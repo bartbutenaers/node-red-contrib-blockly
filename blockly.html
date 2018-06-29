@@ -1,0 +1,292 @@
+<script>
+    // Make sure that all Blockly library files are loaded in the correct order.
+    // Don't use jQuery (see https://discourse.nodered.org/t/scope-of-variables-in-external-js-scripts/1048/2)
+    [
+      "/blocky/js/blockly_compressed.js",
+      "/blocky/js/msg/messages.js", // See https://groups.google.com/forum/#!topic/blockly/TwJTZct59ec
+      "/blocky/js/blocks_compressed.js",
+      "/blocky/js/javascript_compressed.js",
+      "/blocky/js/msg/js/en.js"
+    ].forEach(function(src) {
+      var script = document.createElement('script');
+      script.src = src;
+      // set the async flag to false to force synchronous loading
+      script.async = false;
+      document.head.appendChild(script);
+    });
+</script>
+      
+
+<script type="text/javascript">
+
+// TODO beide editors resizen indien nodig
+// TODO alle blocks in de sidebar tonen (hierarchy)
+// TODO eigen Node-Red blocks maken
+// TODO node in het rood indien er een fout in de code is
+// TODO dynamisch de juist taal JS file loaden
+// TODO zorgen dat de Javascript code niet by default geselecteerd is
+// TODO als er niets wijzigt in de workspace, mag Node-Red niet denken dat er toch iets gewijzigd is (bv tgv node.workspace)
+
+    function createWorkspace(node, workspaceXml) {
+        node.workspace = Blockly.inject('blocklyDiv', {
+            grid: {
+                spacing: 25,
+                length: 3,
+                colour: '#ccc',
+                snap: true
+            },
+            toolbox: node.toolbox,
+            zoom: {
+                controls: true,
+                wheel: true
+            },
+            trashcan: false,
+            comments: true,
+            disable: true,
+            scrollbars: true
+        });
+        
+        // Restore the workspace content from the XML string
+        var dom = Blockly.Xml.textToDom(workspaceXml);
+        Blockly.Xml.domToWorkspace(dom, node.workspace); 
+        
+        // Make sure the workspace is sized correctly in the beginning
+        resize(node);
+    }
+    
+    // See https://developers.google.com/blockly/guides/configure/web/resizable
+    function resize(node) {
+        // Compute the absolute coordinates and dimensions of blocklyArea.
+        var element = blocklyArea;
+        var x = 0;
+        var y = 0;
+        //do {
+            x += element.offsetLeft;
+            y += element.offsetTop;
+        //    element = element.offsetParent;
+        //} while (element);
+        
+        // Position blocklyDiv over blocklyArea.
+        blocklyDiv.style.left = x + 'px';
+        blocklyDiv.style.top = y + 'px';
+        blocklyDiv.style.width = blocklyArea.offsetWidth + 'px';
+        blocklyDiv.style.height = blocklyArea.offsetHeight + 'px';
+        
+        // Make sure the Blockly svg area is resized according the DIV element.
+        // Blocky itself also calls svgResize underneath, but only when e.g. the toolbox changes size)
+        Blockly.svgResize(node.workspace);
+    };
+
+    RED.nodes.registerType('Blockly',{
+        category: 'function',
+        color: '#F888AC',
+        defaults: {
+            language: {value:"en"},
+            javascript: {value:""},
+            workspaceXml: {value:""},
+            name: {value:""}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "blockly.png",
+        label: function() {
+            return this.name||"Blockly";
+        },
+        oneditprepare: function() {
+            var node = this;
+            
+            debugger;
+            if (!node.toolbox) {
+                // TODO synchronous calls are obsolete in most browsers, for performance issues.  How to get around this?
+                var request = new XMLHttpRequest();
+                request.open('GET', '/blocky/js/toolbox.xml', false);  // `false` makes the request synchronous
+                request.send();
+                
+                if (request.readyState == 4 && request.status == 200) {
+                    node.toolbox = request.responseText;
+                }
+                else {
+                    console.log("Cannot load toolbox.xml for Blocky"); 
+                    // return;
+                }
+            }
+            
+            // Show two tabsheets
+            var tabs = RED.tabs.create({
+                id: "node-blocky-tabs",
+                onchange: function(tab) {
+                    $("#node-blocky-tabs-content").children().hide();
+                    $("#" + tab.id).show();
+                    
+                    if (tab.id === "node-blocky-tab-javascript") {
+                        // Generate JavaScript code from the workspace content
+                        Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
+                        var javascript = Blockly.JavaScript.workspaceToCode(node.workspace);
+                        
+                        // Show the generated Javascript code in the Ace editor
+                        node.editor.setValue(javascript);
+                    }
+                }
+            });
+            tabs.addTab({
+                id: "node-blocky-tab-workspace",
+                label: "Workspace"
+            });
+            tabs.addTab({
+                id: "node-blocky-tab-javascript",
+                label: "Generated Javascript"
+            });
+            
+            // Need to wait for it to be rendered before the sizing of the tabs can be properly calculated
+            setTimeout(function() {
+                tabs.resize();
+            }, 0);
+
+            createWorkspace(node, node.workspaceXml);
+            
+            var blocklyArea = document.getElementById('blocklyArea');
+            var blocklyDiv = document.getElementById('blocklyDiv');
+
+ // TODO resize gedeelte herzetten naar de functie bovenaan, want de node.workspace (die we aan resize doorgeven) zal daar wijzigen.
+ // TODO waar we de workspace destroyen, moeten we ook de resize listener verwijderen.
+            
+            node.editor = RED.editor.createEditor({
+                id: 'node-input-javascript-editor',
+                mode: 'ace/mode/javascript',
+                value: node.javascript,
+                globals: { // TODO is dit allemaal nodig ???
+                    msg:true,
+                    context:true,
+                    RED: true,
+                    util: true,
+                    flow: true,
+                    global: true,
+                    console: true,
+                    Buffer: true,
+                    setTimeout: true,
+                    clearTimeout: true,
+                    setInterval: true,
+                    clearInterval: true
+                }
+            });
+            
+            // It is not allowed to change the generated Javascript code
+            node.editor.textInput.setReadOnly(true);
+            
+            var languageElement = document.getElementById('node-input-language');
+            languageElement.addEventListener('change', function(e){
+                if (node.workspace) {
+                    // Blocks may look completely different in another language, due to differences in word-order. 
+                    // As a result the language of a running Blockly instance cannot be changed.  
+                    // To avoid a page reload, build the workspace again (based on the original workspace xml).
+                    // See https://github.com/google/blockly/issues/701
+                    var dom = Blockly.Xml.workspaceToDom(node.workspace);
+                    var workspaceXml = Blockly.Xml.domToText(dom);
+                    
+                    // Destroy the current workspace
+                    node.workspace.dispose();
+                    
+                    createWorkspace(node, workspaceXml);
+                }
+            });
+        },
+        oneditsave: function() {
+            var node = this;
+            
+            if (node.workspace) {
+                // Generate JavaScript code from the workspace content
+                Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
+                node.javascript = Blockly.JavaScript.workspaceToCode(node.workspace);
+ // TODO we moeten de taal ergens opgeven???  Bij de inject ????               
+                // Store the workspace content as an xml string (which will produce a minimal ugly string). 
+                // To obtain a more readable (but larger) string, use Blockly.Xml.domToPrettyText instead.
+                var dom = Blockly.Xml.workspaceToDom(node.workspace);
+                node.workspaceXml = Blockly.Xml.domToText(dom);
+            } 
+        },
+        oneditresize: function (size) {
+            var node = this;
+            
+            // Resize Blockly to fill the available space on screen
+            resize(node);
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="Blockly">
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    </br>
+    <div class="form-row">
+        <ul style="background: #fff; min-width: 600px; margin-bottom: 20px;" id="node-blocky-tabs"></ul>
+    </div>
+    <div id="node-blocky-tabs-content" style="min-height: 350px">
+        <div id="node-blocky-tab-workspace">
+            <div class="form-row">
+                <label for="node-input-language"><i class="fa fa-exchange"></i> Language</label>
+                <select class="form-control" id="node-input-language">
+                    <option value='ar'>العربية</option>
+                    <option value='be-tarask'>Taraškievica</option>
+                    <option value='br'>Brezhoneg</option>
+                    <option value='ca'>Català</option>
+                    <option value='cs'>Česky</option>
+                    <option value='da'>Dansk</option>
+                    <option value='de'>Deutsch</option>
+                    <option value='el'>Ελληνικά</option>
+                    <option value='en'>English</option>
+                    <option value='es'>Español</option>
+                    <option value='et'>Eesti</option>
+                    <option value='fa'>فارسی</option>
+                    <option value='fr'>Français</option>
+                    <option value='he'>עברית</option>
+                    <option value='hrx'>Hunsrik</option>
+                    <option value='hu'>Magyar</option>
+                    <option value='ia'>Interlingua</option>
+                    <option value='is'>Íslenska</option>
+                    <option value='it'>Italiano</option>
+                    <option value='ja'>日本語</option>
+                    <option value='kab'>Kabyle</option>
+                    <option value='ko'>한국어</option>
+                    <option value='mk'>Македонски</option>
+                    <option value='ms'>Bahasa Melayu</option>
+                    <option value='nb'>Norsk Bokmål</option>
+                    <option value='nl'>Nederlands, Vlaams</option>
+                    <option value='oc'>Lenga d\'òc</option>
+                    <option value='pl'>Polski</option>
+                    <option value='pms'>Piemontèis</option>
+                    <option value='pt-br'>Português Brasileiro</option>
+                    <option value='ro'>Română</option>
+                    <option value='ru'>Русский</option>
+                    <option value='sc'>Sardu</option>
+                    <option value='sk'>Slovenčina</option>
+                    <option value='sr'>Српски</option>
+                    <option value='sv'>Svenska</option>
+                    <option value='ta'>தமிழ்</option>
+                    <option value='th'>ภาษาไทย</option>
+                    <option value='tlh'>tlhIngan Hol</option>
+                    <option value='tr'>Türkçe</option>
+                    <option value='uk'>Українська</option>
+                    <option value='vi'>Tiếng Việt</option>
+                    <option value='zh-hans'>简体中文</option>
+                    <option value='zh-hant'>正體中文</option>
+                </select>
+            </div>
+            <div class="form-row">
+                <div id="blocklyArea" style="width: 100%; height: 450px; min-height:350px;">
+                    <div id="blocklyDiv" style="position: absolute"></div>
+                </div>
+            </div>
+        </div>
+        <div id="node-blocky-tab-javascript">
+            <div class="form-row node-text-editor-row">
+                <div style="height: 250px; min-height:150px;" class="node-text-editor" id="node-input-javascript-editor" ></div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="Blockly">
+    <p>A simple node that use Blockly function.</p>
+</script>
