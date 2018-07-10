@@ -36,7 +36,7 @@ When writing Javascript code in a standard *function node*, some Node-Red functi
 
 ![Function API](https://raw.githubusercontent.com/bartbutenaers/node-red-contrib-blockly/master/images/blockly_api.png)
 
-1. **Log** in the console the text, which is specified on the block input.  Multiple log levels are availble, as described [here](https://nodered.org/docs/user-guide/logging#level).
+1. **Log** in the console the text, which is specified on the block input.  Multiple log levels are availble (log, error, warning, trace, debug).  The warnings and errors will also be displayed in the flow editor debug tab.  The trace and debug levels are only used to display details, and are not visible if no logger for those levels is specified in Node-Red.
 2. **Send** to the specified output port the message, which is specified on the block input.  Make sure that the specified output number doesn't exceed the number of outputs on the Blockly node!
 3. **Get** the value of the specified variable from the Node-Red memory.  All the available memory types can be selected (node, flow, global).
 4. **Set** the value of the specified variable from the Node-Red memory to the value, which is specified on the block input.  All the available memory types can be selected (node, flow, global).
