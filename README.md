@@ -13,7 +13,7 @@ npm install node-red-contrib-blockly
 
     ![Value input output](https://raw.githubusercontent.com/bartbutenaers/node-red-contrib-blockly/master/images/blockly_values.png)
     
-+ A value input or output can be *inline* or *external*:
++ A value input can be *inline* or *external*:
 
     ![Inline or external](https://raw.githubusercontent.com/bartbutenaers/node-red-contrib-blockly/master/images/blockly_inline.png)
     
@@ -21,23 +21,33 @@ npm install node-red-contrib-blockly
     
     ![Inline or external example](https://raw.githubusercontent.com/bartbutenaers/node-red-contrib-blockly/master/images/blockly_inline_example.png)    
     
-+ A *statement* is created by connecting value inputs and value outputs together, to pass data from the outputs to the inputs:
++ A *statement* is created by connecting value inputs and value outputs together horizontally, to pass data from the outputs to the inputs:
 
     ![Statement](https://raw.githubusercontent.com/bartbutenaers/node-red-contrib-blockly/master/images/blockly_statement.png)
    
-  In this example the Node-Red input message is cloned, and then the cloned message is send to output 1 of your Blockly node.
+  In this example the Node-Red input message is cloned, and then the cloned message is send to output 1 of your Blockly node.  
+  
+  Which means you have to read the flow from the right to the left ...
   
   Caution: the *data type* requested by a value input should be equal to the data type offered by the value output.  Otherwise you cannot connect the value output to the value input!
+  
++ A block can have properties to change the behaviour of the block:
+
+    ![Block properties](https://raw.githubusercontent.com/bartbutenaers/node-red-contrib-blockly/master/images/blockly_properties.png) 
   
 + A block can have a *statement input* at the top side or a *statement output* at the bottom side or both:
 
     ![Statement input output](https://raw.githubusercontent.com/bartbutenaers/node-red-contrib-blockly/master/images/blockly_statement_input.png) 
     
-+ A *program* is created by connecting statement inputs and statement outputs together, to specify the order in which the statements needs to be executed:
+    Remark: a block can have multiple inputs.
+    
++ A *program* (or *statement stack*) is created by connecting statement inputs and statement outputs together vertically, to specify the order in which the statements needs to be executed:
 
-    ![Statements program](https://raw.githubusercontent.com/bartbutenaers/node-red-contrib-blockly/master/images/blockly_statements_program.png) 
+    ![Statements stack](https://raw.githubusercontent.com/bartbutenaers/node-red-contrib-blockly/master/images/blockly_statements_program.png) 
 
     In this example we start by showing a green node status "Re-sending started".  Afterwards the input message is cloned 10 times and sended to the output port, and every time a log is written to the console "Logging that the message has been resended".  And we end by showing a green node status "Re-sending completed".
+    
+    Which means you have to read the flow from the top to the bottom ...
     
 Congratulations, you have now written your first Blockly program inside Node-Red ...
 
