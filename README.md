@@ -8,7 +8,38 @@ npm install node-red-contrib-blockly
 ```
 
 ## Blockly basics
-[Blockly](https://developers.google.com/blockly/) is a visual block programming language (and editor), maintained by Google.
+[Blockly](https://developers.google.com/blockly/) is a visual block programming language (and editor), maintained by Google.  A lot of documentation (tutorials, videos, ...) can be found on the internet, but here are some bascis to get you started:
++ A block can have a *value input* at the right side or a *value output* at the left side or both:
+
+    ![Value input output](https://raw.githubusercontent.com/bartbutenaers/node-red-contrib-blockly/master/images/blockly_values.png)
+    
++ A value input or output can be *inline* or *external*:
+
+    ![Inline or external](https://raw.githubusercontent.com/bartbutenaers/node-red-contrib-blockly/master/images/blockly_inline.png)
+    
+    For an inline value input, the next block will be inside the previous block.  For an external value input, the next block will be after the previous block:
+    
+    ![Inline or external example](https://raw.githubusercontent.com/bartbutenaers/node-red-contrib-blockly/master/images/blockly_inline_example.png)    
+    
++ A *statement* is created by connecting value inputs and value outputs together, to pass data from the outputs to the inputs:
+
+    ![Statement](https://raw.githubusercontent.com/bartbutenaers/node-red-contrib-blockly/master/images/blockly_statement.png)
+   
+  In this example the Node-Red input message is cloned, and then the cloned message is send to output 1 of your Blockly node.
+  
+  Caution: the *data type* requested by a value input should be equal to the data type offered by the value output.  Otherwise you cannot connect the value output to the value input!
+  
++ A block can have a *statement input* at the top side or a *statement output* at the bottom side or both:
+
+    ![Statement input output](https://raw.githubusercontent.com/bartbutenaers/node-red-contrib-blockly/master/images/blockly_statement_input.png) 
+    
++ A *program* is created by connecting statement inputs and statement outputs together, to specify the order in which the statements needs to be executed:
+
+    ![Statements program](https://raw.githubusercontent.com/bartbutenaers/node-red-contrib-blockly/master/images/blockly_statements_program.png) 
+
+    In this example we start by showing a green node status "Re-sending started".  Afterwards the input message is cloned 10 times and sended to the output port, and every time a log is written to the console "Logging that the message has been resended".  And we end by showing a green node status "Re-sending completed".
+    
+Congratulations, you have now written your first Blockly program inside Node-Red ...
 
 ## Config screen
 The node's config screen consists out of a series of elements:
@@ -16,11 +47,18 @@ The node's config screen consists out of a series of elements:
 ![Config screen](https://raw.githubusercontent.com/bartbutenaers/node-red-contrib-blockly/master/images/blockly_screen.png)
 
 1. The **library** button is similar to the standard *function node*: the code from this Blockly node can be made globally available by adding it to a libary.  That library will be stored withing the 'libs' directory in your node-red user directory.
-2. The **editor** tabsheet displays a Blockly workspace editor.
+2. The **editor** tabsheet displays a Blockly workspace editor.  Here blocks can be added, which will be converted afterwards to Javascript code.
 3. The **generated Javascript** tabsheets will display the Javascript code, which is generated based on the blocks in the Blockly editor.
 4. The **language** dropdown offers all available languages.  The texts in the blocks will be translated in the specified language.  This option is currently ***not available yet***!
 5. The Blockly **toolbox** shows all available blocks, grouped by category.
-6. The Blockly **workspace** shows all the blocks representing your custom logic.  Blocks can be dragged from the toolbox into the workspace.  When pressing the delete button, the selected blocks will be removed.
+6. The Blockly **editable area** shows all the blocks representing your custom logic.  Blocks can be dragged from the toolbox into the area.  Some user interaction is offered in this area:
+    + When pressing the delete button, the selected blocks will be removed.  
+    + By clicking and dragging with the mouse, the user can start panning to alter which part of the area is being visualised.  
+    + By clicking on a block and dragging with the mouse, the block (and all of its's chained next blocks) will be moved.
+    + By using ctrl-c and ctrl-v the selected block will be copied.  When the block is connected to next blocks, the entire block chain will be copied.
+    + By using ctrl-z the last action will be undone.
+    + ...
+Remark: the toolbox and the editable area together are called a *'workspace'.
 7. The **center* button allows the available blocks to be centered in the middle of visible workspace area.
 8. The **zoom in** button.
 9. The **zoom out** button.
