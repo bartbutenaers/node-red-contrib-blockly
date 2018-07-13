@@ -1,11 +1,18 @@
 # node-red-contrib-blockly
-A Node Red node for visual programming a function using Blockly
+A Node Red node for visual programming a function using Blockly.
+
+Thanks to Andrew Marshall, Mark Friedman and Erik Pasternak for their assistance with my Blockly issues!
 
 ## Install
 Run the following npm command in your Node-RED user directory (typically ~/.node-red):
 ```
 npm install node-red-contrib-blockly
 ```
+
+## Example usage
+The following animation shows how the payload of a input message can be read, to display a status on the Blockly node:
+
+![Config screen](https://raw.githubusercontent.com/bartbutenaers/node-red-contrib-blockly/master/images/blockly_intro.gif)
 
 ## Blockly basics
 [Blockly](https://developers.google.com/blockly/) is a visual block programming language (and editor), maintained by Google.  A lot of documentation (tutorials, videos, ...) can be found on the internet, but here are some bascis to get you started:
@@ -58,7 +65,7 @@ The node's config screen consists out of a series of elements:
 
 1. The **library** button is similar to the standard *function node*: the code from this Blockly node can be made globally available by adding it to a libary.  That library will be stored withing the 'libs' directory in your node-red user directory.
 2. The **editor** tabsheet displays a Blockly workspace editor.  Here blocks can be added, which will be converted afterwards to Javascript code.
-3. The **generated Javascript** tabsheets will display the Javascript code, which is generated based on the blocks in the Blockly editor.
+3. The **generated Javascript** tabsheets will display the Javascript code, which is generated based on the blocks in the Blockly editor.  This code is readonly, which means you cannot change it!  Reason is that it is *not possible* to generate Blockly blocks, starting from Javascript code ...
 4. The **language** dropdown offers all available languages.  The texts in the blocks will be translated in the specified language.  This option is currently ***not available yet***!
 5. The Blockly **toolbox** shows all available blocks, grouped by category.
 6. The Blockly **editable area** shows all the blocks representing your custom logic.  Blocks can be dragged from the toolbox into the area.  Some user interaction is offered in this area:
