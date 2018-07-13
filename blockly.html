@@ -37,10 +37,15 @@
 <script type="text/javascript">
 
 // TODO third party libraries toevoegen, o.a. delay node toevoegen (zie https://groups.google.com/forum/#!topic/blockly/5xbDQ8FQzbI)
-// TODO language dropdown gebruiken & dynamisch de juist taal JS file loaden
-// TODO get Node-Red version and check whether the node.id and node.property should become available
-// TODO het clonemessage statement bevat dubbele haakjes.  Vanwaar komen die ?
+// TODO het clonemessage statement heeft vanachter twee keer ';'
 // TODO knopje voorzien om te saven in een library
+// TODO Uncaught TypeError: Cannot read property 'nodeName' of null at t (red.min.js:formatted:6374) : when the workspace is changed (and we go not to JS tabsheet) and click 'done'. --> before oneditsave is called!
+// TODO oneditsave 99df1eec.eca48 Blockly TypeError: Cannot read property 'getAllBlocks' of undefined
+// TODO getvalue en setvalue van memory zet quotes rond het resultaat -> mag niet
+// TODO de setstatus genereert op het begin als color 'undefined'
+// TODO de timer categorie nog weg doen
+// TODO aan beide timer blocks een extra appendStatementInput("END") doen zodat je statements aan het einde van de loop kan uitvoeren
+// TODO de beide timers in aparte folder zetten
     function createWorkspace(node, workspaceXml) {
         node.workspace = Blockly.inject('blocklyDiv', {
             grid: {
@@ -176,7 +181,7 @@
                 // TODO synchronous calls are obsolete in most browsers, for performance issues.  How to get around this?
                 // TODO kunnen we toolbox niet gewoon in code samenstellen, zoals Node-Red en JSON categorieeen ???
                 var request = new XMLHttpRequest();
-                request.open('GET', '/blocky/js/basic/toolbox/toolbox.xml', false);  // `false` makes the request synchronous
+                request.open('GET', '/blocky/js/basic/toolbox.xml', false);  // `false` makes the request synchronous
                 request.send();
                 
                 if (request.readyState == 4 && request.status == 200) {
@@ -186,6 +191,12 @@
                     console.log("Cannot load toolbox.xml for Blocky"); 
                     // return; TODO ???
                 }
+                
+                // Create a category 'Timers' in the toolbox
+                var timersCategory = document.createElement("category");
+                timersCategory.setAttribute("name", "Timers");
+                timersCategory.setAttribute("colour", "#43b7ff");
+                xml.documentElement.insertBefore(timersCategory, xml.documentElement.firstChild);
                 
                 // Create a category 'Json' in the toolbox
                 var jsonCategory = document.createElement("category");
@@ -198,6 +209,76 @@
                 nodeRedCategory.setAttribute("name", "Node-Red");
                 nodeRedCategory.setAttribute("colour", "#fd9c71");
                 xml.documentElement.insertBefore(nodeRedCategory, xml.documentElement.firstChild);
+                
+                // TODO deze naar een aparte library verschuiven
+                Blockly.Blocks['setintervalwithcount'] = {
+                  init: function() {
+                    this.appendDummyInput()
+                        .appendField("Repeat ")
+                        .appendField(new Blockly.FieldNumber(0, 0, Infinity, 1), "COUNT")
+                        .appendField("times every")
+                        .appendField(new Blockly.FieldNumber(0, 0, Infinity, 0.01), "INTERVAL")
+                        .appendField("seconds");
+                    this.appendStatementInput("STATEMENTS")
+                        .setCheck(null);
+                    this.setPreviousStatement(true, null);
+                    this.setNextStatement(true, null);
+                    this.setColour(230);
+                 this.setTooltip("");
+                 this.setHelpUrl("");
+                  }
+                };
+                
+                Blockly.JavaScript['setintervalwithcount'] = function(block) {
+                  var count = block.getFieldValue('COUNT');
+                  var interval = block.getFieldValue('INTERVAL') * 1000; // milliseconds
+                  var statements = Blockly.JavaScript.statementToCode(block, 'STATEMENTS');
+                  
+                  // Generate unique variable names
+                  var i = 'i_' + Math.random().toString(36).substr(2, 16);
+                  var timerId = 'timerId_' + Math.random().toString(36).substr(2, 16);
+                  
+                  var code = `var ${i} = 0;\nvar ${timerId} = setInterval(function() {\n ${statements}\n\tif(++${i} === ${count}) {\n\t\tclearInterval(${timerId});\n\t}\n}, ${interval});\n`;
+                  return code;
+                };
+
+                Blockly.Blocks['setintervalwithcondition'] = {
+                  init: function() {
+                    this.appendValueInput("CONDITION")
+                        .setCheck("Boolean")
+                        .appendField("Repeat every")
+                        .appendField(new Blockly.FieldNumber(0, 0, Infinity, 0.01), "INTERVAL")
+                        .appendField("seconds, until");
+                    this.appendStatementInput("STATEMENTS")
+                        .setCheck(null);
+                    this.setPreviousStatement(true, null);
+                    this.setNextStatement(true, null);
+                    this.setColour(230);
+                 this.setTooltip("");
+                 this.setHelpUrl("");
+                  }
+                };
+
+                Blockly.JavaScript['setintervalwithcondition'] = function(block) {
+                  var interval = block.getFieldValue('INTERVAL') * 1000; // milliseconds
+                  var condition = Blockly.JavaScript.valueToCode(block, 'CONDITION', Blockly.JavaScript.ORDER_ATOMIC);
+                  var statements = Blockly.JavaScript.statementToCode(block, 'STATEMENTS') || '';
+                  
+                  // Generate unique variable name
+                  var timerId = 'timerId_' + Math.random().toString(36).substr(2, 16);
+                  
+                  var code = `var ${timerId} = setInterval(function() {\n ${statements}\n\tif(${condition}) {\n\t\tclearInterval(${timerId});\n\t}\n}, ${interval});\n`;
+                  return code;
+                };
+                
+                [
+                    "setintervalwithcount",
+                    "setintervalwithcondition"
+                ].forEach(function(blockType) {
+                    var timerBlock = document.createElement("block");
+                    timerBlock.setAttribute("type", blockType);
+                    timersCategory.appendChild(timerBlock);
+                });
           
                 // Show all Json blocks in the toolbox, under the 'Json' category.
                 // These blocks are downloaded above (objectBlocksCodeGen.js and objectBlocksDefs.js).
@@ -332,9 +413,15 @@
         oneditsave: function() {
             var node = this;
   
-            // Generate JavaScript code from the workspace content
+            // Generate JavaScript code from the workspace content, and store it in this node.
+            // That way it can be send to the server, where it will be executed in the sandbox.
             Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
             node.func = Blockly.JavaScript.workspaceToCode(node.workspace);
+            
+            // Store the workspace content as an xml string (which will produce a minimal ugly string).
+            // To obtain a more readable (but larger) string, use Blockly.Xml.domToPrettyText instead.
+            var dom = Blockly.Xml.workspaceToDom(node.workspace);
+            node.workspaceXml = Blockly.Xml.domToText(dom);
                
             // Cleanup the ACE editor
             node.aceEditor.destroy();
@@ -344,11 +431,6 @@
             // TODO check whether this is sufficient (what to do with the two DIV tags: blocklyArea and blocklyDiv)
             node.workspace.dispose(); 
             delete node.workspace;
-               
-            // Store the workspace content as an xml string (which will produce a minimal ugly string). 
-            // To obtain a more readable (but larger) string, use Blockly.Xml.domToPrettyText instead.
-            var dom = Blockly.Xml.workspaceToDom(node.workspace);
-            node.workspaceXml = Blockly.Xml.domToText(dom);
         },
         oneditcancel: function() {
             var node = this;
