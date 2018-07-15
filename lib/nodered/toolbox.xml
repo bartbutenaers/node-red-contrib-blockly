@@ -1,0 +1,15 @@
+<xml xmlns="http://www.w3.org/1999/xhtml" id="toolbox" style="display: none;">
+  <category name="Node-Red" colour="#BB8FCE">
+    <block type="node_log"></block>
+    <block type="node_msg"></block>
+    <block type="node_send"></block>
+    <block type="node_clone"></block>
+    <block type="node_context_get"></block>
+    <block type="node_context_set"></block>
+    <block type="node_context_keys"></block>
+    <block type="node_properties"></block>
+    <block type="node_status">
+      <field name="COLOUR">#0000FF</field>
+    </block>
+  </category>
+</xml>
