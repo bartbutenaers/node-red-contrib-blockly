@@ -1,0 +1,13 @@
+<xml xmlns="http://www.w3.org/1999/xhtml" id="toolbox" style="display: none;">
+  <category name="Json objects" colour="#F99EA3">
+    <block type="object_from_json"></block>
+    <block type="object_to_json"></block>
+    <block type="object_get">
+       <field name="field_name">payload</field>  
+    </block>
+    <block type="object_set">
+      <field name="field_name">payload</field>
+    </block>
+    <block type="object_create"></block>
+  </category>
+</xml>
