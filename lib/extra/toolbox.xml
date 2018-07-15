@@ -1,0 +1,6 @@
+<xml xmlns="http://www.w3.org/1999/xhtml" id="toolbox" style="display: none;">
+  <category name="Timers" colour="#EB984E">
+    <block type="setintervalwithcount"></block>
+    <block type="setintervalwithcondition"></block>
+  </category>
+</xml>
