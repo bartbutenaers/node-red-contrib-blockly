@@ -9,6 +9,18 @@ Run the following npm command in your Node-RED user directory (typically ~/.node
 npm install node-red-contrib-blockly
 ```
 
+## Where used
+When implementing your custom logic into a Node-Red flow, sometimes the available nodes won't be sufficient.  In those cases the standard *function node* can be used, to implement your logic by entering custom Javascript coding.  However to avoid having to write Javascript code, you can draw your logic by dragging and dropping blocks into this Blockly node.
+
+![Where used](https://raw.githubusercontent.com/bartbutenaers/node-red-contrib-blockly/master/images/blockly_where_used.png)
+
+1. ***Draw*** the blocks on your editor, according to your business logic.
+2. When *deploying* the flow, the corresponding ***Javascript code will be generated*** and send to the server.
+3. Create an ***input message*** (called *'msg'*), which can contain an arbitrary number of fields (e.g. payload, topic, ...) and their corresponding values.
+4. The *msg* arrives at the Blockly node, which will ***execute*** the generated Javascript code.
+5. The generated Javascript code can ***send*** an output message on one of it's output ports.
+6. The ***output message*** will be handled by the next nodes in the flow.
+
 ## Example usage
 The following animation shows how the payload of a input message can be read, to display a status on the Blockly node:
 
