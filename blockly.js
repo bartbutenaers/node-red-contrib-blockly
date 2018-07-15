@@ -294,6 +294,10 @@ module.exports = function(RED) {
             root: __dirname + '/lib/',
             dotfiles: 'deny'
         };
+        
+        //console.log("TODO remove this - called " + req.params[0]);
+        
+        res.set('Cache-Control', 'public, max-age=31557600, s-maxage=31557600'); // 1 year
        
         // Send the requested file to the client (in this case it will be tableHeadFixer.js)
         res.sendFile(req.params[0], options)
