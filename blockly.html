@@ -11,6 +11,10 @@
   limitations under the License.
 -->
 <script>
+    // *****************************************************************************************
+    // Load all external files (.js and .xml) ONCE for every page refresh
+    // *****************************************************************************************
+    
     // Make sure that all Blockly library files are loaded in the correct order.
     // Don't use jQuery (see https://discourse.nodered.org/t/scope-of-variables-in-external-js-scripts/1048/2)
     [
@@ -27,11 +31,59 @@
       "/blocky/js/extra/extraBlocksDefs.js"
     ].forEach(function(src) {
       var script = document.createElement('script');
-      script.type="text/javascript"
-      script.src = src;
-      // set the async flag to false to force synchronous loading
-      script.async = false;
+      script.type="text/javascript";
+      script.async = false; // Force synchronous loading, to load them in the correct sequence
+      script.src = src; 
       document.head.appendChild(script);
+    });
+
+    // Create a new XML document (which represents a toolbox), and keep it as a global variable
+    var toolboxXmlDocument = document.implementation.createDocument(null, "toolbox");
+    
+    // Load the xml toolbox files for all available blocks libraries, and combine those into a single toolbox
+    [
+        "/blocky/js/basic/toolbox.xml",
+        "/blocky/js/json/toolbox.xml",
+        "/blocky/js/nodered/toolbox.xml",
+        "/blocky/js/extra/toolbox.xml"
+    ].forEach(function(filePath) {
+        var request = new XMLHttpRequest();
+        request.open('GET', filePath, false);  // `false` makes the request synchronous
+        request.send();
+    
+        if (request.readyState == 4 && request.status == 200) {
+            // Get all categories in the new XML document
+            var newCategories = request.responseXML.getElementsByTagName("category");
+
+            // Iterate backwards since categories can be moved away from this list (to the toolbox)
+            for (i = newCategories.length - 1; i >= 0; --i) {
+                var newCategory = newCategories[i];
+                
+                // Get the category name
+                var name = newCategory.getAttribute('name');
+
+                // Try to find an existing category with the same name.
+                // Indeed multiple toolboxes can put blocks in the same category...
+                var existingCategory = toolboxXmlDocument.getElementsByName(name);
+                
+                if (existingCategory.length === 0) {
+                    // If the new category didn't exist yet in the toolbox, move the entire new category to the start of the toolbox
+                    toolboxXmlDocument.documentElement.insertBefore(newCategory, toolboxXmlDocument.documentElement.firstChild);
+                }
+                else {
+                    var newBlocks = newCategory.children;
+
+                    // Move all the blocks (and their children) from the newCategory to the existingCategory
+                    for (var k = 0; k < newBlocks.length; k++) {
+                        var newBlock = newBlocks[k];
+                        existingCategory[0].appendChild(newBlock);
+                    }
+                }
+            }
+        }
+        else {
+            console.log("Cannot load toolboxes for Blocky"); 
+        }
     });
 </script>
 
@@ -39,14 +91,18 @@
 
 // TODO knopje testen om te saven in een library
     function createWorkspace(node, workspaceXml) {
+        // Convert the toolbox xml document to an xml string.
+        var toolboxXmlString = new XMLSerializer().serializeToString(toolboxXmlDocument.documentElement);
+    
+        // Create the workspace
         node.workspace = Blockly.inject('blocklyDiv', {
             grid: {
                 spacing: 25,
                 length: 3,
                 colour: '#ccc',
                 snap: true
-            },
-            toolbox: node.toolbox,
+            },     
+            toolbox: toolboxXmlString,
             zoom: {
                 controls: true, 
                 wheel: true
@@ -57,9 +113,8 @@
             scrollbars: true
         });
         
-        // Create an 'msg' variable, that represents the parameter from the Node-Red 'input' event
-        // TODO zorgen dat de variable nog niet bestaat.  Anders Blockly Error: Variable "msg" is already in use and its id is ... which conflicts with the passed in id, ...
-        //node.workspace.createVariable('msg');
+        // The 'msg' variable represents the parameter from the Node-Red 'input' event.
+        // By adding it as a reserved wordt in Javascript, we can avoid that users create their own 'msg' variable.
         Blockly.JavaScript.addReservedWords('msg');
         
         // Restore the workspace content from the XML string
@@ -138,9 +193,9 @@
         node.aceEditor.clearSelection(); 
     }
 
-    RED.nodes.registerType('BlocklyNR',{
+    RED.nodes.registerType('Blockly',{
         category: 'function',
-        color: '#F888AC',
+        color: '#F888AC',       
         defaults: {
             language: {value:"en"},
             func: {value:"\nreturn msg;"}, // The generated Javascript code
@@ -166,63 +221,6 @@
                     if (value !== this.value) { $(this).spinner("value", value); }
                 }
             });
-            
-            if (!node.toolbox) {                               
-                // Create a new XML document (which represents a toolbox)
-                var toolboxXml = document.implementation.createDocument(null, "toolbox");
-                
-                [
-                    "/blocky/js/basic/toolbox.xml",
-                    "/blocky/js/json/toolbox.xml",
-                    "/blocky/js/nodered/toolbox.xml",
-                    "/blocky/js/extra/toolbox.xml"
-                ].forEach(function(filePath) {
-                    var request = new XMLHttpRequest();
-                    request.open('GET', filePath, false);  // `false` makes the request synchronous
-                    request.send();
-                
-                    if (request.readyState == 4 && request.status == 200) {
-                        // Get all categories in the new XML document
-                        var newCategories = request.responseXML.getElementsByTagName("category");
-
-                        // Iterate backwards since categories can be moved away from this list (to the toolbox)
-                        for (i = newCategories.length - 1; i >= 0; --i) {
-                            var newCategory = newCategories[i];
-                            
-                            // Get the category name
-                            var name = newCategory.getAttribute('name');
-
-                            // Try to find an existing category with the same name.
-                            // Indeed multiple toolboxes can put blocks in the same category...
-                            var existingCategory = toolboxXml.getElementsByName(name);
-                            
-                            if (existingCategory.length === 0) {
-                                // If the new category didn't exist yet in the toolbox, move the entire new category to the start of the toolbox
-                                toolboxXml.documentElement.insertBefore(newCategory, toolboxXml.documentElement.firstChild);
-                            }
-                            else {
-                                var newBlocks = newCategory.children;
- 
-                                // Move all the blocks (and their children) from the newCategory to the existingCategory
-                                for (var k = 0; k < newBlocks.length; k++) {
-                                    var newBlock = newBlocks[k];
-                                    existingCategory[0].appendChild(newBlock);
-                                }
-                            }
-                        }
-                    }
-                    else {
-                        console.log("Cannot load toolbox.xml for Blocky"); 
-                        // return; TODO ???
-                    }
-                });
-                
-                // Make sure to store the toolbox as xml string        
-                node.toolbox = new XMLSerializer().serializeToString(toolboxXml.documentElement);
-                
-                // Avoid that users create their own variable ‘msg’
-                Blockly.JavaScript.addReservedWords('msg');
-            }
             
             // Show two tabsheets
             var tabs = RED.tabs.create({
@@ -354,7 +352,7 @@
     });
 </script>
 
-<script type="text/x-red" data-template-name="BlocklyNR">
+<script type="text/x-red" data-template-name="Blockly">
     <div class="form-row">
         <label for="node-input-name"><i class="icon-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
@@ -438,7 +436,7 @@
 </div>
 </script>
 
-<script type="text/x-red" data-help-name="BlocklyNR">
+<script type="text/x-red" data-help-name="Blockly">
     <p>A function block to generate Javascript code, based on <a target="_blank" href="https://developers.google.com/blockly/">Blockly</a> blocks.  The generated javascript code will be run against the messages being received by the node.</p>
     <p>The messages are passed in as a JavaScript object called <code>msg</code>.</p>
     <p>By convention it will have a <code>msg.payload</code> property containing the body of the message.</p>
