@@ -21,24 +21,22 @@ When implementing your custom logic into a Node-Red flow, sometimes the availabl
 5. The generated Javascript code can ***send*** an output message on one of it's output ports.
 6. The ***output message*** will be handled by the next nodes in the flow.
 
-## Example usage
-The following animation shows how the payload of a input message can be read, to display a status on the Blockly node:
+## Hello world example
+As soon as an input message arrives, we will set the *'payload'* property of that input message to *'Hello world'*.  And afterwards that updated input message will be send to the output port:
 
-![Config screen](https://raw.githubusercontent.com/bartbutenaers/node-red-contrib-blockly/master/images/blockly_intro.gif)
+![Hello world](https://raw.githubusercontent.com/bartbutenaers/node-red-contrib-blockly/master/images/blockly_hello_world.png)
+
+The following animation shows how this example flow can be constructed using the Blockly node:
+
+![Config screen](https://raw.githubusercontent.com/bartbutenaers/node-red-contrib-blockly/master/images/blockly_hello_world.gif)
+
+More advanced examples can be found at the bottom of this page...
 
 ## Blockly basics
 [Blockly](https://developers.google.com/blockly/) is a visual block programming language (and editor), maintained by Google.  A lot of documentation (tutorials, videos, ...) can be found on the internet, but here are some bascis to get you started:
 + A block can have a *value input* at the right side or a *value output* at the left side or both:
 
     ![Value input output](https://raw.githubusercontent.com/bartbutenaers/node-red-contrib-blockly/master/images/blockly_values.png)
-    
-+ A value input can be *inline* or *external*:
-
-    ![Inline or external](https://raw.githubusercontent.com/bartbutenaers/node-red-contrib-blockly/master/images/blockly_inline.png)
-    
-    For an inline value input, the next block will be inside the previous block.  For an external value input, the next block will be after the previous block:
-    
-    ![Inline or external example](https://raw.githubusercontent.com/bartbutenaers/node-red-contrib-blockly/master/images/blockly_inline_example.png)    
     
 + A *statement* is created by connecting value inputs and value outputs together horizontally, to pass data from the outputs to the inputs:
 
@@ -49,6 +47,14 @@ The following animation shows how the payload of a input message can be read, to
   Which means you have to read the flow from the right to the left ...
   
   Caution: the *data type* requested by a value input should be equal to the data type offered by the value output.  Otherwise you cannot connect the value output to the value input!
+  
++ A value input can be *inline* or *external*:
+
+    ![Inline or external](https://raw.githubusercontent.com/bartbutenaers/node-red-contrib-blockly/master/images/blockly_inline.png)
+    
+    For an inline value input, the next block will be inside the previous block.  For an external value input, the next block will be after the previous block:
+    
+    ![Inline or external example](https://raw.githubusercontent.com/bartbutenaers/node-red-contrib-blockly/master/images/blockly_inline_example.png)  
   
 + A block can have properties to change the behaviour of the block:
 
@@ -67,8 +73,6 @@ The following animation shows how the payload of a input message can be read, to
     In this example we start by showing a green node status "Re-sending started".  Afterwards the input message is cloned 10 times and sended to the output port, and every time a log is written to the console "Logging that the message has been resended".  And we end by showing a green node status "Re-sending completed".
     
     Which means you have to read the flow from the top to the bottom ...
-    
-Congratulations, you have now written your first Blockly program inside Node-Red ...
 
 ## Config screen
 The node's config screen consists out of a series of elements:
@@ -112,3 +116,7 @@ When writing Javascript code in a standard *function node*, some Node-Red functi
 7. **Clone message** can be used to create a new separate copy of the message on the block input.
 8. **Get all keys** from the specified Node-Red memory, i.e. all available variable names.  All the available memory types can be selected (node, flow, global).
 9. Get the specified **node property**.  Starting from Node-Red ***version 0.19*** both the Blockly node identifier, and the Blockly node name can be retrieved.
+
+## More examples
+
++ 
