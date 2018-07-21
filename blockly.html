@@ -26,9 +26,10 @@
       "/blocky/js/json/objectBlocksCodeGen.js",
       "/blocky/js/json/objectBlocksDefs.js",
       "/blocky/js/nodered/nodeRedBlocksCodeGen.js",
-      "/blocky/js/nodered/nodeRedBlocksDefs.js",
-      "/blocky/js/extra/extraBlocksCodeGen.js",
-      "/blocky/js/extra/extraBlocksDefs.js"
+      "/blocky/js/nodered/nodeRedBlocksDefs.js"
+      // TODO: add the extra blocks as soon as the timer blocks have been finalized
+      //"/blocky/js/extra/extraBlocksCodeGen.js",
+      //"/blocky/js/extra/extraBlocksDefs.js"
     ].forEach(function(src) {
       var script = document.createElement('script');
       script.type="text/javascript";
@@ -44,8 +45,9 @@
     [
         "/blocky/js/basic/toolbox.xml",
         "/blocky/js/json/toolbox.xml",
-        "/blocky/js/nodered/toolbox.xml",
-        "/blocky/js/extra/toolbox.xml"
+        "/blocky/js/nodered/toolbox.xml"
+        // TODO: add the extra blocks as soon as the timer blocks have been finalized
+        //"/blocky/js/extra/toolbox.xml"
     ].forEach(function(filePath) {
         var request = new XMLHttpRequest();
         request.open('GET', filePath, false);  // `false` makes the request synchronous
@@ -88,8 +90,6 @@
 </script>
 
 <script type="text/javascript">
-
-// TODO knopje testen om te saven in een library
     function createWorkspace(node, workspaceXml) {
         // Convert the toolbox xml document to an xml string.
         var toolboxXmlString = new XMLSerializer().serializeToString(toolboxXmlDocument.documentElement);
@@ -196,7 +196,6 @@
             if (Blockly.blocklyEditorVisible === undefined) {
                 Blockly.originalKeyDownHandler = Blockly.onKeyDown_;
                 Blockly.onKeyDown_ = function(e) {
-                debugger;
                     if (Blockly.blocklyEditorVisible) {
                         Blockly.originalKeyDownHandler(e);
                         // Stop the events from propagating up the DOM tree
@@ -247,15 +246,12 @@
             setTimeout(function() {
                 tabs.resize();
             }, 0);
-           
-             // TODO resize gedeelte herzetten naar de functie bovenaan, want de node.workspace (die we aan resize doorgeven) zal daar wijzigen.
- // TODO waar we de workspace destroyen, moeten we ook de resize listener verwijderen.
             
             node.aceEditor = RED.editor.createEditor({
                 id: 'aceDiv',
                 mode: 'ace/mode/javascript',
                 value: node.func,
-                globals: { // TODO is dit allemaal nodig ???
+                globals: { 
                     msg:true,
                     context:true,
                     RED: true,
@@ -334,7 +330,6 @@
             delete node.aceEditor;
                  
             // Cleanup the Blockly workspace
-            // TODO check whether this is sufficient (what to do with the two DIV tags: blocklyArea and blocklyDiv)
             node.workspace.dispose(); 
             delete node.workspace;
         },
@@ -391,9 +386,8 @@
     <div class="form-row">
         <label for="node-input-outputs"><i class="fa fa-random"></i> Outputs</label>
         <input id="node-input-outputs" style="width: 20px;" value="1">
-        <span>&nbsp;</span>
-        <label for="node-input-language"><i class="fa fa-exchange" disabled></i> Language</label>
-        <select class="form-control" id="node-input-language" style="width:80px" disabled>
+        <label for="node-input-language" style="margin-left:80px;"><i class="fa fa-exchange" disabled></i> Language</label>
+        <select class="form-control" id="node-input-language" style="width:200px" disabled>
             <option value='ar'>العربية</option>
             <option value='be-tarask'>Taraškievica</option>
             <option value='br'>Brezhoneg</option>
