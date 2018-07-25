@@ -2,11 +2,19 @@
   <category name="Json objects" colour="#F99EA3">
     <block type="object_from_json"></block>
     <block type="object_to_json"></block>
-    <block type="object_get">
-       <field name="field_name">payload</field>  
+    <block type="object_get"> 
+       <value name="field_name">
+        <shadow type="text">
+          <field name="TEXT">payload</field>
+        </shadow>
+      </value>
     </block>
     <block type="object_set">
-      <field name="field_name">payload</field>
+       <value name="field_name">
+        <shadow type="text">
+          <field name="TEXT">payload</field>
+        </shadow>
+      </value>
     </block>
     <block type="object_create"></block>
   </category>
