@@ -314,6 +314,9 @@
             
             // Make sure that the Node-Red handles all keydown events again (e.g. 'D' to delete a node), instead of Blockly. 
             Blockly.blocklyEditorVisible = false; 
+            
+            // Store the number of output ports in Blockly,  so the blocks can take that number into account (if required)
+            Blockly.nodeOutputs = $("#node-input-outputs").val();
   
             // Generate JavaScript code from the workspace content, and store it in this node.
             // That way it can be send to the server, where it will be executed in the sandbox.
