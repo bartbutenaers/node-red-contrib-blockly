@@ -2,7 +2,13 @@
   <category name="Node-Red" colour="#BB8FCE">
     <block type="node_log"></block>
     <block type="node_msg"></block>
-    <block type="node_send"></block>
+    <block type="node_send">
+      <value name="OUT_NR_INPUT">
+        <shadow type="math_number">
+          <field name="NUM">1</field>
+        </shadow>
+      </value>
+    </block>
     <block type="node_clone"></block>
     <block type="node_context_get">
       <value name="PROPERTY">
@@ -12,7 +18,7 @@
       </value>
     </block>
     <block type="node_context_set">
-          <value name="PROPERTY">
+       <value name="PROPERTY">
         <shadow type="text">
           <field name="TEXT">property</field>
         </shadow>
