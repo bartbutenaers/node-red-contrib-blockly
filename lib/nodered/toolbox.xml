@@ -1,5 +1,5 @@
 <xml xmlns="http://www.w3.org/1999/xhtml" id="toolbox" style="display: none;">
-  <category name="Node-Red" colour="#BB8FCE">
+  <category name="Node-RED" colour="#BB8FCE">
     <block type="node_log"></block>
     <block type="node_msg"></block>
     <block type="node_send">
@@ -29,5 +29,6 @@
     <block type="node_status">
       <field name="COLOUR">#0000FF</field>
     </block>
+    <block type="node_close"></block>
   </category>
 </xml>
