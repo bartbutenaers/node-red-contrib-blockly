@@ -8,6 +8,14 @@
           <field name="NUM">1</field>
         </shadow>
       </value>
+      <value name="MESSAGE_INPUT">
+        <shadow type="node_msg"></shadow>
+      </value>       
+    </block>
+    <block type="node_return">
+      <value name="MESSAGE_INPUT">
+        <shadow type="node_msg"></shadow>
+      </value>
     </block>
     <block type="node_clone"></block>
     <block type="node_context_get">
