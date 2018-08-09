@@ -1,0 +1,11 @@
+<xml xmlns="http://www.w3.org/1999/xhtml" id="toolbox" style="display: none;">
+  <category name="Buffer" colour="#DF6C06">
+    <block type="buffer_from_string"></block>
+    <block type="buffer_to_string"></block>
+    <block type="buffer_alloc"></block>
+    <block type="buffer_length"></block>
+    <block type="buffer_fill"></block>
+    <block type="buffer_check"></block>
+    <block type="buffer_copy"></block>
+  </category>
+</xml>
