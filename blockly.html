@@ -26,10 +26,11 @@
       "/blocky/js/json/objectBlocksCodeGen.js",
       "/blocky/js/json/objectBlocksDefs.js",
       "/blocky/js/nodered/nodeRedBlocksCodeGen.js",
-      "/blocky/js/nodered/nodeRedBlocksDefs.js"
-      // TODO: add the extra blocks as soon as the timer blocks have been finalized
-      //"/blocky/js/extra/extraBlocksCodeGen.js",
-      //"/blocky/js/extra/extraBlocksDefs.js"
+      "/blocky/js/nodered/nodeRedBlocksDefs.js",
+      "/blocky/js/extra/extraBlocksCodeGen.js",
+      "/blocky/js/extra/extraBlocksDefs.js",
+      "/blocky/js/buffer/bufferBlocksCodeGen.js",
+      "/blocky/js/buffer/bufferBlocksDefs.js"
     ].forEach(function(src) {
       var script = document.createElement('script');
       script.type="text/javascript";
@@ -41,13 +42,14 @@
     // Create a new XML document (which represents a toolbox), and keep it as a global variable
     var toolboxXmlDocument = document.implementation.createDocument(null, "toolbox");
     
-    // Load the xml toolbox files for all available blocks libraries, and combine those into a single toolbox
+    // Load the xml toolbox files for all available blocks libraries, and combine those into a single toolbox.
+    // Remark: the categories are added in the same order as they are loaded here ...
     [
         "/blocky/js/basic/toolbox.xml",
+        "/blocky/js/extra/toolbox.xml",        
+        "/blocky/js/buffer/toolbox.xml",
         "/blocky/js/json/toolbox.xml",
         "/blocky/js/nodered/toolbox.xml"
-        // TODO: add the extra blocks as soon as the timer blocks have been finalized
-        //"/blocky/js/extra/toolbox.xml"
     ].forEach(function(filePath) {
         var request = new XMLHttpRequest();
         request.open('GET', filePath, false);  // `false` makes the request synchronous
@@ -316,7 +318,7 @@
             Blockly.blocklyEditorVisible = false; 
             
             // Store the number of output ports in Blockly,  so the blocks can take that number into account (if required)
-            Blockly.nodeOutputs = $("#node-input-outputs").val();
+            Blockly.nodeOutputs = $("#node-input-outputs").val(); 
   
             // Generate JavaScript code from the workspace content, and store it in this node.
             // That way it can be send to the server, where it will be executed in the sandbox.
