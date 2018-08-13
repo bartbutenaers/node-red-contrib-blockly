@@ -117,7 +117,8 @@
         
         // The 'msg' variable represents the parameter from the Node-Red 'input' event.
         // By adding it as a reserved wordt in Javascript, we can avoid that users create their own 'msg' variable.
-        Blockly.JavaScript.addReservedWords('msg');
+        // Idem for the 'global', 'flow' and 'context' memory in Node-Red.
+        Blockly.JavaScript.addReservedWords(['msg', 'flow', 'context', 'global']);
         
         // Restore the workspace content from the XML string
         var dom = Blockly.Xml.textToDom(workspaceXml);
