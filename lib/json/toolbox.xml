@@ -1,5 +1,5 @@
 <xml xmlns="http://www.w3.org/1999/xhtml" id="toolbox" style="display: none;">
-  <category name="Json objects" colour="#F99EA3">
+  <category name="Objects" colour="#F99EA3">
     <block type="object_from_json"></block>
     <block type="object_to_json"></block>
     <block type="object_get"> 
@@ -18,8 +18,18 @@
         <shadow type="text">
           <field name="TEXT">payload</field>
         </shadow>
-      </value>
+      </value>    
       <value name="object_field">
+        <shadow type="node_msg">
+        </shadow>
+      </value>
+      <value name="value_field">
+        <shadow type="logic_null">
+        </shadow>
+      </value>       
+    </block>
+    <block type="object_keys">
+      <value name="OBJECT_INPUT">
         <shadow type="node_msg">
         </shadow>
       </value>
