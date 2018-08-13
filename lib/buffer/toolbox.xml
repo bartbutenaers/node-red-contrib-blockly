@@ -2,15 +2,30 @@
   <category name="Buffer" colour="#DF6C06">
     <block type="buffer_from_string"></block>
     <block type="buffer_to_string"></block>
-    <block type="buffer_alloc"></block>
+    <block type="buffer_alloc">
+      <value name="LENGTH">
+        <shadow type="math_number">
+          <field name="NUM">0</field>
+        </shadow>
+      </value>
+    </block>
     <block type="buffer_length"></block>
-    <block type="buffer_fill"></block>
+    <block type="buffer_fill">
+      <value name="FILL_VALUE">
+        <shadow type="buffer_byte">
+        </shadow>
+      </value>
+    </block>
     <block type="buffer_check"></block>
     <block type="buffer_copy"></block>
     <block type="buffer_set_index">
       <value name="INDEX">
         <shadow type="math_number">
           <field name="NUM">1</field>
+        </shadow>
+      </value>
+      <value name="VALUE">
+        <shadow type="buffer_byte">
         </shadow>
       </value>
     </block>
@@ -21,5 +36,6 @@
         </shadow>
       </value>
     </block>
+    <block type="buffer_byte"></block>
   </category>
 </xml>
