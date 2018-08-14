@@ -1,7 +1,11 @@
 <xml xmlns="http://www.w3.org/1999/xhtml" id="toolbox" style="display: none;">
   <category name="Buffer" colour="#DF6C06">
     <block type="buffer_from_string"></block>
-    <block type="buffer_to_string"></block>
+    <block type="buffer_to_string">
+      <value name="BUFFER_INPUT">
+        <shadow type="buffer_empty"></shadow>
+      </value>
+    </block>
     <block type="buffer_alloc">
       <value name="LENGTH">
         <shadow type="math_number">
@@ -9,16 +13,37 @@
         </shadow>
       </value>
     </block>
-    <block type="buffer_length"></block>
+    <block type="buffer_length">
+      <value name="BUFFER_INPUT">
+        <shadow type="buffer_empty"></shadow>
+      </value>
+    </block>
     <block type="buffer_fill">
+      <value name="BUFFER_INPUT">
+        <shadow type="buffer_empty"></shadow>
+      </value>
       <value name="FILL_VALUE">
         <shadow type="buffer_byte">
         </shadow>
       </value>
     </block>
-    <block type="buffer_check"></block>
-    <block type="buffer_copy"></block>
+    <block type="buffer_check">
+      <value name="INPUT">
+        <shadow type="buffer_empty"></shadow>
+      </value>
+    </block>
+    <block type="buffer_copy">
+      <value name="BUFFER_SOURCE">
+        <shadow type="buffer_empty"></shadow>
+      </value>
+      <value name="BUFFER_DESTINATION">
+        <shadow type="buffer_empty"></shadow>
+      </value>
+    </block>
     <block type="buffer_set_index">
+      <value name="BUFFER">
+        <shadow type="buffer_empty"></shadow>
+      </value>
       <value name="INDEX">
         <shadow type="math_number">
           <field name="NUM">1</field>
@@ -30,6 +55,9 @@
       </value>
     </block>
     <block type="buffer_get_index">
+      <value name="BUFFER">
+        <shadow type="buffer_empty"></shadow>
+      </value>
       <value name="INDEX">
         <shadow type="math_number">
           <field name="NUM">1</field>
