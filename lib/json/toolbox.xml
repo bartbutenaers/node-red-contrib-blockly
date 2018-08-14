@@ -1,7 +1,5 @@
 <xml xmlns="http://www.w3.org/1999/xhtml" id="toolbox" style="display: none;">
   <category name="Objects" colour="#F99EA3">
-    <block type="object_from_json"></block>
-    <block type="object_to_json"></block>
     <block type="object_get"> 
       <value name="field_name">
         <shadow type="text">
@@ -27,13 +25,15 @@
         <shadow type="logic_null">
         </shadow>
       </value>       
-    </block>
+    </block>  
+    <block type="object_create"></block>
     <block type="object_keys">
       <value name="OBJECT_INPUT">
         <shadow type="node_msg">
         </shadow>
       </value>
     </block>
-    <block type="object_create"></block>
+    <block type="object_from_json"></block>
+    <block type="object_to_json"></block>
   </category>
 </xml>
