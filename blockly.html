@@ -45,11 +45,11 @@
     // Load the xml toolbox files for all available blocks libraries, and combine those into a single toolbox.
     // Remark: the categories are added in the same order as they are loaded here ...
     [
-        "/blocky/js/basic/toolbox.xml",
-        "/blocky/js/extra/toolbox.xml",        
-        "/blocky/js/buffer/toolbox.xml",
-        "/blocky/js/json/toolbox.xml",
-        "/blocky/js/nodered/toolbox.xml"
+        "blocky/js/basic/toolbox.xml",
+        "blocky/js/extra/toolbox.xml",        
+        "blocky/js/buffer/toolbox.xml",
+        "blocky/js/json/toolbox.xml",
+        "blocky/js/nodered/toolbox.xml"
     ].forEach(function(filePath) {
         var request = new XMLHttpRequest();
         request.open('GET', filePath, false);  // `false` makes the request synchronous
