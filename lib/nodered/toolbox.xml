@@ -21,7 +21,8 @@
     </block> 
     <block type="node_status">
       <field name="COLOUR">#0000FF</field>
-    </block>    
+    </block>   
+    <block type="node_remove_status"></block>    
     <block type="node_log"></block>
     <block type="node_clone">
       <value name="OBJECT_INPUT">
