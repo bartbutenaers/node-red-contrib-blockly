@@ -21,6 +21,10 @@
     </block> 
     <block type="node_status">
       <field name="COLOUR">#0000FF</field>
+      <value name="TEXT_INPUT">
+        <shadow type="text">
+        </shadow>
+      </value> 
     </block>   
     <block type="node_remove_status"></block>    
     <block type="node_log"></block>
