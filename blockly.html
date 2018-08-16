@@ -38,12 +38,13 @@
       script.src = src; 
       document.head.appendChild(script);
     });
-
+    
     if (document.implementation.createDocument) {
         // Create a new XML document (which represents a toolbox), and keep it as a global variable.
         // All toolbox.xml files will be loaded and combined into the XML document.  
         // As soon as the XML document is complete, the toolbox will be displayed.
-        var toolboxXmlDocument = document.implementation.createDocument("http://www.w3.org/1999/xhtml", "html");
+        // In e.g. Chrome you can skip the third parameter, but e.g. in Firefox you need at least pass a null.
+        var toolboxXmlDocument = document.implementation.createDocument("http://www.w3.org/1999/xhtml", "html", null);
     }
     else {
         console.error('This browser cannot create a Blockly toolbox XML document (via createDocument)');
