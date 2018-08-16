@@ -1,7 +1,5 @@
 <xml xmlns="http://www.w3.org/1999/xhtml" id="toolbox" style="display: none;">
   <category name="Node-RED" colour="#BB8FCE">
-    <block type="node_log"></block>
-    <block type="node_msg"></block>
     <block type="node_send">
       <value name="OUT_NR_INPUT">
         <shadow type="math_number">
@@ -12,31 +10,25 @@
         <shadow type="node_msg"></shadow>
       </value>       
     </block>
+    <block type="node_msg"></block>
+    <block type="node_flow_memory"></block>
+    <block type="node_global_memory"></block>
+    <block type="node_context_memory"></block>
     <block type="node_return">
       <value name="MESSAGE_INPUT">
         <shadow type="node_msg"></shadow>
       </value>
-    </block>
-    <block type="node_clone"></block>
-    <block type="node_context_get">
-      <value name="PROPERTY">
-        <shadow type="text">
-          <field name="TEXT">property</field>
-        </shadow>
-      </value>
-    </block>
-    <block type="node_context_set">
-       <value name="PROPERTY">
-        <shadow type="text">
-          <field name="TEXT">property</field>
-        </shadow>
-      </value>
-    </block>
-    <block type="node_context_keys"></block>
-    <block type="node_properties"></block>
+    </block> 
     <block type="node_status">
       <field name="COLOUR">#0000FF</field>
+    </block>    
+    <block type="node_log"></block>
+    <block type="node_clone">
+      <value name="OBJECT_INPUT">
+        <shadow type="node_msg"></shadow>
+      </value> 
     </block>
+    <block type="node_properties"></block>
     <block type="node_close"></block>
   </category>
 </xml>

@@ -18,19 +18,19 @@
     // Make sure that all Blockly library files are loaded in the correct order.
     // Don't use jQuery (see https://discourse.nodered.org/t/scope-of-variables-in-external-js-scripts/1048/2)
     [
-      "/blocky/js/basic/blockly_compressed.js",
-      "/blocky/js/basic/msg/messages.js", // See https://groups.google.com/forum/#!topic/blockly/TwJTZct59ec
-      "/blocky/js/basic/blocks_compressed.js",
-      "/blocky/js/basic/javascript_compressed.js",
-      "/blocky/js/basic/msg/js/en.js",
-      "/blocky/js/json/objectBlocksCodeGen.js",
-      "/blocky/js/json/objectBlocksDefs.js",
-      "/blocky/js/nodered/nodeRedBlocksCodeGen.js",
-      "/blocky/js/nodered/nodeRedBlocksDefs.js",
-      "/blocky/js/extra/extraBlocksCodeGen.js",
-      "/blocky/js/extra/extraBlocksDefs.js",
-      "/blocky/js/buffer/bufferBlocksCodeGen.js",
-      "/blocky/js/buffer/bufferBlocksDefs.js"
+      "blocky/js/basic/blockly_compressed.js",
+      "blocky/js/basic/msg/messages.js", // See https://groups.google.com/forum/#!topic/blockly/TwJTZct59ec
+      "blocky/js/basic/blocks_compressed.js",
+      "blocky/js/basic/javascript_compressed.js",
+      "blocky/js/basic/msg/js/en.js",
+      "blocky/js/json/objectBlocksCodeGen.js",
+      "blocky/js/json/objectBlocksDefs.js",
+      "blocky/js/nodered/nodeRedBlocksCodeGen.js",
+      "blocky/js/nodered/nodeRedBlocksDefs.js",
+      "blocky/js/extra/extraBlocksCodeGen.js",
+      "blocky/js/extra/extraBlocksDefs.js",
+      "blocky/js/buffer/bufferBlocksCodeGen.js",
+      "blocky/js/buffer/bufferBlocksDefs.js"
     ].forEach(function(src) {
       var script = document.createElement('script');
       script.type="text/javascript";
@@ -38,57 +38,70 @@
       script.src = src; 
       document.head.appendChild(script);
     });
-
-    // Create a new XML document (which represents a toolbox), and keep it as a global variable
-    var toolboxXmlDocument = document.implementation.createDocument(null, "toolbox");
     
-    // Load the xml toolbox files for all available blocks libraries, and combine those into a single toolbox.
-    // Remark: the categories are added in the same order as they are loaded here ...
-    [
-        "/blocky/js/basic/toolbox.xml",
-        "/blocky/js/extra/toolbox.xml",        
-        "/blocky/js/buffer/toolbox.xml",
-        "/blocky/js/json/toolbox.xml",
-        "/blocky/js/nodered/toolbox.xml"
-    ].forEach(function(filePath) {
-        var request = new XMLHttpRequest();
-        request.open('GET', filePath, false);  // `false` makes the request synchronous
-        request.send();
+    if (document.implementation.createDocument) {
+        // Create a new XML document (which represents a toolbox), and keep it as a global variable.
+        // All toolbox.xml files will be loaded and combined into the XML document.  
+        // As soon as the XML document is complete, the toolbox will be displayed.
+        // In e.g. Chrome you can skip the third parameter, but e.g. in Firefox you need at least pass a null.
+        var toolboxXmlDocument = document.implementation.createDocument("http://www.w3.org/1999/xhtml", "html", null);
+    }
+    else {
+        console.error('This browser cannot create a Blockly toolbox XML document (via createDocument)');
+    }
     
-        if (request.readyState == 4 && request.status == 200) {
-            // Get all categories in the new XML document
-            var newCategories = request.responseXML.getElementsByTagName("category");
+    if (toolboxXmlDocument) {
+        // Load the xml toolbox files for all available blocks libraries, and combine those into a single toolbox.
+        // Remark: the categories are added in the same order as they are loaded here ...
+        [
+            "blocky/js/basic/toolbox.xml",
+            "blocky/js/extra/toolbox.xml",        
+            "blocky/js/buffer/toolbox.xml",
+            "blocky/js/json/toolbox.xml",
+            "blocky/js/nodered/toolbox.xml"
+        ].forEach(function(filePath) {
+            var request = new XMLHttpRequest();
+            request.open('GET', filePath, false);  // `false` makes the request synchronous
+            request.send();
+        
+            if (request.readyState == 4 && request.status == 200) {
+                // Get all categories in the new XML document
+                var newCategories = request.responseXML.getElementsByTagName("category");
 
-            // Iterate backwards since categories can be moved away from this list (to the toolbox)
-            for (i = newCategories.length - 1; i >= 0; --i) {
-                var newCategory = newCategories[i];
-                
-                // Get the category name
-                var name = newCategory.getAttribute('name');
+                // Iterate backwards since categories can be moved away from this list (to the toolbox)
+                for (i = newCategories.length - 1; i >= 0; --i) {
+                    var newCategory = newCategories[i];
+                    
+                    // Get the category name
+                    var name = newCategory.getAttribute('name');
 
-                // Try to find an existing category with the same name.
-                // Indeed multiple toolboxes can put blocks in the same category...
-                var existingCategory = toolboxXmlDocument.getElementsByName(name);
-                
-                if (existingCategory.length === 0) {
-                    // If the new category didn't exist yet in the toolbox, move the entire new category to the start of the toolbox
-                    toolboxXmlDocument.documentElement.insertBefore(newCategory, toolboxXmlDocument.documentElement.firstChild);
-                }
-                else {
-                    var newBlocks = newCategory.children;
+                    // Try to find an existing category with the same name.
+                    // Indeed multiple toolboxes can put blocks in the same category...
+                    var existingCategory = toolboxXmlDocument.getElementsByName(name);
+                    
+                    if (existingCategory.length === 0) {
+                        // If the new category didn't exist yet in the toolbox, move the entire new category to the start of the toolbox
+                        toolboxXmlDocument.documentElement.insertBefore(newCategory, toolboxXmlDocument.documentElement.firstChild);
+                    }
+                    else {
+                        var newBlocks = newCategory.children;
 
-                    // Move all the blocks (and their children) from the newCategory to the existingCategory
-                    for (var k = 0; k < newBlocks.length; k++) {
-                        var newBlock = newBlocks[k];
-                        existingCategory[0].appendChild(newBlock);
+                        // Move all the blocks (and their children) from the newCategory to the existingCategory
+                        for (var k = 0; k < newBlocks.length; k++) {
+                            var newBlock = newBlocks[k];
+                            existingCategory[0].appendChild(newBlock);
+                        }
                     }
                 }
             }
-        }
-        else {
-            console.log("Cannot load toolboxes for Blocky"); 
-        }
-    });
+            else {
+                console.error("The toolbox XML files for Blocky cannot be loaded"); 
+            }
+        });
+    }
+    else {
+        console.error("The Blockly toolbox XML document has not been created"); 
+    }
 </script>
 
 <script type="text/javascript">
@@ -117,7 +130,8 @@
         
         // The 'msg' variable represents the parameter from the Node-Red 'input' event.
         // By adding it as a reserved wordt in Javascript, we can avoid that users create their own 'msg' variable.
-        Blockly.JavaScript.addReservedWords('msg');
+        // Idem for the 'global', 'flow' and 'context' memory in Node-Red.
+        Blockly.JavaScript.addReservedWords(['msg', 'flow', 'context', 'global']);
         
         // Restore the workspace content from the XML string
         var dom = Blockly.Xml.textToDom(workspaceXml);
