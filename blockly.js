@@ -291,7 +291,7 @@ module.exports = function(RED) {
     // Make all the static resources from this node public available (i.e. third party JQuery plugin tableHeadFixer.js).
     RED.httpAdmin.get('/blocky/js/*', function(req, res){
         var options = {
-            root: __dirname + '/lib/',
+            root: __dirname,
             dotfiles: 'deny'
         };
         
