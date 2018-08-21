@@ -22,13 +22,13 @@
         </shadow>
       </value>
       <value name="value_field">
-        <shadow type="logic_null">
+        <shadow type="text">
         </shadow>
       </value>       
     </block>  
     <block type="object_create"></block>
     <block type="object_keys">
-      <value name="OBJECT_INPUT">
+      <value name="object_input">
         <shadow type="node_msg">
         </shadow>
       </value>
