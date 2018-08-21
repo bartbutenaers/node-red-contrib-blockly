@@ -18,19 +18,20 @@
     // Make sure that all Blockly library files are loaded in the correct order.
     // Don't use jQuery (see https://discourse.nodered.org/t/scope-of-variables-in-external-js-scripts/1048/2)
     [
-      "blocky/js/basic/blockly_compressed.js",
-      "blocky/js/basic/msg/messages.js", // See https://groups.google.com/forum/#!topic/blockly/TwJTZct59ec
-      "blocky/js/basic/blocks_compressed.js",
-      "blocky/js/basic/javascript_compressed.js",
-      "blocky/js/basic/msg/js/en.js",
-      "blocky/js/json/objectBlocksCodeGen.js",
-      "blocky/js/json/objectBlocksDefs.js",
-      "blocky/js/nodered/nodeRedBlocksCodeGen.js",
-      "blocky/js/nodered/nodeRedBlocksDefs.js",
-      "blocky/js/extra/extraBlocksCodeGen.js",
-      "blocky/js/extra/extraBlocksDefs.js",
-      "blocky/js/buffer/bufferBlocksCodeGen.js",
-      "blocky/js/buffer/bufferBlocksDefs.js"
+      "blocky/js/lib/basic/blockly_compressed.js",
+      "blocky/js/lib/basic/msg/messages.js", // See https://groups.google.com/forum/#!topic/blockly/TwJTZct59ec
+      "blocky/js/lib/basic/blocks_compressed.js",
+      "blocky/js/lib/basic/javascript_compressed.js",
+      "blocky/js/lib/basic/msg/js/en.js",
+      "blocky/js/messages/en.js", // Messages of custom blocks
+      "blocky/js/lib/json/objectBlocksCodeGen.js",
+      "blocky/js/lib/json/objectBlocksDefs.js",
+      "blocky/js/lib/nodered/nodeRedBlocksCodeGen.js",
+      "blocky/js/lib/nodered/nodeRedBlocksDefs.js",
+      "blocky/js/lib/extra/extraBlocksCodeGen.js",
+      "blocky/js/lib/extra/extraBlocksDefs.js",
+      "blocky/js/lib/buffer/bufferBlocksCodeGen.js",
+      "blocky/js/lib/buffer/bufferBlocksDefs.js"
     ].forEach(function(src) {
       var script = document.createElement('script');
       script.type="text/javascript";
@@ -54,11 +55,11 @@
         // Load the xml toolbox files for all available blocks libraries, and combine those into a single toolbox.
         // Remark: the categories are added in the same order as they are loaded here ...
         [
-            "blocky/js/basic/toolbox.xml",
-            "blocky/js/extra/toolbox.xml",        
-            "blocky/js/buffer/toolbox.xml",
-            "blocky/js/json/toolbox.xml",
-            "blocky/js/nodered/toolbox.xml"
+            "blocky/js/lib/basic/toolbox.xml",
+            "blocky/js/lib/extra/toolbox.xml",        
+            "blocky/js/lib/buffer/toolbox.xml",
+            "blocky/js/lib/json/toolbox.xml",
+            "blocky/js/lib/nodered/toolbox.xml"
         ].forEach(function(filePath) {
             var request = new XMLHttpRequest();
             request.open('GET', filePath, false);  // `false` makes the request synchronous
@@ -172,7 +173,7 @@
     
     function fillAceEditor(node) { 
         // Store the number of output ports in Blockly,  so the blocks can take that number into account (if required)
-        Blockly.nodeOutputs = $("#node-input-outputs").val();
+        //Blockly.nodeOutputs = $("#node-input-outputs").val();
     
         // Generate JavaScript code from the workspace content
         Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
@@ -187,7 +188,7 @@
 
     RED.nodes.registerType('Blockly',{
         category: 'function',
-        color: '#F888AC',       
+        color: '#FFAAAA',       
         defaults: {
             language: {value:"en"},
             func: {value:"\nreturn msg;"}, // The generated Javascript code
@@ -220,6 +221,9 @@
                 }
             }
             Blockly.blocklyEditorVisible = true;
+            
+            // Make sure the Blockly node_send block is already at the start aware about the number of outputs
+            Blockly.nodeOutputs = this.outputs
 
             $( "#node-input-outputs" ).spinner({
                 min:1,
@@ -228,6 +232,17 @@
                     if (!value.match(/^\d+$/)) { value = 1;  }
                     else if (value < this.min) { value = this.min; }
                     if (value !== this.value) { $(this).spinner("value", value); }
+                    
+                    // Make sure the Blockly node_send block is always aware about the number of outputs
+                    Blockly.nodeOutputs = parseInt(value);
+                    
+                    debugger;
+                    var blocks = node.workspace.getAllBlocks();
+                    for(var i = 0; i < blocks.length; i++) {
+                        if(blocks[i].type === "node_send" && parseInt(blocks[i].getFieldValue('OUTPUT_NR')) > parseInt(value)) {
+                            alert("There are 'send ... to output ...' blocks available that use a higher output number");
+                        }
+                    }
                 }
             });
             
@@ -332,7 +347,7 @@
             Blockly.blocklyEditorVisible = false; 
             
             // Store the number of output ports in Blockly,  so the blocks can take that number into account (if required)
-            Blockly.nodeOutputs = $("#node-input-outputs").val(); 
+            //Blockly.nodeOutputs = $("#node-input-outputs").val(); 
   
             // Generate JavaScript code from the workspace content, and store it in this node.
             // That way it can be send to the server, where it will be executed in the sandbox.
