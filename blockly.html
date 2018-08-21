@@ -236,7 +236,6 @@
                     // Make sure the Blockly node_send block is always aware about the number of outputs
                     Blockly.nodeOutputs = parseInt(value);
                     
-                    debugger;
                     var blocks = node.workspace.getAllBlocks();
                     for(var i = 0; i < blocks.length; i++) {
                         if(blocks[i].type === "node_send" && parseInt(blocks[i].getFieldValue('OUTPUT_NR')) > parseInt(value)) {
