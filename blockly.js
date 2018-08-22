@@ -27,7 +27,7 @@
 module.exports = function(RED) {
     var util = require("util");
     var vm = require("vm");
-    
+
     function sendResults(node,_msgid,msgs) {
         if (msgs == null) {
             return;
@@ -61,28 +61,29 @@ module.exports = function(RED) {
             node.send(msgs);
         }
     }
-    
+
     function BlocklyNode(n) {
         RED.nodes.createNode(this,n);
-        this.func = n.func;
-        
         var node = this;
-        
+        this.name = n.name;
+        this.func = n.func;
         var functionText = "var results = null;"+
-                   "results = (function(msg){ "+
-                      "var __msgid__ = msg._msgid;"+
-                      "var node = {"+
-                         "log:__node__.log,"+
-                         "error:__node__.error,"+
-                         "warn:__node__.warn,"+
-                         "debug:__node__.debug,"+
-                         "trace:__node__.trace,"+
-                         "on:__node__.on,"+
-                         "status:__node__.status,"+
-                         "send:function(msgs){ __node__.send(__msgid__,msgs);}"+
-                      "};\n"+
-                      this.func+"\n"+
-                   "})(msg);";
+                           "results = (function(msg){ "+
+                              "var __msgid__ = msg._msgid;"+
+                              "var node = {"+
+                                 "id:__node__.id,"+
+                                 "name:__node__.name,"+
+                                 "log:__node__.log,"+
+                                 "error:__node__.error,"+
+                                 "warn:__node__.warn,"+
+                                 "debug:__node__.debug,"+
+                                 "trace:__node__.trace,"+
+                                 "on:__node__.on,"+
+                                 "status:__node__.status,"+
+                                 "send:function(msgs){ __node__.send(__msgid__,msgs);}"+
+                              "};\n"+
+                              this.func+"\n"+
+                           "})(msg);";
         this.topic = n.topic;
         this.outstandingTimers = [];
         this.outstandingIntervals = [];
@@ -95,6 +96,8 @@ module.exports = function(RED) {
                 util: RED.util
             },
             __node__: {
+                id: node.id,
+                name: node.name,
                 log: function() {
                     node.log.apply(node, arguments);
                 },
@@ -283,8 +286,8 @@ module.exports = function(RED) {
             // so we can't do better than this
             this.error(err);
         }
-    }	
-
+    }
+    
     RED.nodes.registerType("Blockly",BlocklyNode);
     RED.library.register("blockly_functions");
      
@@ -294,8 +297,6 @@ module.exports = function(RED) {
             root: __dirname,
             dotfiles: 'deny'
         };
-        
-        //console.log("TODO remove this - called " + req.params[0]);
         
         res.set('Cache-Control', 'public, max-age=31557600, s-maxage=31557600'); // 1 year
        
