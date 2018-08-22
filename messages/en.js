@@ -1,6 +1,10 @@
 // =========================================================================================
 // Node-Red blocks
 // =========================================================================================
+Blockly.Msg.NODE_OBJECT_GET_JSON = "get %1 property %2";
+Blockly.Msg.NODE_OBJECT_GET_JSON_TOOLTIP = "Get a property of an object.";
+Blockly.Msg.NODE_OBJECT_SET_JSON = "set %1 property %2 to %3";
+Blockly.Msg.NODE_OBJECT_SET_JSON_TOOLTIP = "Set a property of an object.";
 Blockly.Msg.NODE_LOG = "log text %1 with %2 level";
 Blockly.Msg.NODE_LOG_TOOLTIP = "Log via the Node-Red function API.";
 Blockly.Msg.NODE_MSG = "msg";
@@ -60,10 +64,6 @@ Blockly.Msg.OBJECT_FROM_JSON = "get object from JSON %1";
 Blockly.Msg.OBJECT_FROM_JSON_TOOLTIP = "Create object from JSON string.";
 Blockly.Msg.OBJECT_TO_JSON = "generate JSON from %1";
 Blockly.Msg.OBJECT_TO_JSON_TOOLTIP = "Save object as a JSON string.";
-Blockly.Msg.OBJECT_GET_JSON = "get %1 property %2";
-Blockly.Msg.OBJECT_GET_JSON_TOOLTIP = "Get a property of an object.";
-Blockly.Msg.OBJECT_SET_JSON = "set %1 property %2 to %3";
-Blockly.Msg.OBJECT_SET_JSON_TOOLTIP = "Set a property of an object.";
 Blockly.Msg.OBJECT_CREATE = "create object";
 Blockly.Msg.OBJECT_CREATE_TOOLTIP = "Create a new object, optionally with some property values.";
 Blockly.Msg.OBJECT_FIELD_NAME = "property name";
