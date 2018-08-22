@@ -1,31 +1,5 @@
 <xml xmlns="http://www.w3.org/1999/xhtml" id="toolbox" style="display: none;">
   <category name="Objects" colour="#F99EA3">
-    <block type="object_get"> 
-      <value name="field_name">
-        <shadow type="text">
-          <field name="TEXT">payload</field>
-        </shadow>
-      </value>
-      <value name="object">
-        <shadow type="node_msg">
-        </shadow>
-      </value>
-    </block>
-    <block type="object_set">
-      <value name="field_name">
-        <shadow type="text">
-          <field name="TEXT">payload</field>
-        </shadow>
-      </value>    
-      <value name="object_field">
-        <shadow type="node_msg">
-        </shadow>
-      </value>
-      <value name="value_field">
-        <shadow type="text">
-        </shadow>
-      </value>       
-    </block>  
     <block type="object_create"></block>
     <block type="object_keys">
       <value name="object_input">
