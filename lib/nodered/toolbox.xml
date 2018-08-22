@@ -1,5 +1,31 @@
 <xml xmlns="http://www.w3.org/1999/xhtml" id="toolbox" style="display: none;">
   <category name="Node-RED" colour="#BB8FCE">
+    <block type="node_object_get"> 
+      <value name="field_name">
+        <shadow type="text">
+          <field name="TEXT">payload</field>
+        </shadow>
+      </value>
+      <value name="object">
+        <shadow type="node_msg">
+        </shadow>
+      </value>
+    </block>
+    <block type="node_object_set">
+      <value name="field_name">
+        <shadow type="text">
+          <field name="TEXT">payload</field>
+        </shadow>
+      </value>    
+      <value name="object_field">
+        <shadow type="node_msg">
+        </shadow>
+      </value>
+      <value name="value_field">
+        <shadow type="text">
+        </shadow>
+      </value>       
+    </block>  
     <block type="node_send">
       <value name="MESSAGE_INPUT">
         <shadow type="node_msg"></shadow>
