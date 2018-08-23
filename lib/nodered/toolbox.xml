@@ -48,7 +48,11 @@
       </value> 
     </block>   
     <block type="node_remove_status"></block>    
-    <block type="node_log"></block>
+    <block type="node_log">
+      <value name="LOG_MESSAGE_INPUT">
+        <shadow type="text"></shadow>
+      </value> 
+    </block>
     <block type="node_clone">
       <value name="OBJECT_INPUT">
         <shadow type="node_msg"></shadow>
