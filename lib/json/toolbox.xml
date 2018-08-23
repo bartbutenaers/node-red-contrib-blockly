@@ -7,7 +7,12 @@
         </shadow>
       </value>
     </block>
-    <block type="object_from_json"></block>
+    <block type="object_from_json">
+      <value name="JSON">
+        <shadow type="text">
+        </shadow>
+      </value> 
+    </block>
     <block type="object_to_json"></block>
   </category>
 </xml>
