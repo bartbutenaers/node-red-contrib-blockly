@@ -240,6 +240,7 @@
                     for(var i = 0; i < blocks.length; i++) {
                         if(blocks[i].type === "node_send" && parseInt(blocks[i].getFieldValue('OUTPUT_NR')) > parseInt(value)) {
                             alert("There are 'send ... to output ...' blocks available that use a higher output number");
+                            break;
                         }
                     }
                 }
