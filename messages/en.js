@@ -25,6 +25,7 @@ Blockly.Msg.NODE_GLOBAL_MEMORY = "global";
 Blockly.Msg.NODE_GLOBAL_MEMORY_TOOLTIP = "Access the data in the Node-Red global memory.";
 Blockly.Msg.NODE_SEND = "send %1 to output %2";
 Blockly.Msg.NODE_SEND_TOOLTIP = "Send output message via the Node-Red function API.";
+Blockly.Msg.NODE_SEND_WARNING = "When sending messages in a loop,\nmake sure the messages are unique!";
 Blockly.Msg.NODE_RETURN = "return %1";
 Blockly.Msg.NODE_RETURN_TOOLTIP = "Send output message and return to stop processing";
 Blockly.Msg.NODE_CLOSE = "On node closed";
