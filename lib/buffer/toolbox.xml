@@ -1,6 +1,10 @@
 <xml xmlns="http://www.w3.org/1999/xhtml" id="toolbox" style="display: none;">
   <category name="Buffer" colour="#DF6C06">
-    <block type="buffer_from_string"></block>
+    <block type="buffer_from_string">
+      <value name="STRING_INPUT">
+        <shadow type="text"></shadow>
+      </value> 
+    </block>
     <block type="buffer_to_string">
       <value name="BUFFER_INPUT">
         <shadow type="buffer_empty"></shadow>
