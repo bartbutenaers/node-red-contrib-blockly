@@ -1,7 +1,11 @@
 # node-red-contrib-blockly
-A Node Red node for visual programming a function using Blockly.
+A Node Red node that offers a visual programming interface, to make programming a function node easier.  Just drag and drop blocks to build your program logic, without having to write the Javascript code yourself.  By building your code in a visual way, you don't have to learn the Javascript syntax, which makes programming very difficult for beginners.
 
-Thanks to Andrew Marshall, Mark Friedman and Erik Pasternak for their assistance with my Blockly issues!
+Moreover the generated Javascript code can be displayed, so you can learn Javascript coding step by step...
+
+Thanks to lots of people, for their assistance during the development of this node:
+* On the Google Blockly [forum](https://groups.google.com/forum/#!forum/blockly): Andrew Marshall, Mark Friedman, Erik Pasternak, Timo Herngreen, ...
+* On the Node-RED [forum](https://discourse.nodered.org/): Julian Knight for thinking out loud, Simon Walters for lots of stuff, ...
 
 ## Install
 Run the following npm command in your Node-RED user directory (typically ~/.node-red):
@@ -10,7 +14,9 @@ npm install node-red-contrib-blockly
 ```
 
 ## Where used
-When implementing your custom logic into a Node-Red flow, sometimes the available nodes won't be sufficient.  In those cases the standard *function node* can be used, to implement your logic by entering custom Javascript coding.  However to avoid having to write Javascript code, you can draw your logic by dragging and dropping blocks into this Blockly node.
+When implementing your custom logic into a Node-Red flow, sometimes the available nodes won't be sufficient.  In those cases the standard *function node* can be used, to implement your logic by entering custom Javascript coding.  However to avoid having to write Javascript code yourself, you can draw your logic by dragging and dropping blocks into the Blockly editor.
+
+As soon as the the Node-Red flow is deployed, the generated Javascript code will run on the Node-Red flow (similar to a standard function node):
 
 ![Where used](https://raw.githubusercontent.com/bartbutenaers/node-red-contrib-blockly/master/images/blockly_where_used.png)
 
@@ -30,11 +36,11 @@ The following animation shows how this example flow can be constructed using the
 
 ![Config screen](https://raw.githubusercontent.com/bartbutenaers/node-red-contrib-blockly/master/images/blockly_hello_world.gif)
 
-More advanced examples can be found at the bottom of this page...
+Lots of other examples can be found in the [wiki](https://github.com/bartbutenaers/node-red-contrib-blockly/wiki) pages ...
 
 ## Blockly basics
 [Blockly](https://developers.google.com/blockly/) is a visual block programming language (and editor), maintained by Google.  A lot of documentation (tutorials, videos, ...) can be found on the internet, but here are some bascis to get you started:
-+ A block can have a *value input* at the right side or a *value output* at the left side or both:
++ A block can have a *value input* at the right side.  Or a *value output* at the left side.  Or both:
 
     ![Value input output](https://raw.githubusercontent.com/bartbutenaers/node-red-contrib-blockly/master/images/blockly_values.png)
     
@@ -42,9 +48,7 @@ More advanced examples can be found at the bottom of this page...
 
     ![Statement](https://raw.githubusercontent.com/bartbutenaers/node-red-contrib-blockly/master/images/blockly_statement.png)
    
-  In this example the Node-Red input message is cloned, and then the cloned message is send to output 1 of your Blockly node.  
-  
-  Which means you have to read the flow from the right to the left ...
+  In this example the Node-Red input message is cloned, and then the cloned message is send to output 1 of your Blockly node. This means you have to read the chain of blocks from the right to the left ...
   
   Caution: the *data type* requested by a value input should be equal to the data type offered by the value output.  Otherwise you cannot connect the value output to the value input!
   
@@ -52,15 +56,23 @@ More advanced examples can be found at the bottom of this page...
 
     ![Inline or external](https://raw.githubusercontent.com/bartbutenaers/node-red-contrib-blockly/master/images/blockly_inline.png)
     
-    For an inline value input, the next block will be inside the previous block.  For an external value input, the next block will be after the previous block:
+    For an inline value input, the next block will be *inside* the previous block.  For an external value input, the next block will be *after* the previous block:
     
-    ![Inline or external example](https://raw.githubusercontent.com/bartbutenaers/node-red-contrib-blockly/master/images/blockly_inline_example.png)  
+    ![Inline or external example](https://raw.githubusercontent.com/bartbutenaers/node-red-contrib-blockly/master/images/blockly_inline_example.png) 
+    
+    When right-clicking on top of a block, a context menu appears where you can switch between inline and external inputs.
+
++ A block input can be connected automatically to a *shadow block*:
+
+    ![Shadow block](https://raw.githubusercontent.com/bartbutenaers/node-red-contrib-blockly/master/images/blockly_shadow.png) 
+
+    A shadow block is like a default value for that input, which is automatically attached to it (already in the toolbox).  You cannot delete the shadow block, but you can drop another block on top of it.  In that case the shadow block will be ignored an the new block will be used as input value.
   
 + A block can have properties to change the behaviour of the block:
 
     ![Block properties](https://raw.githubusercontent.com/bartbutenaers/node-red-contrib-blockly/master/images/blockly_properties.png) 
   
-+ A block can have a *statement input* at the top side or a *statement output* at the bottom side or both:
++ A block can have a *statement input* at the top side.  Or a *statement output* at the bottom side.  Or both:
 
     ![Statement input output](https://raw.githubusercontent.com/bartbutenaers/node-red-contrib-blockly/master/images/blockly_statement_input.png) 
     
@@ -70,9 +82,7 @@ More advanced examples can be found at the bottom of this page...
 
     ![Statements stack](https://raw.githubusercontent.com/bartbutenaers/node-red-contrib-blockly/master/images/blockly_statements_program.png) 
 
-    In this example we start by showing a green node status "Re-sending started".  Afterwards the input message is cloned 10 times and sended to the output port, and every time a log is written to the console "Logging that the message has been resended".  And we end by showing a green node status "Re-sending completed".
-    
-    Which means you have to read the flow from the top to the bottom ...
+    In this example we start by showing a green node status "Re-sending started".  Afterwards the input message is cloned 10 times and sended to the output port, and every time a log is written to the console "Logging that the message has been resended".  And we end by showing a green node status "Re-sending completed".  This means you have to read the blocks from the top to the bottom ...
 
 ## Config screen
 The node's config screen consists out of a series of elements:
@@ -82,41 +92,54 @@ The node's config screen consists out of a series of elements:
 1. The **library** button is similar to the standard *function node*: the code from this Blockly node can be made globally available by adding it to a libary.  That library will be stored withing the 'libs' directory in your node-red user directory.
 2. The **editor** tabsheet displays a Blockly workspace editor.  Here blocks can be added, which will be converted afterwards to Javascript code.
 3. The **generated Javascript** tabsheets will display the Javascript code, which is generated based on the blocks in the Blockly editor.  This code is readonly, which means you cannot change it!  Reason is that it is *not possible* to generate Blockly blocks, starting from Javascript code ...
-4. The **language** dropdown offers all available languages.  The texts in the blocks will be translated in the specified language.  This option is currently ***not available yet***!
+4. The **language** dropdown offers all available languages.  The texts in the blocks will be translated in the specified language.  This option is currently ***not available yet***!  If you are interested to help us translating, please let us know via this [issue](https://github.com/bartbutenaers/node-red-contrib-blockly/issues/5).
 5. The Blockly **toolbox** shows all available blocks, grouped by category.
-6. The Blockly **editable area** shows all the blocks representing your custom logic.  Blocks can be dragged from the toolbox into the area.  Some user interaction is offered in this area:
+6. The Blockly **editable area** shows all the blocks representing your custom logic.  Blocks can be dragged from the toolbox into the editable area.  A lot of user interaction is offered in this area:
     + When pressing the delete button, the selected blocks will be removed.  
     + By clicking and dragging with the mouse, the user can start panning to alter which part of the area is being visualised.  
     + By clicking on a block and dragging with the mouse, the block (and all of its's chained next blocks) will be moved.
+    + By rotating the mouse wheel, you can zoom in/out.
     + By using ctrl-c and ctrl-v the selected block will be copied.  When the block is connected to next blocks, the entire block chain will be copied.
     + By using ctrl-z the last action will be undone.
+    + By right-clicking a context menu appears.  That context menu will be different if the grid is clicked, or if a block is clicked.
     + ...
-Remark: the toolbox and the editable area together are called a *'workspace'.
+    
+    Remark: the toolbox and the editable area together are called a *'workspace'.
 7. The **center* button allows the available blocks to be centered in the middle of visible workspace area.
 8. The **zoom in** button.
 9. The **zoom out** button.
 10. The number of **output ports** for the Blockly node in the Node-Red flow editor.  Make sure that this number doesn't exceed the output port number of the *'send'* block (see below).
-
-## Node usage
-The Blockly node can be used to visually design your logic, by dragging blocks on your workspace editor.  The standard *function node* will offer much more functionality, since this Blockly node doesn't offer all Javascript functionality.  However the Blockly node can be useful for users that are struggling with the Javascript programming language.  The generated Javascript code can be visualised in the second tabsheet, which offers a nice way to getting started with the Javascript basics.  The generated code could also be copied to a standard function node, and extend it there with other Javascript code (manually entered).
-
-As soon as the the Node-Red flow is deployed, the generated Javascript code will run on the Node-Red flow (similar to a standard function node).
 
 ## Node-Red blocks
 When writing Javascript code in a standard *function node*, some Node-Red functionality can be called from within that code (see function node [API](https://nodered.org/docs/writing-functions#api-reference)).  To offer the same functionality in the Blockly editor, a series of extra blocks have been added.  These blocks are availble in the 'Node-Red' category in the toolbox:
 
 ![Function API](https://raw.githubusercontent.com/bartbutenaers/node-red-contrib-blockly/master/images/blockly_api.png)
 
-1. **Log** in the console the text, which is specified on the block input.  Multiple log levels are availble (log, error, warning, trace, debug).  The warnings and errors will also be displayed in the flow editor debug tab.  The trace and debug levels are only used to display details, and are not visible if no logger for those levels is specified in Node-Red.
-2. **Send** to the specified output port the message, which is specified on the block input.  Make sure that the specified output number doesn't exceed the number of outputs on the Blockly node!
-3. **Get** the value of the specified variable from the Node-Red memory.  All the available memory types can be selected (node, flow, global).
-4. **Set** the value of the specified variable from the Node-Red memory to the value, which is specified on the block input.  All the available memory types can be selected (node, flow, global).
-5. **Set** the Blockly node status to the text, which is specified on the block input.  Both the status icon shape and color can be specified.
-6. The **input message** exposes the input message that arrive's in the Node-Red flow, on the Blockly node input port.
-7. **Clone message** can be used to create a new separate copy of the message on the block input.
-8. **Get all keys** from the specified Node-Red memory, i.e. all available variable names.  All the available memory types can be selected (node, flow, global).
-9. Get the specified **node property**.  Starting from Node-Red ***version 0.19*** both the Blockly node identifier, and the Blockly node name can be retrieved.
+1. **Get** the value of some property in an object.
+1. **Set** some property in an object to a specified value.
+1. **Send** to the specified output port the message, which is specified on the block input.  Make sure that the specified output number doesn't exceed the number of outputs on the Blockly node!
+1. The **input message (msg)** exposes the input message that arrive's in the Node-Red flow, on the Blockly node input port.
+1. The Node-Red **flow** memory can be used to store data that needs to be shared by all nodes in a flow.  
+1. The Node-Red **global** memory can be used to store data that needs to be shared by all nodes. 
+1. The Node-Red **(node)context** memory can be used to store data that needs to be shared by all blockly nodes. 
+1. **Return** the specified message.  This means that we stop processing (i.e. the next blocks will not be executed), and the message will be send on the output port.
+1. Show the specified text in the **node status**.  Both the status icon shape and color can be specified.
+1. **Remove** the node status from the node.
+1. **Log** the specified text in the console.  Multiple log levels are available (log, error, warning, trace, debug).  The warnings and errors will also be displayed in the flow editor debug tab.  The trace and debug levels are only used to display details, and are not visible if no logger for those levels is specified in Node-Red.
+1. **Clone message** can be used to create a new separate copy of the specified message.
+1. Get the specified **node property**.  Starting from Node-Red ***version 0.19*** both the Blockly node identifier, and the Blockly node name can be retrieved.
+1. Some things can be don when the **node is closed**, most of the time to cleanup stuff.
 
-## More examples
+## Need a change ...
+When you need a change in this node, check in advance whether that change hasn't been requested yet (as a Github [issue](https://github.com/bartbutenaers/node-red-contrib-blockly/issues)).  When dealing with a new change:
 
-+ 
++ When something is going ***wrong***, a new issue should be created on Github.  Describe the problem in detail, and (if possible) how the problem can be reproduced easily.
+
++ When you need some ***new functionality***, please discuss it first on the Node-RED [forum]()!  *You need to get an agreement on the forum, otherwise the change won't be accepted anyway.*  Once you have an agreement, a new Github issue can be created.
+    Make sure that the topic description starts with *'Blockly'*.  And perhaps add our user names in the topic content:
+
+    ![New topic](https://raw.githubusercontent.com/bartbutenaers/node-red-contrib-blockly/master/images/blockly_new_topic.png)
+    
+     The *function node* will offer much more functionality, since Blockly doesn't offer all available Javascript functionality.  Keep in mind that we cannot offer every little feature.
+
+P.S. Take into account that this is only our hobby, so we won't be available around the clock for assistance ...
