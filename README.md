@@ -83,6 +83,9 @@ Lots of other examples can be found in the [wiki](https://github.com/bartbutenae
     ![Statements stack](https://raw.githubusercontent.com/bartbutenaers/node-red-contrib-blockly/master/images/blockly_statements_program.png) 
 
     In this example we start by showing a green node status "Re-sending started".  Afterwards the input message is cloned 10 times and sended to the output port, and every time a log is written to the console "Logging that the message has been resended".  And we end by showing a green node status "Re-sending completed".  This means you have to read the blocks from the top to the bottom ...
+    
+!!! CAUTION !!!
+*Blockly always starts counting from 1*, while Javascript starts counting from 0!  This might be confusing for users that are already familiar with programming in Javascript...
 
 ## Config screen
 The node's config screen consists out of a series of elements:
