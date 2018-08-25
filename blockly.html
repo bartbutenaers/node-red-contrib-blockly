@@ -222,7 +222,7 @@
             }
             Blockly.blocklyEditorVisible = true;
             
-            // Make sure the Blockly node_send block is already at the start aware about the number of outputs
+            // Make sure the Blockly node_send and node_return_message blocks are already at the beginning aware about the number of outputs
             Blockly.nodeOutputs = this.outputs
 
             $( "#node-input-outputs" ).spinner({
@@ -233,14 +233,16 @@
                     else if (value < this.min) { value = this.min; }
                     if (value !== this.value) { $(this).spinner("value", value); }
                     
-                    // Make sure the Blockly node_send block is always aware about the number of outputs
+                    // Make sure the Blockly node_send and node_return_message blocks are always aware about the number of outputs
                     Blockly.nodeOutputs = parseInt(value);
                     
                     var blocks = node.workspace.getAllBlocks();
                     for(var i = 0; i < blocks.length; i++) {
-                        if(blocks[i].type === "node_send" && parseInt(blocks[i].getFieldValue('OUTPUT_NR')) > parseInt(value)) {
-                            alert("There are 'send ... to output ...' blocks available that use a higher output number");
-                            break;
+                        if (blocks[i].type === "node_send" || blocks[i].type === "node_return_message") {
+                            if( parseInt(blocks[i].getFieldValue('OUTPUT_NR')) > parseInt(value)) {
+                                alert("There are '" + blocks[i].type.replace('_', ' ') + "' blocks available that use a higher output number");
+                                break;
+                            }
                         }
                     }
                 }
@@ -410,8 +412,8 @@
             </div>
         </div>
         <div id="node-blocky-tab-javascript">
-            <!-- Ace editor for generated Javascript code -->
             <div class="form-row">
+                <!-- Ace editor for generated Javascript code -->
                 <div id="aceDiv" style="width: 100%; height: 450px; min-height:350px;"></div>
             </div>
         </div>
@@ -473,11 +475,15 @@
 </script>
 
 <script type="text/x-red" data-help-name="Blockly">
-    <p>A function block to generate Javascript code, based on <a target="_blank" href="https://developers.google.com/blockly/">Blockly</a> blocks.  The generated javascript code will be run against the messages being received by the node.</p>
+    <p>A visual programming interface, to make programming a function node easier. Just drag and drop <a target="_blank" href="https://developers.google.com/blockly/">Blockly</a> 
+    blocks to build your program logic, without having to write the Javascript code yourself.  The generated javascript code will be run against the messages being received by the node.</p>
     <p>The messages are passed in as a JavaScript object called <code>msg</code>.</p>
     <p>By convention it will have a <code>msg.payload</code> property containing the body of the message.</p>
     <p>The function is expected to return a message object (or multiple message objects), but can choose to return nothing in order to halt a flow.</p>
-    <p>See <a target="_blank" href="https://github.com/bartbutenaers/node-red-contrib-blockly">Github</a> for a basic introduction on writing functions with Blockly.  Much more documentation (tutorials, video's, ...) can be found on the internet.</p>
+    <p>See <a target="_blank" href="https://github.com/bartbutenaers/node-red-contrib-blockly">Github</a> for a basic introduction on writing functions with Blockly, or our 
+    <a target="_blank" href="https://github.com/bartbutenaers/node-red-contrib-blockly/wiki">wiki</a> pages for tutorials.  And lot's of other Blockly documentation (tutorials, video's, ...) can be found all over the internet.</p>
     <h3>Details</h3>
     <p>The Blockly editor contains the basic blocks provided by Google.  In addition a number of extra blocks have been provided.  A number of those extra blocks allow to communicate with the Node-Red API, similar to a normal function node.</p>
+    <h3>CAUTION</h3>
+    <p>Blockly is 1-based while Javascript is 0-based, which means that Blockly starts counting from 0 in a loop.  The numbers are <strong>automatically decremented</strong> (-1) in the generated code.</p>
 </script>
