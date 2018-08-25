@@ -240,7 +240,7 @@
                     for(var i = 0; i < blocks.length; i++) {
                         if (blocks[i].type === "node_send" || blocks[i].type === "node_return_message") {
                             if( parseInt(blocks[i].getFieldValue('OUTPUT_NR')) > parseInt(value)) {
-                                alert("There are '" + blocks[i].type.replace('_', ' ') + "' blocks available that use a higher output number");
+                                alert("There are '" + blocks[i].type.replace(/_/g, ' ') + "' blocks available that use a higher output number");
                                 break;
                             }
                         }
