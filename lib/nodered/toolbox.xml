@@ -35,11 +35,12 @@
     <block type="node_flow_memory"></block>
     <block type="node_global_memory"></block>
     <block type="node_context_memory"></block>
-    <block type="node_return">
+    <block type="node_return_message">
       <value name="MESSAGE_INPUT">
         <shadow type="node_msg"></shadow>
       </value>
-    </block> 
+    </block>
+    <block type="node_return"></block> 
     <block type="node_status">
       <field name="COLOUR">#0000FF</field>
       <value name="TEXT_INPUT">
