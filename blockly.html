@@ -18,26 +18,26 @@
     // Make sure that all Blockly library files are loaded in the correct order.
     // Don't use jQuery (see https://discourse.nodered.org/t/scope-of-variables-in-external-js-scripts/1048/2)
     [
-      "blocky/js/lib/basic/blockly_compressed.js",
-      "blocky/js/lib/basic/msg/messages.js", // See https://groups.google.com/forum/#!topic/blockly/TwJTZct59ec
-      "blocky/js/lib/basic/blocks_compressed.js",
-      "blocky/js/lib/basic/javascript_compressed.js",
-      "blocky/js/lib/basic/msg/js/en.js",
-      "blocky/js/messages/en.js", // Messages of custom blocks
-      "blocky/js/lib/json/objectBlocksCodeGen.js",
-      "blocky/js/lib/json/objectBlocksDefs.js",
-      "blocky/js/lib/nodered/nodeRedBlocksCodeGen.js",
-      "blocky/js/lib/nodered/nodeRedBlocksDefs.js",
-      "blocky/js/lib/extra/extraBlocksCodeGen.js",
-      "blocky/js/lib/extra/extraBlocksDefs.js",
-      "blocky/js/lib/buffer/bufferBlocksCodeGen.js",
-      "blocky/js/lib/buffer/bufferBlocksDefs.js"
+        "blocky/js/lib/basic/blockly_compressed.js",
+        "blocky/js/lib/basic/msg/messages.js", // See https://groups.google.com/forum/#!topic/blockly/TwJTZct59ec
+        "blocky/js/lib/basic/blocks_compressed.js",
+        "blocky/js/lib/basic/javascript_compressed.js",
+        "blocky/js/lib/basic/msg/js/en.js",
+        "blocky/js/messages/en.js", // Messages of custom blocks
+        "blocky/js/lib/json/objectBlocksCodeGen.js",
+        "blocky/js/lib/json/objectBlocksDefs.js",
+        "blocky/js/lib/nodered/nodeRedBlocksCodeGen.js",
+        "blocky/js/lib/nodered/nodeRedBlocksDefs.js",
+        "blocky/js/lib/extra/extraBlocksCodeGen.js",
+        "blocky/js/lib/extra/extraBlocksDefs.js",
+        "blocky/js/lib/buffer/bufferBlocksCodeGen.js",
+        "blocky/js/lib/buffer/bufferBlocksDefs.js"
     ].forEach(function(src) {
-      var script = document.createElement('script');
-      script.type="text/javascript";
-      script.async = false; // Force synchronous loading, to load them in the correct sequence
-      script.src = src; 
-      document.head.appendChild(script);
+        var script = document.createElement('script');
+        script.type="text/javascript";
+        script.async = false; // Force synchronous loading, to load them in the correct sequence
+        script.src = src; 
+        document.head.appendChild(script);
     });
     
     if (document.implementation.createDocument) {
@@ -221,7 +221,7 @@
                 }
             }
             Blockly.blocklyEditorVisible = true;
-            
+       
             // Make sure the Blockly node_send and node_return_message blocks are already at the beginning aware about the number of outputs
             Blockly.nodeOutputs = this.outputs
 
@@ -309,21 +309,35 @@
 
             createWorkspace(node, node.workspaceXml);
             
-            var languageElement = document.getElementById('node-input-language');
-            languageElement.addEventListener('change', function(e){
-                if (node.workspace) {
-                    // Blocks may look completely different in another language, due to differences in word-order. 
-                    // As a result the language of a running Blockly instance cannot be changed.  
-                    // To avoid a page reload, build the workspace again (based on the original workspace xml).
-                    // See https://github.com/google/blockly/issues/701
-                    var dom = Blockly.Xml.workspaceToDom(node.workspace);
-                    var workspaceXml = Blockly.Xml.domToText(dom);
-                    
-                    // Destroy the current workspace
-                    node.workspace.dispose();
-                    
-                    createWorkspace(node, workspaceXml);
-                }
+            $("#node-input-language").change(function () {
+                // When another language is selected, then load the file with the translations in that language.
+                // Those translated texts will override the english text (which has been loaded at the start in the en.js file).
+                [
+                  "blocky/js/lib/basic/msg/js/" + this.value + ".js",
+                  "blocky/js/messages/" + this.value + ".js",
+                ].forEach(function(src) {
+                    var script = document.createElement('script');
+                    script.type="text/javascript";
+                    script.async = false; // Force synchronous loading, to load them in the correct sequence
+                  
+                    // Show the entire workspace in the new selected value, by rendering after the scripts are loaded
+                    script.onload = function() {
+                        // Blocks may look completely different in another language, due to differences in word-order. 
+                        // As a result the language of a running Blockly instance cannot be changed.  
+                        // To avoid a page reload, build the workspace again (based on the original workspace xml).
+                        // See https://github.com/google/blockly/issues/701
+                        var dom = Blockly.Xml.workspaceToDom(node.workspace);
+                        var workspaceXml = Blockly.Xml.domToText(dom);
+                        
+                        // Destroy the current workspace
+                        node.workspace.dispose();
+                        
+                        createWorkspace(node, workspaceXml);
+                    };
+                  
+                    script.src = src; 
+                    document.head.appendChild(script);
+                });
             });
             
             RED.library.create({
@@ -423,51 +437,51 @@
         <label for="node-input-outputs"><i class="fa fa-random"></i> Outputs</label>
         <input id="node-input-outputs" style="width: 20px;" value="1">
         <label for="node-input-language" style="margin-left:80px;"><i class="fa fa-exchange" disabled></i> Language</label>
-        <select class="form-control" id="node-input-language" style="width:200px" disabled>
-            <option value='ar'>العربية</option>
-            <option value='be-tarask'>Taraškievica</option>
-            <option value='br'>Brezhoneg</option>
-            <option value='ca'>Català</option>
-            <option value='cs'>Česky</option>
-            <option value='da'>Dansk</option>
-            <option value='de'>Deutsch</option>
-            <option value='el'>Ελληνικά</option>
+        <select class="form-control" id="node-input-language" style="width:200px">
+            <!--<option value='ar'>العربية</option>-->
+            <!--<option value='be-tarask'>Taraškievica</option>-->
+            <!--<option value='br'>Brezhoneg</option>-->
+            <!--<option value='ca'>Català</option>-->
+            <!--<option value='cs'>Česky</option>-->
+            <!--<option value='da'>Dansk</option>-->
+            <!--<option value='de'>Deutsch</option>-->
+            <!--<option value='el'>Ελληνικά</option>-->
             <option value='en'>English</option>
-            <option value='es'>Español</option>
-            <option value='et'>Eesti</option>
-            <option value='fa'>فارسی</option>
+            <!--<option value='es'>Español</option>-->
+            <!--<option value='et'>Eesti</option>-->
+            <!--<option value='fa'>فارسی</option>-->
             <option value='fr'>Français</option>
-            <option value='he'>עברית</option>
-            <option value='hrx'>Hunsrik</option>
-            <option value='hu'>Magyar</option>
-            <option value='ia'>Interlingua</option>
-            <option value='is'>Íslenska</option>
-            <option value='it'>Italiano</option>
-            <option value='ja'>日本語</option>
-            <option value='kab'>Kabyle</option>
-            <option value='ko'>한국어</option>
-            <option value='mk'>Македонски</option>
-            <option value='ms'>Bahasa Melayu</option>
-            <option value='nb'>Norsk Bokmål</option>
+            <!--<option value='he'>עברית</option>-->
+            <!--<option value='hrx'>Hunsrik</option>-->
+            <!--<option value='hu'>Magyar</option>-->
+            <!--<option value='ia'>Interlingua</option>-->
+            <!--<option value='is'>Íslenska</option>-->
+            <!--<option value='it'>Italiano</option>-->
+            <!--<option value='ja'>日本語</option>-->
+            <!--<option value='kab'>Kabyle</option>-->
+            <!--<option value='ko'>한국어</option>-->
+            <!--<option value='mk'>Македонски</option>-->
+            <!--<option value='ms'>Bahasa Melayu</option>-->
+            <!--<option value='nb'>Norsk Bokmål</option>-->
             <option value='nl'>Nederlands, Vlaams</option>
-            <option value='oc'>Lenga d\'òc</option>
-            <option value='pl'>Polski</option>
-            <option value='pms'>Piemontèis</option>
-            <option value='pt-br'>Português Brasileiro</option>
-            <option value='ro'>Română</option>
-            <option value='ru'>Русский</option>
-            <option value='sc'>Sardu</option>
-            <option value='sk'>Slovenčina</option>
-            <option value='sr'>Српски</option>
-            <option value='sv'>Svenska</option>
-            <option value='ta'>தமிழ்</option>
-            <option value='th'>ภาษาไทย</option>
-            <option value='tlh'>tlhIngan Hol</option>
-            <option value='tr'>Türkçe</option>
-            <option value='uk'>Українська</option>
-            <option value='vi'>Tiếng Việt</option>
-            <option value='zh-hans'>简体中文</option>
-            <option value='zh-hant'>正體中文</option>
+            <!--<option value='oc'>Lenga d\'òc</option>-->
+            <!--<option value='pl'>Polski</option>-->
+            <!--<option value='pms'>Piemontèis</option>-->
+            <!--<option value='pt-br'>Português Brasileiro</option>-->
+            <!--<option value='ro'>Română</option>-->
+            <!--<option value='ru'>Русский</option>-->
+            <!--<option value='sc'>Sardu</option>-->
+            <!--<option value='sk'>Slovenčina</option>-->
+            <!--<option value='sr'>Српски</option>-->
+            <!--<option value='sv'>Svenska</option>-->
+            <!--<option value='ta'>தமிழ்</option>-->
+            <!--<option value='th'>ภาษาไทย</option>-->
+            <!--<option value='tlh'>tlhIngan Hol</option>-->
+            <!--<option value='tr'>Türkçe</option>-->
+            <!--<option value='uk'>Українська</option>-->
+            <!--<option value='vi'>Tiếng Việt</option>-->
+            <!--<option value='zh-hans'>简体中文</option>-->
+            <!--<option value='zh-hant'>正體中文</option>-->
         </select>
     </div>
     <div class="form-tips" id="tip-version" style="width: 100%;max-width: 100%;" hidden>Tip: The 'get node property' block cannot be used, since Node-red version 0.19.0 is minimal required.</div>
