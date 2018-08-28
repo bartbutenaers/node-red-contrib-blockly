@@ -98,3 +98,7 @@ Blockly.Msg.SWITCH_CASE_TOOLTIP = "When a specific value is matched.";
 Blockly.Msg.SWITCH_CASE_LIST = "in case of";
 Blockly.Msg.SWITCH_CASE_LIST_TOOLTIP = "List of all available cases";
 Blockly.Msg.SWITCH_DO = "do";
+Blockly.Msg.LIST_PUSH = "add %1 to the end of %2";
+Blockly.Msg.LIST_PUSH_TOOLTIP = "Add the specified value to the end of the list";
+Blockly.Msg.LIST_POP = "remove last element from %1";
+Blockly.Msg.LIST_POP_TOOLTIP = "Remove the last element from the list";
