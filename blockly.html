@@ -355,6 +355,22 @@
             } else {
                 $("#tip-version").hide();
             }
+            
+            $("#node-function-expand-js").click(function(e) {
+                e.preventDefault();
+                var value = node.aceEditor.getValue();
+                RED.editor.editJavaScript({
+                    value: value,
+                    cursor: node.aceEditor.getCursorPosition(),
+                    complete: function(v,cursor) {
+                        node.aceEditor.setValue(v, -1);
+                        setTimeout(function() {
+                            node.aceEditor.textInput.setReadOnly(true);
+                            node.aceEditor.focus();
+                        },300);
+                    }
+                })
+            })
         },
         oneditsave: function() {
             var node = this;
@@ -426,7 +442,8 @@
             </div>
         </div>
         <div id="node-blocky-tab-javascript">
-            <div class="form-row">
+            <div class="form-row node-text-editor-row">
+                <div style="position: absolute; right:0; bottom:calc(100% + 3px);"><button id="node-function-expand-js" class="editor-button editor-button-small"><i class="fa fa-expand"></i></button></div>
                 <!-- Ace editor for generated Javascript code -->
                 <div id="aceDiv" style="width: 100%; height: 450px; min-height:350px;"></div>
             </div>
