@@ -8,4 +8,20 @@
   <category name="Logic" colour="#5C81A6">
     <block type="switch_case"></block>
   </category>
+  <category name="Lists" colour="#745CA6">
+    <block type="list_push">
+      <value name="LIST">
+        <block type="variables_get">
+          <field name="VAR" id="gi}k7JX7=R5*T{1VE^F(" variabletype="">list</field>
+        </block>
+      </value>
+    </block>
+    <block type="list_pop">
+      <value name="LIST">
+        <block type="variables_get">
+          <field name="VAR" id="gi}k7JX7=R5*T{1VE^F(" variabletype="">list</field>
+        </block>
+      </value>
+    </block>
+  </category>
 </xml>
