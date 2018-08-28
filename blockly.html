@@ -87,10 +87,10 @@
                     else {
                         var newBlocks = newCategory.children;
 
-                        // Move all the blocks (and their children) from the newCategory to the existingCategory
-                        for (var k = 0; k < newBlocks.length; k++) {
-                            var newBlock = newBlocks[k];
-                            existingCategory[0].appendChild(newBlock);
+                        // Move all the blocks (and their children) from the newCategory to the existingCategory.
+                        // Remark: appendChild will remove the block from newBlocks!
+                        while(newBlocks.length > 0) {
+                            existingCategory[0].appendChild(newBlocks[0]);
                         }
                     }
                 }
