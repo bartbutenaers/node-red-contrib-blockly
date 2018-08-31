@@ -1,8 +1,11 @@
 // =========================================================================================
 // Node-Red blocks
 // =========================================================================================
-Blockly.Msg.NODE_OBJECT_GET_JSON = "get %1 property %2";
-Blockly.Msg.NODE_OBJECT_GET_JSON_TOOLTIP = "Get a property of an object.";
+Blockly.Msg.NODE_OBJECT_GET_JSON = "%1 %2 property %3";
+Blockly.Msg.NODE_OBJECT_GET_JSON_GET_TOOLTIP = "Get a property of an object.";
+Blockly.Msg.NODE_OBJECT_GET_JSON_REMOVE_TOOLTIP = "Remove a property of an object.";
+Blockly.Msg.NODE_OBJECT_GET_JSON_GET = "get";
+Blockly.Msg.NODE_OBJECT_GET_JSON_REMOVE = "remove";
 Blockly.Msg.NODE_OBJECT_SET_JSON = "set %1 property %2 to %3";
 Blockly.Msg.NODE_OBJECT_SET_JSON_TOOLTIP = "Set a property of an object.";
 Blockly.Msg.NODE_LOG = "log text %1 with %2 level";
@@ -55,7 +58,7 @@ Blockly.Msg.BUFFER_LENGTH_TOOLTIP = "Get the buffer length in bytes.";
 Blockly.Msg.BUFFER_ALLOC = "create buffer with length %1";
 Blockly.Msg.BUFFER_ALLOC_TOOLTIP = "Create a buffer with the specified length.";
 Blockly.Msg.BUFFER_FILL = "fill buffer %1 with value %2";
-Blockly.Msg.BUFFER_FILL_TOOLTIP = "Fill buffer with the specified value.";
+Blockly.Msg.BUFFER_FILL_TOOLTIP = "Fill a buffer with the specified value.";
 Blockly.Msg.BUFFER_CHECK = "check if buffer %1";
 Blockly.Msg.BUFFER_CHECK_TOOLTIP = "Check if the input value is a buffer.";
 Blockly.Msg.BUFFER_COPY = "copy from buffer %1 to buffer %2";
