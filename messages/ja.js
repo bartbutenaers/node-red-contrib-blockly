@@ -1,8 +1,8 @@
 // =========================================================================================
 // Node-Red blocks
 // =========================================================================================
-Blockly.Msg.NODE_OBJECT_GET_JSON = "%1 のプロパティ %2 を取得";
-Blockly.Msg.NODE_OBJECT_GET_JSON_TOOLTIP = "オブジェクトのプロパティを取得";
+//Blockly.Msg.NODE_OBJECT_GET_JSON = "%1 のプロパティ %2 を取得";
+//Blockly.Msg.NODE_OBJECT_GET_JSON_TOOLTIP = "オブジェクトのプロパティを取得";
 Blockly.Msg.NODE_OBJECT_SET_JSON = "%1 のプロパティ %2 を %3 にセット";
 Blockly.Msg.NODE_OBJECT_SET_JSON_TOOLTIP = "オブジェクトのプロパティをセット";
 Blockly.Msg.NODE_LOG = "%2 ログレベル指定で %1 をログ出力";
