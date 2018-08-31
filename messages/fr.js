@@ -1,8 +1,11 @@
 // =========================================================================================
 // Node-Red blocks
 // =========================================================================================
-Blockly.Msg.NODE_OBJECT_GET_JSON = "obtenir de %1 la propriété %2";
-Blockly.Msg.NODE_OBJECT_GET_JSON_TOOLTIP = "Obtenir la propriété d'un objet.";
+Blockly.Msg.NODE_OBJECT_GET_JSON = "%1 %2 la propriété %3";
+Blockly.Msg.NODE_OBJECT_GET_JSON_GET_TOOLTIP = "Obtenir la propriété d'un objet.";
+Blockly.Msg.NODE_OBJECT_GET_JSON_REMOVE_TOOLTIP = "Supprimer la propriété d'un objet.";
+Blockly.Msg.NODE_OBJECT_GET_JSON_GET = "obtenir de";
+Blockly.Msg.NODE_OBJECT_GET_JSON_REMOVE = "supprimer de";
 Blockly.Msg.NODE_OBJECT_SET_JSON = "fixer dans %1 la propriété %2 à %3";
 Blockly.Msg.NODE_OBJECT_SET_JSON_TOOLTIP = "Fixer la propriété d'un objet.";
 Blockly.Msg.NODE_LOG = "consigner le texte %1 avec le niveau %2";
