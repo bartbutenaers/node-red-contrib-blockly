@@ -101,7 +101,3 @@ Blockly.Msg.SWITCH_CASE_TOOLTIP = "Wanneer een specifieke waarde overeenkomt.";
 Blockly.Msg.SWITCH_CASE_LIST = "in geval van";
 Blockly.Msg.SWITCH_CASE_LIST_TOOLTIP = "Lijst van alle mogelijke gevallen";
 Blockly.Msg.SWITCH_DO = "doe";
-Blockly.Msg.LIST_PUSH = "voeg %1 toe aan het einde van %2";
-Blockly.Msg.LIST_PUSH_TOOLTIP = "Voeg de opgegeven waarde toe aan het einde van de lijst";
-Blockly.Msg.LIST_POP = "verwijder laatste element van %1";
-Blockly.Msg.LIST_POP_TOOLTIP = "Verwijder het laatste element van de lijstRemove the last element from the list";
