@@ -142,6 +142,32 @@
         resize(node);
     }
     
+    function cleanup(node) {
+        // Make sure that the Node-Red handles all keydown events again (e.g. 'D' to delete a node), instead of Blockly. 
+        Blockly.blocklyEditorVisible = false;
+        
+        // When blocks are still available in Blockly's clipboard, Blockly CANNOT paste them in another workspace (of another node).
+        // This means we can empty the clipboard (by setting it to null).  However we will store first a copy of their clipboard 
+        // (as xml string) into our own custom clipboard, which we CAN use to paste in another workspace.
+        if (Blockly.clipboardXml_) {
+            Blockly.customClipboard = '<xml xmlns="http://www.w3.org/1999/xhtml">' + Blockly.Xml.domToPrettyText(Blockly.clipboardXml_) + '</xml>';
+            Blockly.clipboardXml_ = null;
+        }
+                            
+        // When a copy is done in this blockly node, an error will occur if that content is pasted later in another blockly node.
+        // Copy-paste across workspaces is not supported by Blockly (https://github.com/google/blockly/issues/334)
+        Blockly.clipboardXml_ = null;
+        Blockly.clipboardSource_ = null;
+
+        // Cleanup the ACE editor
+        node.aceEditor.destroy();
+        delete node.aceEditor;
+             
+        // Cleanup the Blockly workspace
+        node.workspace.dispose(); 
+        delete node.workspace;
+    }
+    
     // See https://developers.google.com/blockly/guides/configure/web/resizable
     function resize(node) {        
         // Resize the Blockly workspace, as soon as available (i.e. not when called from oneditprepare).
@@ -214,7 +240,25 @@
                 Blockly.originalKeyDownHandler = Blockly.onKeyDown_;
                 Blockly.onKeyDown_ = function(e) {
                     if (Blockly.blocklyEditorVisible) {
+                        // Let Blockly handle the keydown event
                         Blockly.originalKeyDownHandler(e);
+                        
+                        // 
+                        if (e.altKey || e.ctrlKey || e.metaKey) {
+                            // Don't use meta keys during drags
+                            if (!Blockly.mainWorkspace.isDragging()) {
+                                // When pressing CTRL-V (paste) ...
+                                if (e.keyCode == 86) {
+                                    if (!Blockly.clipboardXml_ && Blockly.customClipboard) {
+                                        // When the originalClipboardXml_ is null and the customClipboard is not empty, this means
+                                        // we need to paste blocks that have been copied (to the customClipboard) in another node.
+                                        var xmlDom = Blockly.Xml.textToDom(Blockly.customClipboard);
+                                        Blockly.Xml.domToWorkspace(xmlDom, Blockly.mainWorkspace);
+                                    }
+                                }
+                            }
+                        }
+                        
                         // Stop the events from propagating up the DOM tree
                         e.stopPropagation();
                     }
@@ -374,10 +418,7 @@
         },
         oneditsave: function() {
             var node = this;
-            
-            // Make sure that the Node-Red handles all keydown events again (e.g. 'D' to delete a node), instead of Blockly. 
-            Blockly.blocklyEditorVisible = false; 
-            
+                        
             // Store the number of output ports in Blockly,  so the blocks can take that number into account (if required)
             //Blockly.nodeOutputs = $("#node-input-outputs").val(); 
   
@@ -391,27 +432,12 @@
             var dom = Blockly.Xml.workspaceToDom(node.workspace);
             node.workspaceXml = Blockly.Xml.domToText(dom);
                
-            // Cleanup the ACE editor
-            node.aceEditor.destroy();
-            delete node.aceEditor;
-                 
-            // Cleanup the Blockly workspace
-            node.workspace.dispose(); 
-            delete node.workspace;
+            cleanup(node);
         },
         oneditcancel: function() {
             var node = this;
             
-            // Make sure that the Node-Red handles all keydown events again (e.g. 'D' to delete a node), instead of Blockly. 
-            Blockly.blocklyEditorVisible = false;
-
-            // Cleanup the ACE editor
-            node.aceEditor.destroy();
-            delete node.aceEditor;
-                 
-            // Cleanup the Blockly workspace
-            node.workspace.dispose(); 
-            delete node.workspace;
+            cleanup(node);
         },
         oneditresize: function (size) {
             var node = this;
