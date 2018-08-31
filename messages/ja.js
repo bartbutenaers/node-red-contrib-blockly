@@ -98,7 +98,3 @@ Blockly.Msg.SWITCH_CASE_TOOLTIP = "指定した値にマッチした場合";
 Blockly.Msg.SWITCH_CASE_LIST = "の場合";
 Blockly.Msg.SWITCH_CASE_LIST_TOOLTIP = "全ての有効な条件";
 Blockly.Msg.SWITCH_DO = "do";
-Blockly.Msg.LIST_PUSH = "%2 の最後に %1 を追加";
-Blockly.Msg.LIST_PUSH_TOOLTIP = "指定された値をリストの最後に追加";
-Blockly.Msg.LIST_POP = "リスト %1 の最後の要素を削除";
-Blockly.Msg.LIST_POP_TOOLTIP = "リストの最後の要素を削除";
