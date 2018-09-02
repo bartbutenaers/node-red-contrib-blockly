@@ -4,10 +4,14 @@
 Blockly.Msg.NODE_OBJECT_GET_JSON = "%1 %2 property %3";
 Blockly.Msg.NODE_OBJECT_GET_JSON_GET_TOOLTIP = "Get a property of an object.";
 Blockly.Msg.NODE_OBJECT_GET_JSON_REMOVE_TOOLTIP = "Remove a property of an object.";
+Blockly.Msg.NODE_OBJECT_GET_JSON_HAS_TOOLTIP = "Check whether an object has a property.";
 Blockly.Msg.NODE_OBJECT_GET_JSON_GET = "get";
 Blockly.Msg.NODE_OBJECT_GET_JSON_REMOVE = "remove";
+Blockly.Msg.NODE_OBJECT_GET_JSON_HAS = "has";
+Blockly.Msg.NODE_OBJECT_GET_WARNING = "Nested properties can only be get with string literals";
 Blockly.Msg.NODE_OBJECT_SET_JSON = "set %1 property %2 to %3";
 Blockly.Msg.NODE_OBJECT_SET_JSON_TOOLTIP = "Set a property of an object.";
+Blockly.Msg.NODE_OBJECT_GET_WARNING = "Nested properties can only be set with string literals";
 Blockly.Msg.NODE_LOG = "log text %1 with %2 level";
 Blockly.Msg.NODE_LOG_TOOLTIP = "Log via the Node-Red function API.";
 Blockly.Msg.NODE_LOG_LOG = "log"; 
