@@ -3,9 +3,12 @@
 // =========================================================================================
 Blockly.Msg.NODE_OBJECT_GET_JSON = "%1 %2 property %3";
 Blockly.Msg.NODE_OBJECT_GET_JSON_GET_TOOLTIP = "Zoek een eigenschap van een object.";
+Blockly.Msg.NODE_OBJECT_GET_JSON_HAS_TOOLTIP = "Controleer of een object een eigenschap heeft";
 Blockly.Msg.NODE_OBJECT_GET_JSON_REMOVE_TOOLTIP = "Verwijder een eigenschap van een object.";
 Blockly.Msg.NODE_OBJECT_GET_JSON_GET = "zoek";
 Blockly.Msg.NODE_OBJECT_GET_JSON_REMOVE = "verwijder";
+Blockly.Msg.NODE_OBJECT_GET_JSON_HAS = "heeft";
+Blockly.Msg.NODE_OBJECT_GET_WARNING = "Dieper liggende eigenschappen kunnen enkel met vaste namen opgehaald worden.";
 Blockly.Msg.NODE_OBJECT_SET_JSON = "zet %1 eigenschap %2 op %3";
 Blockly.Msg.NODE_OBJECT_SET_JSON_TOOLTIP = "Zet de eigenschap van een object.";
 Blockly.Msg.NODE_LOG = "log tekst %1 met niveau %2";
