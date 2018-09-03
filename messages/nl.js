@@ -104,3 +104,7 @@ Blockly.Msg.SWITCH_CASE_TOOLTIP = "Wanneer een specifieke waarde overeenkomt.";
 Blockly.Msg.SWITCH_CASE_LIST = "in geval van";
 Blockly.Msg.SWITCH_CASE_LIST_TOOLTIP = "Lijst van alle mogelijke gevallen";
 Blockly.Msg.SWITCH_DO = "doe";
+Blockly.Msg.MISC_JAVASCRIPT= "Javascript statement %1;";
+Blockly.Msg.MISC_JAVASCRIPT_TOOLTIP = "Voer Javascript code in, wanneer de andere blokken bepaalde functionaliteit niet aanbieden.";
+Blockly.Msg.MISC_COMMENT = "Commentaar %1";
+Blockly.Msg.MISC_COMMENT_TOOLTIP = "Voeg commentaar toe om uit te leggen hoe de logica werkt.";
