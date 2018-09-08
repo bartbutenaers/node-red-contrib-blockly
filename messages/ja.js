@@ -1,10 +1,17 @@
 // =========================================================================================
 // Node-Red blocks
 // =========================================================================================
-//Blockly.Msg.NODE_OBJECT_GET_JSON = "%1 のプロパティ %2 を取得";
-//Blockly.Msg.NODE_OBJECT_GET_JSON_TOOLTIP = "オブジェクトのプロパティを取得";
+Blockly.Msg.NODE_OBJECT_GET_JSON = "%1 のプロパティ %2 を取得";
+Blockly.Msg.NODE_OBJECT_GET_JSON_GET_TOOLTIP = "オブジェクトのプロパティを取得";
+Blockly.Msg.NODE_OBJECT_GET_JSON_REMOVE_TOOLTIP = "オブジェクトのプロパティを削除";
+Blockly.Msg.NODE_OBJECT_GET_JSON_HAS_TOOLTIP = "オブジェクトがプロパティを持っているか確認";
+Blockly.Msg.NODE_OBJECT_GET_JSON_GET = "取得";
+Blockly.Msg.NODE_OBJECT_GET_JSON_REMOVE = "削除";
+Blockly.Msg.NODE_OBJECT_GET_JSON_HAS = "所有";
+Blockly.Msg.NODE_OBJECT_GET_WARNING = "プロパティ変数がfoo.barのようなネストした戻り値を返さないようにすること";
 Blockly.Msg.NODE_OBJECT_SET_JSON = "%1 のプロパティ %2 を %3 にセット";
 Blockly.Msg.NODE_OBJECT_SET_JSON_TOOLTIP = "オブジェクトのプロパティをセット";
+Blockly.Msg.NODE_OBJECT_GET_WARNING = "ネストしたプロパティは、文字列リテラルでのみ設定できます";
 Blockly.Msg.NODE_LOG = "%2 ログレベル指定で %1 をログ出力";
 Blockly.Msg.NODE_LOG_TOOLTIP = "Node-RED function APIでログ出力";
 Blockly.Msg.NODE_LOG_LOG = "ログ出力"; 
@@ -98,3 +105,7 @@ Blockly.Msg.SWITCH_CASE_TOOLTIP = "指定した値にマッチした場合";
 Blockly.Msg.SWITCH_CASE_LIST = "の場合";
 Blockly.Msg.SWITCH_CASE_LIST_TOOLTIP = "全ての有効な条件";
 Blockly.Msg.SWITCH_DO = "do";
+Blockly.Msg.MISC_JAVASCRIPT= "Javascript ステートメント %1;";
+Blockly.Msg.MISC_JAVASCRIPT_TOOLTIP = "特定の機能を提供するブロックがない場合、Javascriptコードを入力できる";
+Blockly.Msg.MISC_COMMENT = "%1 のコメント";
+Blockly.Msg.MISC_COMMENT_TOOLTIP = "ロジックの動作を説明するコメントを追加";
