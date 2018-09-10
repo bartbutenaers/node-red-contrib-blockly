@@ -1,0 +1,20 @@
+<xml xmlns="http://www.w3.org/1999/xhtml" id="toolbox" style="display: none;">
+  <category name="Date/time" colour="#D6316B">
+    <block type="datetime_convert_from_date">
+      <value name="INPUT">
+        <shadow type="datetime_timestamp"></shadow>
+      </value>
+    </block>
+    <block type="datetime_format">
+      <value name="INPUT">
+        <shadow type="datetime_timestamp"></shadow>
+      </value>
+      <value name="FORMAT">
+        <shadow type="text">
+          <field name="TEXT">YYYYMMDDHHSS</field>
+        </shadow>
+      </value>
+    </block>
+    <block type="datetime_timestamp"></block>
+  </category>
+</xml>
