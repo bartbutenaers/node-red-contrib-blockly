@@ -109,3 +109,32 @@ Blockly.Msg.MISC_JAVASCRIPT= "Javascript statement %1;";
 Blockly.Msg.MISC_JAVASCRIPT_TOOLTIP = "Enter Javascript code when no blocks offer certain functionality.";
 Blockly.Msg.MISC_COMMENT = "Comment %1";
 Blockly.Msg.MISC_COMMENT_TOOLTIP = "Add comments to explain how the logic works.";
+
+// =========================================================================================
+// Datetime blocks
+// =========================================================================================
+Blockly.Msg.DATETIME_INPUT = "date %1";
+Blockly.Msg.DATETIME_INPUT_TOOLTIP = "A date.";
+Blockly.Msg.DATETIME_TIMESTAMP = "timestamp";
+Blockly.Msg.DATETIME_TIMESTAMP_TOOLTIP = "Get the current timestamp (i.e. date and time of now).";
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE = "get %1 from timestamp %2";
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_TOOLTIP = "Get the specified information from a timestamp";
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_NR = "number";
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_MSEC = "milliseconds";
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_SEC = "seconds"; 
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_MIN = "minutes"; 
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_HOUR = "hour"; 
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_DAY = "day"; 
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_DAY_OF_WEEK = "day of week";
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_MONTH = "month"; 
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_YEAR = "year";
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_TEXT = "date";
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_FULL = "full date";
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_DAY_NAME = "day name"; 
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_MONTH_NAME = "month name";
+//Blockly.Msg.DATETIME_CONVERT_FROM_DATE_DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+//Blockly.Msg.DATETIME_CONVERT_FROM_DATE_MONTH_NAMES = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+Blockly.Msg.DATETIME_CONVERT_TO_DATE = "create date from %1";
+Blockly.Msg.DATETIME_CONVERT_TO_DATE_TOOLTIP = "Create a date from the specified value.";
+Blockly.Msg.DATETIME_FORMAT = "convert timestamp %1 to format %2";
+Blockly.Msg.DATETIME_FORMAT_TOOLTIP = "Convert a timestamp to a specified format";
