@@ -31,7 +31,9 @@
         "blocky/js/lib/extra/extraBlocksCodeGen.js",
         "blocky/js/lib/extra/extraBlocksDefs.js",
         "blocky/js/lib/buffer/bufferBlocksCodeGen.js",
-        "blocky/js/lib/buffer/bufferBlocksDefs.js"
+        "blocky/js/lib/buffer/bufferBlocksDefs.js",
+        "blocky/js/lib/datetime/dateTimeBlocksCodeGen.js",
+        "blocky/js/lib/datetime/dateTimeBlocksDefs.js"
     ].forEach(function(src) {
         var script = document.createElement('script');
         script.type="text/javascript";
@@ -56,6 +58,7 @@
         // Remark: the categories are added in the same order as they are loaded here ...
         [
             "blocky/js/lib/basic/toolbox.xml",
+            "blocky/js/lib/datetime/toolbox.xml",
             "blocky/js/lib/extra/toolbox.xml",        
             "blocky/js/lib/buffer/toolbox.xml",
             "blocky/js/lib/json/toolbox.xml",
@@ -353,7 +356,10 @@
 
             createWorkspace(node, node.workspaceXml);
             
-            $("#node-input-language").change(function () {
+            $("#node-input-language").change(function () {         
+                // Make sure the Blockly datetime_convert_from_date block is always aware about the number of outputs
+                Blockly.blocklyEditorLanguage = this.value;
+            
                 // When another language is selected, then load the file with the translations in that language.
                 // Those translated texts will override the english text (which has been loaded at the start in the en.js file).
                 [
