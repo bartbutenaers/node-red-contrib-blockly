@@ -5,16 +5,6 @@
         <shadow type="datetime_timestamp"></shadow>
       </value>
     </block>
-    <block type="datetime_format">
-      <value name="INPUT">
-        <shadow type="datetime_timestamp"></shadow>
-      </value>
-      <value name="FORMAT">
-        <shadow type="text">
-          <field name="TEXT">YYYYMMDDHHSS</field>
-        </shadow>
-      </value>
-    </block>
     <block type="datetime_timestamp"></block>
   </category>
 </xml>
