@@ -109,3 +109,30 @@ Blockly.Msg.MISC_JAVASCRIPT= "Javascript ステートメント %1;";
 Blockly.Msg.MISC_JAVASCRIPT_TOOLTIP = "特定の機能を提供するブロックがない場合、Javascriptコードを入力できる";
 Blockly.Msg.MISC_COMMENT = "%1 のコメント";
 Blockly.Msg.MISC_COMMENT_TOOLTIP = "ロジックの動作を説明するコメントを追加";
+
+// =========================================================================================
+// Datetime blocks
+// =========================================================================================
+Blockly.Msg.DATETIME_INPUT = "日付 %1";
+Blockly.Msg.DATETIME_INPUT_TOOLTIP = "日付";
+Blockly.Msg.DATETIME_TIMESTAMP = "タイムスタンプ";
+Blockly.Msg.DATETIME_TIMESTAMP_TOOLTIP = "今のタイムスタンプを取得 (今の日付時刻のこと)";
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE = "タイムスタンプ %2 から日時情報 %1 を取得";
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_TOOLTIP = "タイムスタンプから指定した情報を取得";
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_NR = "タイムスタンプ形式";
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_MSEC = "ミリ秒";
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_SEC = "秒"; 
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_MIN = "分"; 
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_HOUR = "時"; 
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_DAY = "日"; 
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_DAY_OF_WEEK = "曜日";
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_MONTH = "月"; 
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_YEAR = "年";
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_TEXT = "日付";
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_FULL = "長い形式の日付";
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_DAY_NAME = "曜日名"; 
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_MONTH_NAME = "月名称";
+Blockly.Msg.DATETIME_CONVERT_TO_DATE = "%1 から日付を生成";
+Blockly.Msg.DATETIME_CONVERT_TO_DATE_TOOLTIP = "指定した値から日付を生成";
+Blockly.Msg.DATETIME_FORMAT = "タイムスタンプ %1 を %2 形式に変換";
+Blockly.Msg.DATETIME_FORMAT_TOOLTIP = "タイムスタンプを指定した形式に変換";
