@@ -79,7 +79,7 @@ Blockly.Msg.BUFFER_SET_INDEX_TOOLTIP = "Set the byte value of the specified buff
 // =========================================================================================
 // Objects (JSON) blocks
 // =========================================================================================
-Blockly.Msg.OBJECT_FROM_JSON = "get JSON object from text %1";
+Blockly.Msg.OBJECT_FROM_JSON = "get object from JSON text %1";
 Blockly.Msg.OBJECT_FROM_JSON_TOOLTIP = "Create an object from JSON formatted text string.";
 Blockly.Msg.OBJECT_TO_JSON = "get JSON text from object %1";
 Blockly.Msg.OBJECT_TO_JSON_TOOLTIP = "Create JSON formatted text string from an object.";
