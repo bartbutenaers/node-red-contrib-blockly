@@ -1,13 +1,13 @@
 // =========================================================================================
 // Node-Red blocks
 // =========================================================================================
-Blockly.Msg.NODE_OBJECT_GET_JSON = "%1 のプロパティ %2 を取得";
+Blockly.Msg.NODE_OBJECT_GET_JSON = "%2 のプロパティ %3 を %1";
 Blockly.Msg.NODE_OBJECT_GET_JSON_GET_TOOLTIP = "オブジェクトのプロパティを取得";
 Blockly.Msg.NODE_OBJECT_GET_JSON_REMOVE_TOOLTIP = "オブジェクトのプロパティを削除";
 Blockly.Msg.NODE_OBJECT_GET_JSON_HAS_TOOLTIP = "オブジェクトがプロパティを持っているか確認";
 Blockly.Msg.NODE_OBJECT_GET_JSON_GET = "取得";
 Blockly.Msg.NODE_OBJECT_GET_JSON_REMOVE = "削除";
-Blockly.Msg.NODE_OBJECT_GET_JSON_HAS = "所有";
+Blockly.Msg.NODE_OBJECT_GET_JSON_HAS = "持っているか確認";
 Blockly.Msg.NODE_OBJECT_GET_WARNING = "プロパティ変数がfoo.barのようなネストした戻り値を返さないようにすること";
 Blockly.Msg.NODE_OBJECT_SET_JSON = "%1 のプロパティ %2 を %3 にセット";
 Blockly.Msg.NODE_OBJECT_SET_JSON_TOOLTIP = "オブジェクトのプロパティをセット";
