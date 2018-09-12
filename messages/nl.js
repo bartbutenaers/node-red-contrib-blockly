@@ -1,10 +1,10 @@
 // =========================================================================================
 // Node-Red blocks
 // =========================================================================================
-Blockly.Msg.NODE_OBJECT_GET_JSON = "%1 %2 property %3";
+Blockly.Msg.NODE_OBJECT_GET_JSON = "%1 %2 eigenschap %3";
 Blockly.Msg.NODE_OBJECT_GET_JSON_GET_TOOLTIP = "Zoek een eigenschap van een object.";
-Blockly.Msg.NODE_OBJECT_GET_JSON_HAS_TOOLTIP = "Controleer of een object een eigenschap heeft";
 Blockly.Msg.NODE_OBJECT_GET_JSON_REMOVE_TOOLTIP = "Verwijder een eigenschap van een object.";
+Blockly.Msg.NODE_OBJECT_GET_JSON_HAS_TOOLTIP = "Controleer of een object een eigenschap heeft";
 Blockly.Msg.NODE_OBJECT_GET_JSON_GET = "zoek";
 Blockly.Msg.NODE_OBJECT_GET_JSON_REMOVE = "verwijder";
 Blockly.Msg.NODE_OBJECT_GET_JSON_HAS = "heeft";
@@ -61,7 +61,7 @@ Blockly.Msg.BUFFER_LENGTH_TOOLTIP = "Zoek de buffer lengte in bytes.";
 Blockly.Msg.BUFFER_ALLOC = "maak buffer met lengte %1";
 Blockly.Msg.BUFFER_ALLOC_TOOLTIP = "Maak een buffer met de opgegeven lengte.";
 Blockly.Msg.BUFFER_FILL = "vul buffer %1 met waarde %2";
-Blockly.Msg.BUFFER_FILL_TOOLTIP = "Vul alle bytes in de buffer met de opgegeven waarde.";
+Blockly.Msg.BUFFER_FILL_TOOLTIP = "Vul de buffer met de opgegeven waarde.";
 Blockly.Msg.BUFFER_CHECK = "controleer of %1 buffer is";
 Blockly.Msg.BUFFER_CHECK_TOOLTIP = "Controleer of de ingangswaarde een buffer is.";
 Blockly.Msg.BUFFER_COPY = "kopiëer van buffer %1 naar buffer %2";
@@ -78,9 +78,9 @@ Blockly.Msg.BUFFER_SET_INDEX_TOOLTIP = "Zet de waarde van de byte op de opgegeve
 // =========================================================================================
 // Objects (JSON) blocks
 // =========================================================================================
-Blockly.Msg.OBJECT_FROM_JSON = "maak object van JSON %1";
+Blockly.Msg.OBJECT_FROM_JSON = "maak object van JSON tekst %1";
 Blockly.Msg.OBJECT_FROM_JSON_TOOLTIP = "Maak een object van een JSON tekst.";
-Blockly.Msg.OBJECT_TO_JSON = "genereer JSON van %1";
+Blockly.Msg.OBJECT_TO_JSON = "genereer JSON tekst van objekt %1";
 Blockly.Msg.OBJECT_TO_JSON_TOOLTIP = "Bewaar het object als een JSON tekst.";
 Blockly.Msg.OBJECT_CREATE = "maak een object";
 Blockly.Msg.OBJECT_CREATE_TOOLTIP = "Maak een nieuw object, optioneel met eigenschap waarden.";
@@ -108,3 +108,30 @@ Blockly.Msg.MISC_JAVASCRIPT= "Javascript statement %1;";
 Blockly.Msg.MISC_JAVASCRIPT_TOOLTIP = "Voer Javascript code in, wanneer de andere blokken bepaalde functionaliteit niet aanbieden.";
 Blockly.Msg.MISC_COMMENT = "Commentaar %1";
 Blockly.Msg.MISC_COMMENT_TOOLTIP = "Voeg commentaar toe om uit te leggen hoe de logica werkt.";
+
+// =========================================================================================
+// Datetime blocks
+// =========================================================================================
+Blockly.Msg.DATETIME_INPUT = "datum %1";
+Blockly.Msg.DATETIME_INPUT_TOOLTIP = "Een datum.";
+Blockly.Msg.DATETIME_TIMESTAMP = "tijdstip";
+Blockly.Msg.DATETIME_TIMESTAMP_TOOLTIP = "Zoek het huidige tijdstip (d.w.z. datum en tijd van nu).";
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE = "zoek %1 van tijdstip %2";
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_TOOLTIP = "Zoek de opgegeven infromatie van een tijdstip";
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_NR = "tijdstip formaat";
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_MSEC = "milliseconden";
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_SEC = "seconden"; 
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_MIN = "minuten"; 
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_HOUR = "uur"; 
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_DAY = "dag"; 
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_DAY_OF_WEEK = "dag van de week";
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_MONTH = "maand"; 
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_YEAR = "jaar";
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_TEXT = "datum";
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_FULL = "volledige datum";
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_DAY_NAME = "naam van de dag"; 
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_MONTH_NAME = "naam van de maand";
+Blockly.Msg.DATETIME_CONVERT_TO_DATE = "maak datum van %1";
+Blockly.Msg.DATETIME_CONVERT_TO_DATE_TOOLTIP = "Maak een datum o.b.v. de opgegeven waarde.";
+Blockly.Msg.DATETIME_FORMAT = "zet tijdstip %1 om naar formaat %2";
+Blockly.Msg.DATETIME_FORMAT_TOOLTIP = "Zet een tijdstip om naar een bepaald formaat.";
