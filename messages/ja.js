@@ -79,10 +79,10 @@ Blockly.Msg.BUFFER_SET_INDEX_TOOLTIP = "Bufferの指定された位置へ1バイ
 // =========================================================================================
 // Objects (JSON) blocks
 // =========================================================================================
-Blockly.Msg.OBJECT_FROM_JSON = "JSON %1 からオブジェクトを取得";
-Blockly.Msg.OBJECT_FROM_JSON_TOOLTIP = "JSON文字列からオブジェクトを生成";
-Blockly.Msg.OBJECT_TO_JSON = "オブジェクト %1 からJSONを生成";
-Blockly.Msg.OBJECT_TO_JSON_TOOLTIP = "オブジェクトをJSON文字列に保存";
+Blockly.Msg.OBJECT_FROM_JSON = "JSON文字列 %1 からオブジェクトを取得";
+Blockly.Msg.OBJECT_FROM_JSON_TOOLTIP = "JSON形式の文字列からオブジェクトを生成";
+Blockly.Msg.OBJECT_TO_JSON = "オブジェクト %1 からJSON文字列を生成";
+Blockly.Msg.OBJECT_TO_JSON_TOOLTIP = "オブジェクトからJSON形式の文字列を生成";
 Blockly.Msg.OBJECT_CREATE = "オブジェクト生成";
 Blockly.Msg.OBJECT_CREATE_TOOLTIP = "いくつかのプロパティ値を含む新しいオブジェクトを生成";
 Blockly.Msg.OBJECT_FIELD_NAME = "プロパティ名";
