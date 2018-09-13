@@ -11,6 +11,7 @@ Blockly.Msg.NODE_OBJECT_GET_JSON_HAS = "heeft";
 Blockly.Msg.NODE_OBJECT_GET_WARNING = "Zorg er voor dat de variabele geen dieperliggende waarde bevat zoals foo.bar";
 Blockly.Msg.NODE_OBJECT_SET_JSON = "zet %1 eigenschap %2 op %3";
 Blockly.Msg.NODE_OBJECT_SET_JSON_TOOLTIP = "Zet de eigenschap van een object.";
+Blockly.Msg.NODE_OBJECT_SET_WARNING = "Dieperliggende eigenschappen kunnen enkel als waarde een vaste tekst hebben.";
 Blockly.Msg.NODE_LOG = "log tekst %1 met niveau %2";
 Blockly.Msg.NODE_LOG_TOOLTIP = "Log de tekst via de Node-Red functie API.";
 Blockly.Msg.NODE_LOG_LOG = "log"; 
