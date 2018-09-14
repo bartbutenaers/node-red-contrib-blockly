@@ -4,10 +4,14 @@
 Blockly.Msg.NODE_OBJECT_GET_JSON = "%1 %2 la propriété %3";
 Blockly.Msg.NODE_OBJECT_GET_JSON_GET_TOOLTIP = "Obtenir la propriété d'un objet.";
 Blockly.Msg.NODE_OBJECT_GET_JSON_REMOVE_TOOLTIP = "Supprimer la propriété d'un objet.";
+Blockly.Msg.NODE_OBJECT_GET_JSON_HAS_TOOLTIP = "S'assurer qu'un objet possède une certaine propriété.";
 Blockly.Msg.NODE_OBJECT_GET_JSON_GET = "obtenir de";
 Blockly.Msg.NODE_OBJECT_GET_JSON_REMOVE = "supprimer de";
+Blockly.Msg.NODE_OBJECT_GET_JSON_HAS = "il y a dans";
+Blockly.Msg.NODE_OBJECT_GET_WARNING = "Assurez-vous que la propriété ne renvoie pas une valeur imbriquée comme foo.bar";
 Blockly.Msg.NODE_OBJECT_SET_JSON = "fixer dans %1 la propriété %2 à %3";
 Blockly.Msg.NODE_OBJECT_SET_JSON_TOOLTIP = "Fixer la propriété d'un objet.";
+Blockly.Msg.NODE_OBJECT_SET_WARNING = "Les valeurs imbriquées ne peuvent être définies qu'avec une chaîne littérale";
 Blockly.Msg.NODE_LOG = "consigner le texte %1 avec le niveau %2";
 Blockly.Msg.NODE_LOG_TOOLTIP = "Consignation (log) via l'API de Node-Red.";
 Blockly.Msg.NODE_LOG_LOG = "info";
@@ -101,3 +105,34 @@ Blockly.Msg.SWITCH_CASE_TOOLTIP = "Liste tous les cas possibles";
 Blockly.Msg.SWITCH_CASE_LIST = "si =";
 Blockly.Msg.SWITCH_CASE_LIST_TOOLTIP = "Exécuter si la valeur correspond.";
 Blockly.Msg.SWITCH_DO = "exécuter";
+Blockly.Msg.MISC_JAVASCRIPT= "Code JavaScript %1;";
+Blockly.Msg.MISC_JAVASCRIPT_TOOLTIP = "Tapez du code JS directement si aucun block ne peut vous aider.";
+Blockly.Msg.MISC_COMMENT = "Commentaire %1";
+Blockly.Msg.MISC_COMMENT_TOOLTIP = "Ajouter un commentaire pour expliquer comment ça fonctionne.";
+
+// =========================================================================================
+// Datetime blocks
+// =========================================================================================
+Blockly.Msg.DATETIME_INPUT = "date %1";
+Blockly.Msg.DATETIME_INPUT_TOOLTIP = "Une date.";
+Blockly.Msg.DATETIME_TIMESTAMP = "maintenant";
+Blockly.Msg.DATETIME_TIMESTAMP_TOOLTIP = "Obtenir le timestamp de l'instant présent.";
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE = "obtenir %1 depuis le timestamp %2";
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_TOOLTIP = "Obtenir une donnée temporelle depuis un timestamp";
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_NR = "le timestamp";
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_MSEC = "les millisecondes";
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_SEC = "les secondes"; 
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_MIN = "les minutes"; 
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_HOUR = "l'heure"; 
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_DAY = "le jour"; 
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_DAY_OF_WEEK = "le jour de la semaine";
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_MONTH = "le mois"; 
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_YEAR = "l'année";
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_TEXT = "la date";
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_FULL = "la date complète";
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_DAY_NAME = "le nom du jour"; 
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_MONTH_NAME = "le nom du mois";
+Blockly.Msg.DATETIME_CONVERT_TO_DATE = "créer une date à partir de %1";
+Blockly.Msg.DATETIME_CONVERT_TO_DATE_TOOLTIP = "Créer une date en utilisant la valeur spécifiée.";
+Blockly.Msg.DATETIME_FORMAT = "Convertir le timestamp %1 au format %2";
+Blockly.Msg.DATETIME_FORMAT_TOOLTIP = "Convertir un timestamp au format spécifié";
