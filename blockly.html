@@ -18,26 +18,28 @@
     // Make sure that all Blockly library files are loaded in the correct order.
     // Don't use jQuery (see https://discourse.nodered.org/t/scope-of-variables-in-external-js-scripts/1048/2)
     [
-      "blocky/js/lib/basic/blockly_compressed.js",
-      "blocky/js/lib/basic/msg/messages.js", // See https://groups.google.com/forum/#!topic/blockly/TwJTZct59ec
-      "blocky/js/lib/basic/blocks_compressed.js",
-      "blocky/js/lib/basic/javascript_compressed.js",
-      "blocky/js/lib/basic/msg/js/en.js",
-      "blocky/js/messages/en.js", // Messages of custom blocks
-      "blocky/js/lib/json/objectBlocksCodeGen.js",
-      "blocky/js/lib/json/objectBlocksDefs.js",
-      "blocky/js/lib/nodered/nodeRedBlocksCodeGen.js",
-      "blocky/js/lib/nodered/nodeRedBlocksDefs.js",
-      "blocky/js/lib/extra/extraBlocksCodeGen.js",
-      "blocky/js/lib/extra/extraBlocksDefs.js",
-      "blocky/js/lib/buffer/bufferBlocksCodeGen.js",
-      "blocky/js/lib/buffer/bufferBlocksDefs.js"
+        "blocky/js/lib/basic/blockly_compressed.js",
+        "blocky/js/lib/basic/msg/messages.js", // See https://groups.google.com/forum/#!topic/blockly/TwJTZct59ec
+        "blocky/js/lib/basic/blocks_compressed.js",
+        "blocky/js/lib/basic/javascript_compressed.js",
+        "blocky/js/lib/basic/msg/js/en.js",
+        "blocky/js/messages/en.js", // Messages of custom blocks
+        "blocky/js/lib/json/objectBlocksCodeGen.js",
+        "blocky/js/lib/json/objectBlocksDefs.js",
+        "blocky/js/lib/nodered/nodeRedBlocksCodeGen.js",
+        "blocky/js/lib/nodered/nodeRedBlocksDefs.js",
+        "blocky/js/lib/extra/extraBlocksCodeGen.js",
+        "blocky/js/lib/extra/extraBlocksDefs.js",
+        "blocky/js/lib/buffer/bufferBlocksCodeGen.js",
+        "blocky/js/lib/buffer/bufferBlocksDefs.js",
+        "blocky/js/lib/datetime/dateTimeBlocksCodeGen.js",
+        "blocky/js/lib/datetime/dateTimeBlocksDefs.js"
     ].forEach(function(src) {
-      var script = document.createElement('script');
-      script.type="text/javascript";
-      script.async = false; // Force synchronous loading, to load them in the correct sequence
-      script.src = src; 
-      document.head.appendChild(script);
+        var script = document.createElement('script');
+        script.type="text/javascript";
+        script.async = false; // Force synchronous loading, to load them in the correct sequence
+        script.src = src; 
+        document.head.appendChild(script);
     });
     
     if (document.implementation.createDocument) {
@@ -56,6 +58,7 @@
         // Remark: the categories are added in the same order as they are loaded here ...
         [
             "blocky/js/lib/basic/toolbox.xml",
+            "blocky/js/lib/datetime/toolbox.xml",
             "blocky/js/lib/extra/toolbox.xml",        
             "blocky/js/lib/buffer/toolbox.xml",
             "blocky/js/lib/json/toolbox.xml",
@@ -87,10 +90,10 @@
                     else {
                         var newBlocks = newCategory.children;
 
-                        // Move all the blocks (and their children) from the newCategory to the existingCategory
-                        for (var k = 0; k < newBlocks.length; k++) {
-                            var newBlock = newBlocks[k];
-                            existingCategory[0].appendChild(newBlock);
+                        // Move all the blocks (and their children) from the newCategory to the existingCategory.
+                        // Remark: appendChild will remove the block from newBlocks!
+                        while(newBlocks.length > 0) {
+                            existingCategory[0].appendChild(newBlocks[0]);
                         }
                     }
                 }
@@ -140,6 +143,32 @@
         
         // Make sure the workspace is sized correctly in the beginning
         resize(node);
+    }
+    
+    function cleanup(node) {
+        // Make sure that the Node-Red handles all keydown events again (e.g. 'D' to delete a node), instead of Blockly. 
+        Blockly.blocklyEditorVisible = false;
+        
+        // When blocks are still available in Blockly's clipboard, Blockly CANNOT paste them in another workspace (of another node).
+        // This means we can empty the clipboard (by setting it to null).  However we will store first a copy of their clipboard 
+        // (as xml string) into our own custom clipboard, which we CAN use to paste in another workspace.
+        if (Blockly.clipboardXml_) {
+            Blockly.customClipboard = '<xml xmlns="http://www.w3.org/1999/xhtml">' + Blockly.Xml.domToPrettyText(Blockly.clipboardXml_) + '</xml>';
+            Blockly.clipboardXml_ = null;
+        }
+                            
+        // When a copy is done in this blockly node, an error will occur if that content is pasted later in another blockly node.
+        // Copy-paste across workspaces is not supported by Blockly (https://github.com/google/blockly/issues/334)
+        Blockly.clipboardXml_ = null;
+        Blockly.clipboardSource_ = null;
+
+        // Cleanup the ACE editor
+        node.aceEditor.destroy();
+        delete node.aceEditor;
+             
+        // Cleanup the Blockly workspace
+        node.workspace.dispose(); 
+        delete node.workspace;
     }
     
     // See https://developers.google.com/blockly/guides/configure/web/resizable
@@ -214,14 +243,32 @@
                 Blockly.originalKeyDownHandler = Blockly.onKeyDown_;
                 Blockly.onKeyDown_ = function(e) {
                     if (Blockly.blocklyEditorVisible) {
+                        // Let Blockly handle the keydown event
                         Blockly.originalKeyDownHandler(e);
+                        
+                        // 
+                        if (e.altKey || e.ctrlKey || e.metaKey) {
+                            // Don't use meta keys during drags
+                            if (!Blockly.mainWorkspace.isDragging()) {
+                                // When pressing CTRL-V (paste) ...
+                                if (e.keyCode == 86) {
+                                    if (!Blockly.clipboardXml_ && Blockly.customClipboard) {
+                                        // When the originalClipboardXml_ is null and the customClipboard is not empty, this means
+                                        // we need to paste blocks that have been copied (to the customClipboard) in another node.
+                                        var xmlDom = Blockly.Xml.textToDom(Blockly.customClipboard);
+                                        Blockly.Xml.domToWorkspace(xmlDom, Blockly.mainWorkspace);
+                                    }
+                                }
+                            }
+                        }
+                        
                         // Stop the events from propagating up the DOM tree
                         e.stopPropagation();
                     }
                 }
             }
             Blockly.blocklyEditorVisible = true;
-            
+       
             // Make sure the Blockly node_send and node_return_message blocks are already at the beginning aware about the number of outputs
             Blockly.nodeOutputs = this.outputs
 
@@ -309,21 +356,38 @@
 
             createWorkspace(node, node.workspaceXml);
             
-            var languageElement = document.getElementById('node-input-language');
-            languageElement.addEventListener('change', function(e){
-                if (node.workspace) {
-                    // Blocks may look completely different in another language, due to differences in word-order. 
-                    // As a result the language of a running Blockly instance cannot be changed.  
-                    // To avoid a page reload, build the workspace again (based on the original workspace xml).
-                    // See https://github.com/google/blockly/issues/701
-                    var dom = Blockly.Xml.workspaceToDom(node.workspace);
-                    var workspaceXml = Blockly.Xml.domToText(dom);
-                    
-                    // Destroy the current workspace
-                    node.workspace.dispose();
-                    
-                    createWorkspace(node, workspaceXml);
-                }
+            $("#node-input-language").change(function () {         
+                // Make sure the Blockly datetime_convert_from_date block is always aware about the number of outputs
+                Blockly.blocklyEditorLanguage = this.value;
+            
+                // When another language is selected, then load the file with the translations in that language.
+                // Those translated texts will override the english text (which has been loaded at the start in the en.js file).
+                [
+                  "blocky/js/lib/basic/msg/js/" + this.value + ".js",
+                  "blocky/js/messages/" + this.value + ".js",
+                ].forEach(function(src) {
+                    var script = document.createElement('script');
+                    script.type="text/javascript";
+                    script.async = false; // Force synchronous loading, to load them in the correct sequence
+                  
+                    // Show the entire workspace in the new selected value, by rendering after the scripts are loaded
+                    script.onload = function() {
+                        // Blocks may look completely different in another language, due to differences in word-order. 
+                        // As a result the language of a running Blockly instance cannot be changed.  
+                        // To avoid a page reload, build the workspace again (based on the original workspace xml).
+                        // See https://github.com/google/blockly/issues/701
+                        var dom = Blockly.Xml.workspaceToDom(node.workspace);
+                        var workspaceXml = Blockly.Xml.domToText(dom);
+                        
+                        // Destroy the current workspace
+                        node.workspace.dispose();
+                        
+                        createWorkspace(node, workspaceXml);
+                    };
+                  
+                    script.src = src; 
+                    document.head.appendChild(script);
+                });
             });
             
             RED.library.create({
@@ -341,13 +405,28 @@
             } else {
                 $("#tip-version").hide();
             }
+            
+            /* 
+            // The expand button is not working correctly yet ...
+            $("#node-function-expand-js").click(function(e) {
+                e.preventDefault();
+                var value = node.aceEditor.getValue();
+                RED.editor.editJavaScript({
+                    value: value,
+                    cursor: node.aceEditor.getCursorPosition(),
+                    complete: function(v,cursor) {
+                        node.aceEditor.setValue(v, -1);
+                        setTimeout(function() {
+                            node.aceEditor.textInput.setReadOnly(true);
+                            node.aceEditor.focus();
+                        },300);
+                    }
+                })
+            })*/
         },
         oneditsave: function() {
             var node = this;
-            
-            // Make sure that the Node-Red handles all keydown events again (e.g. 'D' to delete a node), instead of Blockly. 
-            Blockly.blocklyEditorVisible = false; 
-            
+                        
             // Store the number of output ports in Blockly,  so the blocks can take that number into account (if required)
             //Blockly.nodeOutputs = $("#node-input-outputs").val(); 
   
@@ -361,27 +440,12 @@
             var dom = Blockly.Xml.workspaceToDom(node.workspace);
             node.workspaceXml = Blockly.Xml.domToText(dom);
                
-            // Cleanup the ACE editor
-            node.aceEditor.destroy();
-            delete node.aceEditor;
-                 
-            // Cleanup the Blockly workspace
-            node.workspace.dispose(); 
-            delete node.workspace;
+            cleanup(node);
         },
         oneditcancel: function() {
             var node = this;
             
-            // Make sure that the Node-Red handles all keydown events again (e.g. 'D' to delete a node), instead of Blockly. 
-            Blockly.blocklyEditorVisible = false;
-
-            // Cleanup the ACE editor
-            node.aceEditor.destroy();
-            delete node.aceEditor;
-                 
-            // Cleanup the Blockly workspace
-            node.workspace.dispose(); 
-            delete node.workspace;
+            cleanup(node);
         },
         oneditresize: function (size) {
             var node = this;
@@ -412,7 +476,8 @@
             </div>
         </div>
         <div id="node-blocky-tab-javascript">
-            <div class="form-row">
+            <div class="form-row node-text-editor-row">
+                <!-- <div style="position: absolute; right:0; bottom:calc(100% + 3px);"><button id="node-function-expand-js" class="editor-button editor-button-small"><i class="fa fa-expand"></i></button></div>-->
                 <!-- Ace editor for generated Javascript code -->
                 <div id="aceDiv" style="width: 100%; height: 450px; min-height:350px;"></div>
             </div>
@@ -423,51 +488,51 @@
         <label for="node-input-outputs"><i class="fa fa-random"></i> Outputs</label>
         <input id="node-input-outputs" style="width: 20px;" value="1">
         <label for="node-input-language" style="margin-left:80px;"><i class="fa fa-exchange" disabled></i> Language</label>
-        <select class="form-control" id="node-input-language" style="width:200px" disabled>
-            <option value='ar'>العربية</option>
-            <option value='be-tarask'>Taraškievica</option>
-            <option value='br'>Brezhoneg</option>
-            <option value='ca'>Català</option>
-            <option value='cs'>Česky</option>
-            <option value='da'>Dansk</option>
-            <option value='de'>Deutsch</option>
-            <option value='el'>Ελληνικά</option>
+        <select class="form-control" id="node-input-language" style="width:200px">
+            <!--<option value='ar'>العربية</option>-->
+            <!--<option value='be-tarask'>Taraškievica</option>-->
+            <!--<option value='br'>Brezhoneg</option>-->
+            <!--<option value='ca'>Català</option>-->
+            <!--<option value='cs'>Česky</option>-->
+            <!--<option value='da'>Dansk</option>-->
+            <!--<option value='de'>Deutsch</option>-->
+            <!--<option value='el'>Ελληνικά</option>-->
             <option value='en'>English</option>
-            <option value='es'>Español</option>
-            <option value='et'>Eesti</option>
-            <option value='fa'>فارسی</option>
+            <!--<option value='es'>Español</option>-->
+            <!--<option value='et'>Eesti</option>-->
+            <!--<option value='fa'>فارسی</option>-->
             <option value='fr'>Français</option>
-            <option value='he'>עברית</option>
-            <option value='hrx'>Hunsrik</option>
-            <option value='hu'>Magyar</option>
-            <option value='ia'>Interlingua</option>
-            <option value='is'>Íslenska</option>
-            <option value='it'>Italiano</option>
+            <!--<option value='he'>עברית</option>-->
+            <!--<option value='hrx'>Hunsrik</option>-->
+            <!--<option value='hu'>Magyar</option>-->
+            <!--<option value='ia'>Interlingua</option>-->
+            <!--<option value='is'>Íslenska</option>-->
+            <!--<option value='it'>Italiano</option>-->
             <option value='ja'>日本語</option>
-            <option value='kab'>Kabyle</option>
-            <option value='ko'>한국어</option>
-            <option value='mk'>Македонски</option>
-            <option value='ms'>Bahasa Melayu</option>
-            <option value='nb'>Norsk Bokmål</option>
+            <!--<option value='kab'>Kabyle</option>-->
+            <!--<option value='ko'>한국어</option>-->
+            <!--<option value='mk'>Македонски</option>-->
+            <!--<option value='ms'>Bahasa Melayu</option>-->
+            <!--<option value='nb'>Norsk Bokmål</option>-->
             <option value='nl'>Nederlands, Vlaams</option>
-            <option value='oc'>Lenga d\'òc</option>
-            <option value='pl'>Polski</option>
-            <option value='pms'>Piemontèis</option>
-            <option value='pt-br'>Português Brasileiro</option>
-            <option value='ro'>Română</option>
-            <option value='ru'>Русский</option>
-            <option value='sc'>Sardu</option>
-            <option value='sk'>Slovenčina</option>
-            <option value='sr'>Српски</option>
-            <option value='sv'>Svenska</option>
-            <option value='ta'>தமிழ்</option>
-            <option value='th'>ภาษาไทย</option>
-            <option value='tlh'>tlhIngan Hol</option>
-            <option value='tr'>Türkçe</option>
-            <option value='uk'>Українська</option>
-            <option value='vi'>Tiếng Việt</option>
-            <option value='zh-hans'>简体中文</option>
-            <option value='zh-hant'>正體中文</option>
+            <!--<option value='oc'>Lenga d\'òc</option>-->
+            <!--<option value='pl'>Polski</option>-->
+            <!--<option value='pms'>Piemontèis</option>-->
+            <!--<option value='pt-br'>Português Brasileiro</option>-->
+            <!--<option value='ro'>Română</option>-->
+            <!--<option value='ru'>Русский</option>-->
+            <!--<option value='sc'>Sardu</option>-->
+            <!--<option value='sk'>Slovenčina</option>-->
+            <!--<option value='sr'>Српски</option>-->
+            <!--<option value='sv'>Svenska</option>-->
+            <!--<option value='ta'>தமிழ்</option>-->
+            <!--<option value='th'>ภาษาไทย</option>-->
+            <!--<option value='tlh'>tlhIngan Hol</option>-->
+            <!--<option value='tr'>Türkçe</option>-->
+            <!--<option value='uk'>Українська</option>-->
+            <!--<option value='vi'>Tiếng Việt</option>-->
+            <!--<option value='zh-hans'>简体中文</option>-->
+            <!--<option value='zh-hant'>正體中文</option>-->
         </select>
     </div>
     <div class="form-tips" id="tip-version" style="width: 100%;max-width: 100%;" hidden>Tip: The 'get node property' block cannot be used, since Node-red version 0.19.0 is minimal required.</div>

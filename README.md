@@ -95,14 +95,14 @@ The node's config screen consists out of a series of elements:
 1. The **library** button is similar to the standard *function node*: the code from this Blockly node can be made globally available by adding it to a libary.  That library will be stored withing the 'libs' directory in your node-red user directory.
 2. The **editor** tabsheet displays a Blockly workspace editor.  Here blocks can be added, which will be converted afterwards to Javascript code.
 3. The **generated Javascript** tabsheets will display the Javascript code, which is generated based on the blocks in the Blockly editor.  This code is readonly, which means you cannot change it!  Reason is that it is *not possible* to generate Blockly blocks, starting from Javascript code ...
-4. The **language** dropdown offers all available languages.  The texts in the blocks will be translated in the specified language.  This option is currently ***not available yet***!  If you are interested to help us translating, please let us know via this [issue](https://github.com/bartbutenaers/node-red-contrib-blockly/issues/5).
+4. The **language** dropdown offers all available languages.  The texts in the blocks will be translated in the specified language.  Starting from version 1.1.0 following languages will be available: English, French, Japanese, Dutch.  Please see below if you want to add another language to this selection.
 5. The Blockly **toolbox** shows all available blocks, grouped by category.
 6. The Blockly **editable area** shows all the blocks representing your custom logic.  Blocks can be dragged from the toolbox into the editable area.  A lot of user interaction is offered in this area:
     + When pressing the delete button, the selected blocks will be removed.  
     + By clicking and dragging with the mouse, the user can start panning to alter which part of the area is being visualised.  
     + By clicking on a block and dragging with the mouse, the block (and all of its's chained next blocks) will be moved.
     + By rotating the mouse wheel, you can zoom in/out.
-    + By using ctrl-c and ctrl-v the selected block will be copied.  When the block is connected to next blocks, the entire block chain will be copied.
+    + By using ctrl-c and ctrl-v the selected block will be copied.  When the block is connected to next blocks, the entire block chain will be copied.  Note that you can also paste the selected block in another blockly node!
     + By using ctrl-z the last action will be undone.
     + By right-clicking a context menu appears.  That context menu will be different if the grid is clicked, or if a block is clicked.
     + ...
@@ -134,15 +134,16 @@ When writing Javascript code in a standard *function node*, some Node-Red functi
 1. Some things can be don when the **node is closed**, most of the time to cleanup stuff.
 
 ## Need a change ...
-When you need a change in this node, check in advance whether that change hasn't been requested yet (as a Github [issue](https://github.com/bartbutenaers/node-red-contrib-blockly/issues)).  When dealing with a new change:
+When you need a change in this node, you can create a new Github issue.  A couple of remarks about this:
++ Check in advance whether that change hasn't been requested yet (as a Github [issue](https://github.com/bartbutenaers/node-red-contrib-blockly/issues)).  
+* Take into account that the *function node* offers much more functionality, since we cannot create blocks for all Javascript statements.  
+* Keep in mind that we won't create blocks for functionality, whcih is already available in other Node-RED nodes (e.g. send mail, ...).
 
-+ When something is going ***wrong***, a new issue should be created on Github.  Describe the problem in detail, and (if possible) how the problem can be reproduced easily.
+## Need blockly in your own language ...
+Google has already provided translations for all their basic blocks.  However for our own blocks, there are currently only translations available in a few languages.  If you want to translate the blocks in your own language, please follow these steps:
++ Clone the [en.js](https://github.com/bartbutenaers/node-red-contrib-blockly/blob/master/messages/en.js) to a xx.js file (with xx being your country code like 'nl', 'en', 'fr', 'jp', ...).
++ Translate all the texts from the xx.js file in your own language.  Blockly will automatically replace the placeholders (%1 %2 ...) by widgets (dropdowns, input fields, ...).  You are allowed to rearrange the placeholders, because blockly will automatically rearrange the corresponding widgets also.  For example *'convert date %1 to format %2'* could be *'xxx %2 xxxx %1 xxx'* in a language that is being read from right to left.
++ Test whether the blocks look good and correct in your language.
++ Deliver us the xx.js file (preferrable by pull request, or otherwise e.g. via a new issue).
 
-+ When you need some ***new functionality***, please discuss it first on the Node-RED [forum]()!  *You need to get an agreement on the forum, otherwise the change won't be accepted anyway.*  Once you have an agreement, a new Github issue can be created.
-    Make sure that the topic description starts with *'Blockly'*.  And perhaps add our user names in the topic content:
-
-    ![New topic](https://raw.githubusercontent.com/bartbutenaers/node-red-contrib-blockly/master/images/blockly_new_topic.png)
-    
-     The *function node* will offer much more functionality, since Blockly doesn't offer all available Javascript functionality.  Keep in mind that we cannot offer every little feature.
-
-P.S. Take into account that this is only our hobby, so we won't be available around the clock for assistance ...
+Thanks in advance !
