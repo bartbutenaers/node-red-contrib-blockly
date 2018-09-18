@@ -113,6 +113,7 @@
         // Convert the toolbox xml document to an xml string.
         var toolboxXmlString = new XMLSerializer().serializeToString(toolboxXmlDocument.documentElement);
       
+        // When the scale is stored - the previous time the workspace was displayed - we will restore that scale.
         if (!node.scale) {
             // Use default scale like a user has pressed the zoom-out button once (instead of default 1.0)
             node.scale = 0.8333;
@@ -203,6 +204,11 @@
             // Make sure the Blockly svg area is resized according the DIV element.
             // Blocky itself also calls svgResize underneath, but only when e.g. the toolbox changes size)
             Blockly.svgResize(node.workspace);
+          
+            if (node.scrollX && node.scrollY) {
+                // Restore the workspace translation, similar to the previous time the workspace was displayed
+                Blockly.mainWorkspace.scrollbar.set(node.scrollX, node.scrollY);
+            }
         }
     };
     
@@ -435,6 +441,11 @@
           
             // Store the workspace zoom level, to restore it when the workspace is opened again
             node.scale = node.workspace.scale;
+          
+            // Store the workspace translation (X and Y coordinates), to restore it when the workspace is opened again
+            var metrics = Blockly.mainWorkspace.getMetrics();
+            node.scrollX = (metrics.viewLeft - metrics.contentLeft );
+            node.scrollY = (metrics.viewTop - metrics.contentTop );
                         
             // Store the number of output ports in Blockly,  so the blocks can take that number into account (if required)
             //Blockly.nodeOutputs = $("#node-input-outputs").val(); 
