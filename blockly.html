@@ -112,6 +112,11 @@
     function createWorkspace(node, workspaceXml) {
         // Convert the toolbox xml document to an xml string.
         var toolboxXmlString = new XMLSerializer().serializeToString(toolboxXmlDocument.documentElement);
+      
+        if (!node.scale) {
+            // Use default scale like a user has pressed the zoom-out button once (instead of default 1.0)
+            node.scale = 0.8333;
+        }
     
         // Create the workspace
         node.workspace = Blockly.inject('blocklyDiv', {
@@ -124,7 +129,8 @@
             toolbox: toolboxXmlString,
             zoom: {
                 controls: true, 
-                wheel: true
+                wheel: true,
+                startScale: node.scale
             },
             trashcan: false,
             comments: true,
@@ -426,6 +432,9 @@
         },
         oneditsave: function() {
             var node = this;
+          
+            // Store the workspace zoom level, to restore it when the workspace is opened again
+            node.scale = node.workspace.scale;
                         
             // Store the number of output ports in Blockly,  so the blocks can take that number into account (if required)
             //Blockly.nodeOutputs = $("#node-input-outputs").val(); 
