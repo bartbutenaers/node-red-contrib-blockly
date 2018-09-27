@@ -92,6 +92,12 @@ Blockly.Msg.OBJECT_KEYS_TOOLTIP = "Get all keys from the object";
 // =========================================================================================
 // Extra blocks
 // =========================================================================================
+Blockly.Msg.TEXT_SPECIAL_CHARACTER = "special character %1";
+Blockly.Msg.TEXT_SPECIAL_CHARACTER_TOOLTIP = "A special character that shouldn't be escaped (by a '\' prefix";
+Blockly.Msg.TEXT_SPECIAL_CHARACTER_LF = "line feed (\\n)";
+Blockly.Msg.TEXT_SPECIAL_CHARACTER_CR = "carriage return (\\r)";
+Blockly.Msg.TEXT_SPECIAL_CHARACTER_CRLF = "carriage return line feed (\\r\\n)";
+Blockly.Msg.TEXT_SPECIAL_CHARACTER_TAB = "tab (\\t)";
 Blockly.Msg.TIMER_CONDITIONAL = "Repeat every %1 seconds, until %2 %3";
 Blockly.Msg.TIMER_CONDITIONAL_TOOLTIP = "Repeat at regular intervals until a condition is fullfilled.";
 Blockly.Msg.TIMER_COUNTING = "Repeat %1 times every %2 seconds %3 %4";
