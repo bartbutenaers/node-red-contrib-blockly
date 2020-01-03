@@ -431,23 +431,77 @@
                 $("#tip-version").hide();
             }
             
-            /* 
-            // The expand button is not working correctly yet ...
-            $("#node-function-expand-js").click(function(e) {
-                e.preventDefault();
-                var value = node.aceEditor.getValue();
-                RED.editor.editJavaScript({
-                    value: value,
-                    cursor: node.aceEditor.getCursorPosition(),
-                    complete: function(v,cursor) {
-                        node.aceEditor.setValue(v, -1);
-                        setTimeout(function() {
-                            node.aceEditor.textInput.setReadOnly(true);
-                            node.aceEditor.focus();
-                        },300);
-                    }
+            // Show a button to expand the blocklyArea element
+            var expandblocklyAreaButton = $('#node-expand-blocklyArea');
+            var blocklyArea = $("#blocklyArea");
+            var blocklyFullScreenRequest = blocklyArea[0].requestFullscreen       || 
+                                           blocklyArea[0].mozRequestFullScreen    || 
+                                           blocklyArea[0].webkitRequestFullscreen || 
+                                           blocklyArea[0].msRequestFullScreen;
+            // Check whether the browser supports fullscreen
+            if (blocklyFullScreenRequest) {
+                expandblocklyAreaButton[0].title = "Expand fullscreen";
+                expandblocklyAreaButton.click(function(e) {
+                    e.preventDefault();
+        
+                    // Make sure (on all browsers) that the blocklyArea DIV element has 100% AFTER it has become fullscreen
+                    // If document.fullscreenElement is null then full-screen mode has been quitted...
+                    blocklyArea.on('webkitfullscreenchange mozfullscreenchange msRequestFullscreen fullscreenchange', function(e) {
+                        if (document.fullscreenElement) {
+                            // Make sure the blockly area fills the entire screen
+                            document.fullscreenElement.style.height = "100%";
+                        }
+                        else {
+                            // Resize the blockly area to its original size
+                            blocklyArea[0].style.height = "450px";
+                            resize(node);
+                        }
+                    });
+                    
+                    // Expand the blocklyArea element to fullscreen
+                    blocklyFullScreenRequest.call(blocklyArea[0])
                 })
-            })*/
+            }
+            else {
+                expandblocklyAreaButton.title = "Fullscreen not supported";
+                expandblocklyAreaButton.prop('disabled', true);
+            }
+
+            // Show a button to expand the aceDiv element
+            var expandAceDivButton = $('#node-expand-aceDiv');
+            var aceDiv = $("#aceDiv");
+            var aceDivFullScreenRequest = aceDiv[0].requestFullscreen       || 
+                                          aceDiv[0].mozRequestFullScreen    || 
+                                          aceDiv[0].webkitRequestFullscreen || 
+                                          aceDiv[0].msRequestFullScreen;
+            // Check whether the browser supports fullscreen
+            if (aceDivFullScreenRequest) {
+                expandAceDivButton[0].title = "Expand fullscreen";
+                expandAceDivButton.click(function(e) {
+                    e.preventDefault();
+        
+                    // Make sure (on all browsers) that the aceDiv DIV element has 100% AFTER it has become fullscreen
+                    // If document.fullscreenElement is null then full-screen mode has been quitted...
+                    aceDiv.on('webkitfullscreenchange mozfullscreenchange msRequestFullscreen fullscreenchange', function(e) {
+                        if (document.fullscreenElement) {
+                            // Make sure the blockly area fills the entire screen
+                            document.fullscreenElement.style.height = "100%";
+                        }
+                        else {
+                            // Resize the blockly area to its original size
+                            aceDiv[0].style.height = "450px";
+                            //resize(node);
+                        }
+                    });
+                    
+                    // Expand the aceDiv element to fullscreen
+                    aceDivFullScreenRequest.call(aceDiv[0])
+                })
+            }
+            else {
+                expandAceDivButton.title = "Fullscreen not supported";
+                expandAceDivButton.prop('disabled', true);
+            }
         },
         oneditsave: function() {
             var node = this;
@@ -504,6 +558,9 @@
     <div id="node-blocky-tabs-content" style="min-height: 350px">
         <div id="node-blocky-tab-workspace">
             <div class="form-row">
+                <button id="node-expand-blocklyArea" class="editor-button editor-button-small" style="margin-top: 4px;">
+                    <i class="fa fa-expand"></i>
+                </button>
                 <!-- Blockly editor -->
                 <div id="blocklyArea" style="width: 100%; height: 450px; min-height:350px;">
                     <div id="blocklyDiv"></div>
@@ -512,6 +569,9 @@
         </div>
         <div id="node-blocky-tab-javascript">
             <div class="form-row node-text-editor-row">
+                <button id="node-expand-aceDiv" class="editor-button editor-button-small" style="margin-top: 4px;">
+                    <i class="fa fa-expand"></i>
+                </button>
                 <!-- <div style="position: absolute; right:0; bottom:calc(100% + 3px);"><button id="node-function-expand-js" class="editor-button editor-button-small"><i class="fa fa-expand"></i></button></div>-->
                 <!-- Ace editor for generated Javascript code -->
                 <div id="aceDiv" style="width: 100%; height: 450px; min-height:350px;"></div>
