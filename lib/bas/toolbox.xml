@@ -1,0 +1,21 @@
+<xml xmlns="http://www.w3.org/1999/xhtml" id="toolbox" style="display: none;">
+  <category name="BAS Control" colour="#00B6C7">
+    <category name="HVAC" colour="#00B6C7">
+      <block type="bas_javascript">
+        <value name="STATEMENT">
+          <shadow type="text">
+          </shadow>
+        </value> 
+      </block>
+    </category>
+    <category name="Lighting" colour="#00B6C7">
+      <block type="bas_jsexpress">
+        <value name="STATEMENT">
+          <shadow type="text">
+          </shadow>
+        </value> 
+      </block>
+    </category>
+  </category>
+</xml>
+

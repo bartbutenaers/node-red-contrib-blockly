@@ -22,5 +22,11 @@
         </shadow>
       </value>
     </block>
+    <block type="misc_jsexpress">
+      <value name="STATEMENT">
+        <shadow type="text">
+        </shadow>
+      </value>
+    </block>
   </category>
 </xml>

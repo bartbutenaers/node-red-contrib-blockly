@@ -107,6 +107,8 @@ Blockly.Msg.SWITCH_CASE_LIST_TOOLTIP = "List of all available cases";
 Blockly.Msg.SWITCH_DO = "do";
 Blockly.Msg.MISC_JAVASCRIPT= "Javascript statement %1;";
 Blockly.Msg.MISC_JAVASCRIPT_TOOLTIP = "Enter Javascript code when no blocks offer certain functionality.";
+Blockly.Msg.MISC_JSEXPRESS= "Javascript expression %1";
+Blockly.Msg.MISC_JSEXPRESS_TOOLTIP = "Use with caution. Enter JS code when no blocks offer certain functionality.";
 Blockly.Msg.MISC_COMMENT = "Comment %1";
 Blockly.Msg.MISC_COMMENT_TOOLTIP = "Add comments to explain how the logic works.";
 
