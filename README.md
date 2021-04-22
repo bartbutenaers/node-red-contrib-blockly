@@ -1,3 +1,10 @@
+This is a derived version of node-red-contrib-blockly release-1.1.0
+
+https://github.com/bartbutenaers/node-red-contrib-blockly
+
+
+
+
 # node-red-contrib-blockly
 A Node Red node that offers a visual programming interface, to make programming a function node easier.  Just drag and drop blocks to build your program logic, without having to write the Javascript code yourself.  By building your code in a visual way, you don't have to learn the Javascript syntax, which makes programming very difficult for beginners.
 
