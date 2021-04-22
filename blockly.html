@@ -248,11 +248,8 @@
 
 
     function reloadBlockly(node) {
-        // Jeff: fill aceXMLEditor 04/18/2021
+        // Jeff: fill Blockly Editor from the contents of the XML editor 04/18/2021
         var loadedXml = node.aceXMLEditor.getValue();
-        //var dom = Blockly.Xml.textToDom(loadedXml);
-        //node.workspace.clear();
-        //Blockly.Xml.domToWorkspace(dom, node.workspace);
         node.workspace.dispose();
         createWorkspace(node, loadedXml);
     }
