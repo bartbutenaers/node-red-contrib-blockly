@@ -13,7 +13,7 @@ This version is a progressing experiment with upgraded Blockly, expanded Blockly
 
 
 ## Expanded mode
-Click the expand button to expand the Blockly Editor
+Click the expand button to expand the Blockly Editor<br />
 ![image](https://user-images.githubusercontent.com/79299554/115790622-db457800-a37b-11eb-98a8-52286bfeffe5.png)
 
 Expanded editor
