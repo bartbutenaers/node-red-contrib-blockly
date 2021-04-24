@@ -32,8 +32,6 @@
         "blocky/js/lib/extra/extraBlocksDefs.js",
         "blocky/js/lib/buffer/bufferBlocksCodeGen.js",
         "blocky/js/lib/buffer/bufferBlocksDefs.js",
-        "blocky/js/lib/bas/basBlocksCodeGen.js",
-        "blocky/js/lib/bas/basBlocksDefs.js",
         "blocky/js/lib/datetime/dateTimeBlocksCodeGen.js",
         "blocky/js/lib/datetime/dateTimeBlocksDefs.js"
     ].forEach(function(src) {
@@ -61,7 +59,6 @@
         [
             "blocky/js/lib/basic/toolbox.xml",
             "blocky/js/lib/datetime/toolbox.xml",
-            "blocky/js/lib/bas/toolbox.xml",
             "blocky/js/lib/extra/toolbox.xml",        
             "blocky/js/lib/buffer/toolbox.xml",
             "blocky/js/lib/json/toolbox.xml",
@@ -80,7 +77,6 @@
                 while (newCategories.length > 0) {
                     var newCategory = newCategories[0];
                     
-
                     // Get the category name
                     var name = newCategory.getAttribute('name');
 
@@ -100,8 +96,8 @@
                         while(newBlocks.length > 0) {
                             existingCategory[0].appendChild(newBlocks[0]);
                         }
-			// Remove the category from newCategories so the next loop is clean
-			newCategory.remove();
+			            // Remove the category from newCategories so the next loop is clean
+			            newCategory.remove();
                     }
 
                 }
@@ -118,9 +114,6 @@
 
 <script type="text/javascript">
     function createWorkspace(node, workspaceXml) {
-        // Convert the toolbox xml document to an xml string.
-        var toolboxXmlString = new XMLSerializer().serializeToString(toolboxXmlDocument.documentElement);
-    
         // Create the workspace
         node.workspace = Blockly.inject('blocklyDiv', {
             grid: {
@@ -129,7 +122,7 @@
                 colour: '#ccc',
                 snap: true
             },     
-            toolbox: toolboxXmlString,
+            toolbox: toolboxXmlDocument.firstElementChild,
             zoom: {
                 controls: true, 
                 wheel: true
@@ -178,7 +171,6 @@
         // Jeff: Cleanup the XML editor 04/18/2021
         node.aceXMLEditor.destroy();
         delete node.aceXMLEditor;
-
 
         // Cleanup the Blockly workspace
         node.workspace.dispose(); 
@@ -248,7 +240,7 @@
 
 
     function reloadBlockly(node) {
-        // Jeff: fill Blockly Editor from the contents of the XML editor 04/18/2021
+        // Jeff: fill aceXMLEditor 04/18/2021
         var loadedXml = node.aceXMLEditor.getValue();
         node.workspace.dispose();
         createWorkspace(node, loadedXml);
@@ -261,7 +253,7 @@
         defaults: {
             language: {value:"en"},
             func: {value:"\nreturn msg;"}, // The generated Javascript code
-            workspaceXml: {value:"<xml xmlns=\"https:\/\/developers.google.com\/blockly\/xml\"><\/xml>"},
+            workspaceXml: {value:"<xml xmlns=\"https:\/\/developers.google.com\/blockly\/xml\"><\/xml>"}, // Needed for Blockly version "5.20210325.1". Can't be empty
             outputs: {value:1}, // Standard field that will be used by Node-Red to draw N output ports in the flow editor
             name: {value:""}
         },
@@ -370,27 +362,12 @@
                 id: 'aceXMLDiv',
                 mode: 'ace/mode/xml',
                 value: node.workspaceXml,
-                globals: {
-                    msg:true,
-                    context:true,
-                    RED: true,
-                    util: true,
-                    flow: true,
-                    global: true,
-                    console: true,
-                    Buffer: true,
-                    setTimeout: true,
-                    clearTimeout: true,
-                    setInterval: true,
-                    clearInterval: true
-                }
             });
             node.aceXMLEditor.setFontSize(12);
             node.aceXMLEditor.textInput.setReadOnly(true);
             // Jeff: invoke when either fillAceXMLEditor triggered or loaded XML from library
             node.aceXMLEditor.on("change", function () {
                 var loadedXml = node.aceXMLEditor.getValue();
-                console.log(loadedXml);
                 // Jeff: it seems everytime anything loads to the editor it removes the previous contents and then inject the new contents.
                 // so there are two changes. 
                 if (loadedXml != "") {
@@ -410,7 +387,7 @@
                     $("#node-blocky-tabs-content").children().hide();
                     $("#" + tab.id).show();
 
-                    // Every time the ace editor is displayed, the Javascript/XML code should be regenerated (from the Blockly workspace)
+                    // Every time the ace editor is displayed, the Javascript code should be regenerated (from the Blockly workspace)
                     if (tab.id === "node-blocky-tab-javascript") {
                         fillAceEditor(node);
                     }
@@ -420,9 +397,6 @@
                     if (tab.id === "node-blocky-tab-workspace") {
                         reloadBlockly(node);
                     }
-                    // Recalculate the size of the editor which will be displayed.
-                    // Indeed due to the previous tab switch, the (invisible) editor will have size 0x0...
-                    resize(node);
                 }
             });
             tabs.addTab({
@@ -560,19 +534,6 @@
 
             //Jeff: expand Blockly editing area
             $("#blocklyExpandDiv").on("click", expandBlocklyHandler());
-
-           
-            //document.getElementById("blocklyDiv").addEventListener("focusin", function() {
-            //    if (node.workspace) {
-            //        var dom = Blockly.Xml.workspaceToDom(node.workspace);
-            //        node.workspaceXml = Blockly.Xml.domToPrettyText(dom);
-            //        node.workspace.dispose();
-            //    }
-            //    createWorkspace(node, node.workspaceXml);  
-            //});
-
-
-
         },
         oneditsave: function() {
             var node = this;
@@ -599,9 +560,6 @@
         },
         oneditresize: function (size) {
             var node = this;
-            
-            // Resize Blockly to fill the available space on screen
-            // resize(node);
             var height = $("#blocklyArea").height();
             var width = $("#blocklyArea").width();
             $("#blocklyDiv").css("height",height+"px");
@@ -617,7 +575,6 @@
         <label for="node-input-name"><i class="icon-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
     </div>
-    </br>
     <div class="form-row">
         <!-- Three tabsheets -->
         <ul style="background: #fff; min-width: 600px; margin-bottom: 20px;" id="node-blocky-tabs"></ul>
@@ -628,7 +585,7 @@
                 <!-- Blockly editor -->
                 <div id="blocklyArea" style="width: 100%; height: 450px; min-height:350px;">
                     <div id="blocklyDiv"></div>
-                    <div style="position: absolute; left:194px; bottom: calc(100% - 130px); z-index: 99;">
+                    <div style="position: absolute; left:188px; bottom: calc(100% - 110px); z-index: 99;">
                         <button id="blocklyExpandDiv" class="red-ui-button red-ui-button-small"><i class="fa fa-expand"></i></button>
                     </div>
                 </div>
@@ -650,7 +607,6 @@
             </div>
         </div>
     </div>
-    </br>
     <div class="form-row">
         <label for="node-input-outputs"><i class="fa fa-random"></i> Outputs</label>
         <input id="node-input-outputs" style="width: 20px;" value="1">
