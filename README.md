@@ -1,6 +1,37 @@
-This is a derived version of node-red-contrib-blockly release-1.1.0
+# A derived version of node-red-contrib-blockly
 
-https://github.com/bartbutenaers/node-red-contrib-blockly
+This is a derived version of node-red-contrib-blockly release-1.1.0 @ https://github.com/bartbutenaers/node-red-contrib-blockly
+This version is a progressing experiment with upgraded Blockly, expanded Blockly editor, import/export XML library and etc.
+
+
+## Generated XML data fro Blockly workspace
+![image](https://user-images.githubusercontent.com/79299554/115790145-227f3900-a37b-11eb-8a8a-83be9a9b9b11.png)
+
+
+## Library
+![image](https://user-images.githubusercontent.com/79299554/115790177-30cd5500-a37b-11eb-8959-acfd67a7e8ff.png)
+
+
+## Expanded mode
+Click the expand button to expand the Blockly Editor<br />
+![image](https://user-images.githubusercontent.com/79299554/115790622-db457800-a37b-11eb-98a8-52286bfeffe5.png)
+
+Expanded editor
+![image](https://user-images.githubusercontent.com/79299554/115790341-6b36f200-a37b-11eb-8b97-db417c48e1f1.png)
+
+
+## Nested toolbox categories
+![image](https://user-images.githubusercontent.com/79299554/115790419-899ced80-a37b-11eb-974b-e652ce67776d.png)
+
+
+
+
+
+
+
+
+
+
 
 
 
