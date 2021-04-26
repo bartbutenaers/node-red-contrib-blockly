@@ -96,8 +96,8 @@
                         while(newBlocks.length > 0) {
                             existingCategory[0].appendChild(newBlocks[0]);
                         }
-			            // Remove the category from newCategories so the next loop is clean
-			            newCategory.remove();
+			// Remove the category from newCategories so the next loop is clean
+			newCategory.remove();
                     }
 
                 }
@@ -473,6 +473,15 @@
             
 
             //Jeff: called when the expand button clicked
+            var expandTemplate = 
+            '<!-- Blockly editor -->'+
+            '<div id="blocklyArea" style="width: 100%; height: 100%; min-height:700px;">'+
+                '<div id="blocklyDiv"></div>'+
+            '</div>'+
+            '<div id="jsArea" class="form-row node-text-editor-row" style="width: 100%; height: 100%; min-height:700px; display: none;">'+
+                '<div id="aceDiv" style="width: 100%; height: 100%; min-height:700px;"></div>'+
+            '</div>';
+
             var expandBlocklyHandler = function() {
                 return function(e) {
                     e.preventDefault();
@@ -481,6 +490,34 @@
                         title: "Blockly Workspace",
                         width: "Infinity",
                         buttons: [
+                            {
+                                id: "node-showBlocklyArea",
+                                text: "Back to Blockly Editor",
+                                click: function() {
+                                    $("#jsArea").css("display","none");
+                                    $("#blocklyArea").css("display","block");
+                                    $("#node-showJSArea").css("display","block");
+                                    $("#node-showBlocklyArea").css("display","none");
+                                    var dom = Blockly.Xml.workspaceToDom(node.workspace);
+                                    var loadedXml = Blockly.Xml.domToPrettyText(dom);
+                                    node.workspace.dispose();
+                                    createWorkspace(node, loadedXml);
+                                }
+                            },
+                            {
+                                id: "node-showJSArea",
+                                text: "See Generated Javascript",
+                                click: function() {
+                                    $("#blocklyArea").css("display","none");
+                                    $("#jsArea").css("display","block");
+                                    $("#node-showBlocklyArea").css("display","block");
+                                    $("#node-showJSArea").css("display","none");
+                                    Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
+                                    var javascript = Blockly.JavaScript.workspaceToCode(node.workspace);
+                                    node.jseditor.setValue(javascript);
+                                    node.jseditor.clearSelection(); 
+                                }
+                            },
                             {
                                 id: "node-dialog-cancel",
                                 text: RED._("common.label.cancel"),
@@ -512,17 +549,43 @@
                             node.workspace.scrollCenter();
                         },
                         open: function(tray) {
+                            $("#node-showBlocklyArea").css({"float":"left","display":"none"});
+                            $("#node-showJSArea").css("float","left");
                             var trayBody = tray.find('.red-ui-tray-body');
-                            var blocklyAreaContent = $('<div id="blocklyArea" style="width: 100%; height: 100%; min-height:700px;"></div>').appendTo(trayBody);
-                            var blocklyDivContent = $('<div id="blocklyDiv"></div>').appendTo(blocklyAreaContent);
+                            //var blocklyAreaContent = $('<div id="blocklyArea" style="width: 100%; height: 100%; min-height:700px;"></div>').appendTo(trayBody);
+                            //var blocklyDivContent = $('<div id="blocklyDiv"></div>').appendTo(blocklyAreaContent);
+                            $(expandTemplate).appendTo(trayBody);
                             //Jeff: load workspace to a temp XML
                             var dom = Blockly.Xml.workspaceToDom(node.workspace);
                             node.loadedXml = Blockly.Xml.domToPrettyText(dom);
                             node.workspace.dispose();
                             createWorkspace(node, node.loadedXml);
+                            node.jseditor = RED.editor.createEditor({
+                                id: "aceDiv",
+                                mode: 'ace/mode/javascript',
+                                value: "",
+                                globals: {
+                                    msg:true,
+                                    context:true,
+                                    RED: true,
+                                    util: true,
+                                    flow: true,
+                                    global: true,
+                                    console: true,
+                                    Buffer: true,
+                                    setTimeout: true,
+                                    clearTimeout: true,
+                                    setInterval: true,
+                                    clearInterval: true
+                                }
+                            });
+                            node.jseditor.setFontSize(14); 
+                            node.jseditor.textInput.setReadOnly(true);
                         },
                         close: function() {
                             delete node.loadedXml;   
+                            node.jseditor.destroy();
+                            delete node.jseditor;
                         },
                         show: function() {
 
