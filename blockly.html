@@ -57,12 +57,13 @@
         // Load the xml toolbox files for all available blocks libraries, and combine those into a single toolbox.
         // Remark: the categories are added in the same order as they are loaded here ...
         [
-            "blocky/js/lib/basic/toolbox.xml",
-            "blocky/js/lib/datetime/toolbox.xml",
-            "blocky/js/lib/extra/toolbox.xml",        
-            "blocky/js/lib/buffer/toolbox.xml",
+            "blocky/js/lib/nodered/toolbox.xml",
             "blocky/js/lib/json/toolbox.xml",
-            "blocky/js/lib/nodered/toolbox.xml"
+            "blocky/js/lib/buffer/toolbox.xml",
+            "blocky/js/lib/datetime/toolbox.xml",       
+            "blocky/js/lib/basic/toolbox.xml",
+            "blocky/js/lib/extra/toolbox.xml"
+            //"blocky/js/lib/bas/toolbox.xml",
         ].forEach(function(filePath) {
             var request = new XMLHttpRequest();
             request.open('GET', filePath, false);  // `false` makes the request synchronous
@@ -77,6 +78,7 @@
                 while (newCategories.length > 0) {
                     var newCategory = newCategories[0];
                     
+
                     // Get the category name
                     var name = newCategory.getAttribute('name');
 
@@ -172,6 +174,7 @@
         node.aceXMLEditor.destroy();
         delete node.aceXMLEditor;
 
+
         // Cleanup the Blockly workspace
         node.workspace.dispose(); 
         delete node.workspace;
@@ -242,6 +245,9 @@
     function reloadBlockly(node) {
         // Jeff: fill aceXMLEditor 04/18/2021
         var loadedXml = node.aceXMLEditor.getValue();
+        //var dom = Blockly.Xml.textToDom(loadedXml);
+        //node.workspace.clear();
+        //Blockly.Xml.domToWorkspace(dom, node.workspace);
         node.workspace.dispose();
         createWorkspace(node, loadedXml);
     }
@@ -475,11 +481,11 @@
             //Jeff: called when the expand button clicked
             var expandTemplate = 
             '<!-- Blockly editor -->'+
-            '<div id="blocklyArea" style="width: 100%; height: 100%; min-height:700px;">'+
+            '<div id="blocklyArea" style="width: 100%; height: 100%; min-height:350px;">'+
                 '<div id="blocklyDiv"></div>'+
             '</div>'+
-            '<div id="jsArea" class="form-row node-text-editor-row" style="width: 100%; height: 100%; min-height:700px; display: none;">'+
-                '<div id="aceDiv" style="width: 100%; height: 100%; min-height:700px;"></div>'+
+            '<div id="jsArea" class="form-row node-text-editor-row" style="width: 100%; height: 100%; min-height:350px; display: none;">'+
+                '<div id="aceDiv" style="width: 100%; height: 100%;"></div>'+
             '</div>';
 
             var expandBlocklyHandler = function() {
