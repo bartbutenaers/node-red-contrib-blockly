@@ -393,8 +393,10 @@
                     $("#node-blocky-tabs-content").children().hide();
                     $("#" + tab.id).show();
 
-                    // Every time the ace editor is displayed, the Javascript code should be regenerated (from the Blockly workspace)
+                    // Every time the ace editor is displayed, the Javascript code should be regenerated (from the Blockly workspace);
+                    // and the xml editor should be refilled (from the Blockly workspace)
                     if (tab.id === "node-blocky-tab-javascript") {
+                        fillAceXMLEditor(node);
                         fillAceEditor(node);
                     }
                     if (tab.id === "node-blocky-tab-xml") {
