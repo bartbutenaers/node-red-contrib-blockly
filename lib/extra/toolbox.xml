@@ -22,6 +22,12 @@
         </shadow>
       </value>
     </block>
+    <block type="misc_jsmultiline">
+      <value name= "STATEMENT">
+        <shadow type="field_multilinetext">
+        </shadow>
+      </value>
+    </block>
     <block type="misc_jsexpress">
       <value name="STATEMENT">
         <shadow type="text">
