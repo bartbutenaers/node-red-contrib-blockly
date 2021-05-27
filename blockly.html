@@ -47,7 +47,7 @@
         // All toolbox.xml files will be loaded and combined into the XML document.  
         // As soon as the XML document is complete, the toolbox will be displayed.
         // In e.g. Chrome you can skip the third parameter, but e.g. in Firefox you need at least pass a null.
-        var toolboxXmlDocument = document.implementation.createDocument("http://www.w3.org/1999/xhtml", "html", null);
+        var toolboxXmlDocument = document.implementation.createDocument("https://developers.google.com/blockly/xml", "xml", null);
     }
     else {
         console.error('This browser cannot create a Blockly toolbox XML document (via createDocument)');
@@ -57,12 +57,13 @@
         // Load the xml toolbox files for all available blocks libraries, and combine those into a single toolbox.
         // Remark: the categories are added in the same order as they are loaded here ...
         [
-            "blocky/js/lib/basic/toolbox.xml",
-            "blocky/js/lib/datetime/toolbox.xml",
-            "blocky/js/lib/extra/toolbox.xml",        
-            "blocky/js/lib/buffer/toolbox.xml",
+            "blocky/js/lib/nodered/toolbox.xml",
             "blocky/js/lib/json/toolbox.xml",
-            "blocky/js/lib/nodered/toolbox.xml"
+            "blocky/js/lib/buffer/toolbox.xml",
+            "blocky/js/lib/datetime/toolbox.xml",       
+            "blocky/js/lib/basic/toolbox.xml",
+            "blocky/js/lib/extra/toolbox.xml"
+            //"blocky/js/lib/bas/toolbox.xml",
         ].forEach(function(filePath) {
             var request = new XMLHttpRequest();
             request.open('GET', filePath, false);  // `false` makes the request synchronous
@@ -71,11 +72,13 @@
             if (request.readyState == 4 && request.status == 200) {
                 // Get all categories in the new XML document
                 var newCategories = request.responseXML.getElementsByTagName("category");
-
+		
                 // Iterate backwards since categories can be moved away from this list (to the toolbox)
-                for (i = newCategories.length - 1; i >= 0; --i) {
-                    var newCategory = newCategories[i];
+                // 2021-03-25 Jeff: changed to while-loop to accommadate nested categories
+                while (newCategories.length > 0) {
+                    var newCategory = newCategories[0];
                     
+
                     // Get the category name
                     var name = newCategory.getAttribute('name');
 
@@ -84,8 +87,8 @@
                     var existingCategory = toolboxXmlDocument.getElementsByName(name);
                     
                     if (existingCategory.length === 0) {
-                        // If the new category didn't exist yet in the toolbox, move the entire new category to the start of the toolbox
-                        toolboxXmlDocument.documentElement.insertBefore(newCategory, toolboxXmlDocument.documentElement.firstChild);
+                        // If the new category didn't exist yet in the toolbox, append the entire new category to the toolbox
+                        toolboxXmlDocument.documentElement.appendChild(newCategory);
                     }
                     else {
                         var newBlocks = newCategory.children;
@@ -95,7 +98,10 @@
                         while(newBlocks.length > 0) {
                             existingCategory[0].appendChild(newBlocks[0]);
                         }
+			// Remove the category from newCategories so the next loop is clean
+			newCategory.remove();
                     }
+
                 }
             }
             else {
@@ -110,9 +116,6 @@
 
 <script type="text/javascript">
     function createWorkspace(node, workspaceXml) {
-        // Convert the toolbox xml document to an xml string.
-        var toolboxXmlString = new XMLSerializer().serializeToString(toolboxXmlDocument.documentElement);
-    
         // Create the workspace
         node.workspace = Blockly.inject('blocklyDiv', {
             grid: {
@@ -121,7 +124,7 @@
                 colour: '#ccc',
                 snap: true
             },     
-            toolbox: toolboxXmlString,
+            toolbox: toolboxXmlDocument.firstElementChild,
             zoom: {
                 controls: true, 
                 wheel: true
@@ -143,6 +146,7 @@
         
         // Make sure the workspace is sized correctly in the beginning
         resize(node);
+        node.workspace.scrollCenter();
     }
     
     function cleanup(node) {
@@ -153,7 +157,7 @@
         // This means we can empty the clipboard (by setting it to null).  However we will store first a copy of their clipboard 
         // (as xml string) into our own custom clipboard, which we CAN use to paste in another workspace.
         if (Blockly.clipboardXml_) {
-            Blockly.customClipboard = '<xml xmlns="http://www.w3.org/1999/xhtml">' + Blockly.Xml.domToPrettyText(Blockly.clipboardXml_) + '</xml>';
+            Blockly.customClipboard = '<xml xmlns="https://developers.google.com/blockly/xml">' + Blockly.Xml.domToPrettyText(Blockly.clipboardXml_) + '</xml>';
             Blockly.clipboardXml_ = null;
         }
                             
@@ -165,7 +169,12 @@
         // Cleanup the ACE editor
         node.aceEditor.destroy();
         delete node.aceEditor;
-             
+
+        // Jeff: Cleanup the XML editor 04/18/2021
+        node.aceXMLEditor.destroy();
+        delete node.aceXMLEditor;
+
+
         // Cleanup the Blockly workspace
         node.workspace.dispose(); 
         delete node.workspace;
@@ -197,6 +206,7 @@
             // Make sure the Blockly svg area is resized according the DIV element.
             // Blocky itself also calls svgResize underneath, but only when e.g. the toolbox changes size)
             Blockly.svgResize(node.workspace);
+            
         }
     };
     
@@ -215,13 +225,41 @@
         node.aceEditor.clearSelection(); 
     }
 
+
+    function fillAceXMLEditor(node) {
+        // Jeff: fill aceXMLEditor 04/18/2021
+        // Store the number of output ports in Blockly,  so the blocks can take that number into account (if required)
+        //Blockly.nodeOutputs = $("#node-input-outputs").val();
+
+        // Generate JavaScript code from the workspace content
+        var dom = Blockly.Xml.workspaceToDom(node.workspace);
+        var loadedxml = Blockly.Xml.domToPrettyText(dom);
+        // Show the generated XML code in the Ace editor
+        node.aceXMLEditor.setValue(loadedxml);
+
+        // After setValue all code will be selected otherwise
+        node.aceXMLEditor.clearSelection();
+    }
+
+
+    function reloadBlockly(node) {
+        // Jeff: fill aceXMLEditor 04/18/2021
+        var loadedXml = node.aceXMLEditor.getValue();
+        //var dom = Blockly.Xml.textToDom(loadedXml);
+        //node.workspace.clear();
+        //Blockly.Xml.domToWorkspace(dom, node.workspace);
+        node.workspace.dispose();
+        createWorkspace(node, loadedXml);
+    }
+
+
     RED.nodes.registerType('Blockly',{
         category: 'function',
         color: '#FFAAAA',       
         defaults: {
             language: {value:"en"},
             func: {value:"\nreturn msg;"}, // The generated Javascript code
-            workspaceXml: {value:""},
+            workspaceXml: {value:"<xml xmlns=\"https:\/\/developers.google.com\/blockly\/xml\"><\/xml>"}, // Needed for Blockly version "5.20210325.1". Can't be empty
             outputs: {value:1}, // Standard field that will be used by Node-Red to draw N output ports in the flow editor
             name: {value:""}
         },
@@ -294,39 +332,11 @@
                     }
                 }
             });
-            
-            // Show two tabsheets
-            var tabs = RED.tabs.create({
-                id: "node-blocky-tabs",
-                onchange: function(tab) {
-                    // Show only the content (i.e. the children) of the selected tabsheet, and hide the others
-                    $("#node-blocky-tabs-content").children().hide();
-                    $("#" + tab.id).show();
-                    
-                    // Every time the ace editor is displayed, the Javascript code should be regenerated (from the Blockly workspace)
-                    if (tab.id === "node-blocky-tab-javascript") {
-                        fillAceEditor(node);
-                    }
-                    
-                    // Recalculate the size of the editor which will be displayed. 
-                    // Indeed due to the previous tab switch, the (invisible) editor will have size 0x0...
-                    resize(node);
-                }
-            });
-            tabs.addTab({
-                id: "node-blocky-tab-workspace",
-                label: "Editor"
-            });
-            tabs.addTab({
-                id: "node-blocky-tab-javascript",
-                label: "Generated Javascript"
-            });
-            
-            // Need to wait for it to be rendered before the sizing of the tabs can be properly calculated
-            setTimeout(function() {
-                tabs.resize();
-            }, 0);
-            
+
+
+            // Jeff: Moved to here for initializing Blockly workspace before creating tabs. It will be reloaded when the tabs created.
+            createWorkspace(node, node.workspaceXml);
+
             node.aceEditor = RED.editor.createEditor({
                 id: 'aceDiv',
                 mode: 'ace/mode/javascript',
@@ -346,15 +356,76 @@
                     clearInterval: true
                 }
             });
-            
-            node.aceEditor.setFontSize(14); 
-            
+            node.aceEditor.setFontSize(14);             
             // It is not allowed to change the generated Javascript code.
             // Indeed we cannot generate an updated Blockly workspace, starting from the updated Javascript code.
             // By having a read-only Javascript editor, we can make sure that the workspace and Js code are always in sync ...
             node.aceEditor.textInput.setReadOnly(true);
 
-            createWorkspace(node, node.workspaceXml);
+
+            // Jeff: create XML editor
+            node.aceXMLEditor = RED.editor.createEditor({
+                id: 'aceXMLDiv',
+                mode: 'ace/mode/xml',
+                value: node.workspaceXml,
+            });
+            node.aceXMLEditor.setFontSize(12);
+            node.aceXMLEditor.textInput.setReadOnly(true);
+            // Jeff: invoke when either fillAceXMLEditor triggered or loaded XML from library
+            node.aceXMLEditor.on("change", function () {
+                var loadedXml = node.aceXMLEditor.getValue();
+                // Jeff: it seems everytime anything loads to the editor it removes the previous contents and then inject the new contents.
+                // so there are two changes. 
+                if (loadedXml != "") {
+                    node.workspace.dispose();
+                    Blockly.nodeOutputs = parseInt($("#node-input-outputs")[0].value);
+                    createWorkspace(node, loadedXml);
+                }
+            });
+
+
+
+            // Show three tabsheets
+            var tabs = RED.tabs.create({
+                id: "node-blocky-tabs",
+                onchange: function(tab) {
+                    // Show only the content (i.e. the children) of the selected tabsheet, and hide the others
+                    $("#node-blocky-tabs-content").children().hide();
+                    $("#" + tab.id).show();
+
+                    // Every time the ace editor is displayed, the Javascript code should be regenerated (from the Blockly workspace);
+                    // and the xml editor should be refilled (from the Blockly workspace)
+                    if (tab.id === "node-blocky-tab-javascript") {
+                        fillAceXMLEditor(node);
+                        fillAceEditor(node);
+                    }
+                    if (tab.id === "node-blocky-tab-xml") {
+                        fillAceXMLEditor(node);
+                    }
+                    if (tab.id === "node-blocky-tab-workspace") {
+                        reloadBlockly(node);
+                    }
+                }
+            });
+            tabs.addTab({
+                id: "node-blocky-tab-workspace",
+                label: "Editor"
+            });
+            tabs.addTab({
+                id: "node-blocky-tab-javascript",
+                label: "Generated Javascript"
+            });
+            tabs.addTab({
+                id: "node-blocky-tab-xml",
+                label: "Generated XML"
+            });
+
+            // Need to wait for it to be rendered before the sizing of the tabs can be properly calculated
+            setTimeout(function() {
+                tabs.resize();
+            }, 0);
+       
+
             
             $("#node-input-language").change(function () {         
                 // Make sure the Blockly datetime_convert_from_date block is always aware about the number of outputs
@@ -377,7 +448,7 @@
                         // To avoid a page reload, build the workspace again (based on the original workspace xml).
                         // See https://github.com/google/blockly/issues/701
                         var dom = Blockly.Xml.workspaceToDom(node.workspace);
-                        var workspaceXml = Blockly.Xml.domToText(dom);
+                        var workspaceXml = Blockly.Xml.domToPrettyText(dom);
                         
                         // Destroy the current workspace
                         node.workspace.dispose();
@@ -393,11 +464,13 @@
             RED.library.create({
                 url:"blockly_functions", // where to get the data from
                 type:"Blockly", // the type of object the library is for
-                editor:node.aceEditor, // the field name the main text body goes to
-                mode:"ace/mode/javascript",
+                // Jeff: load XML to aceXMLEditor instead aceEditor
+                editor:node.aceXMLEditor, // the field name the main text body goes to
+                mode:"ace/mode/xml",
                 fields:['name','outputs']
             });
             
+
             // Display a tip if the Node-Red version is below 0.19.0
             var versionParts = RED.settings.version.split('.');
             if (versionParts[0] == 0 && versionParts[1] < 19) {
@@ -406,23 +479,132 @@
                 $("#tip-version").hide();
             }
             
-            /* 
-            // The expand button is not working correctly yet ...
-            $("#node-function-expand-js").click(function(e) {
-                e.preventDefault();
-                var value = node.aceEditor.getValue();
-                RED.editor.editJavaScript({
-                    value: value,
-                    cursor: node.aceEditor.getCursorPosition(),
-                    complete: function(v,cursor) {
-                        node.aceEditor.setValue(v, -1);
-                        setTimeout(function() {
-                            node.aceEditor.textInput.setReadOnly(true);
-                            node.aceEditor.focus();
-                        },300);
+
+            //Jeff: called when the expand button clicked
+            var expandTemplate = 
+            '<!-- Blockly editor -->'+
+            '<div id="blocklyArea" style="width: 100%; height: 100%; min-height:350px;">'+
+                '<div id="blocklyDiv"></div>'+
+            '</div>'+
+            '<div id="jsArea" class="form-row node-text-editor-row" style="width: 100%; height: 100%; min-height:350px; display: none;">'+
+                '<div id="aceDiv" style="width: 100%; height: 100%;"></div>'+
+            '</div>';
+
+            var expandBlocklyHandler = function() {
+                return function(e) {
+                    e.preventDefault();
+                    RED.view.state(RED.state.EDITING);
+                    var trayOptions = {
+                        title: "Blockly Workspace",
+                        width: "Infinity",
+                        buttons: [
+                            {
+                                id: "node-showBlocklyArea",
+                                text: "Back to Blockly Editor",
+                                click: function() {
+                                    $("#jsArea").css("display","none");
+                                    $("#blocklyArea").css("display","block");
+                                    $("#node-showJSArea").css("display","block");
+                                    $("#node-showBlocklyArea").css("display","none");
+                                    var dom = Blockly.Xml.workspaceToDom(node.workspace);
+                                    var loadedXml = Blockly.Xml.domToPrettyText(dom);
+                                    node.workspace.dispose();
+                                    createWorkspace(node, loadedXml);
+                                }
+                            },
+                            {
+                                id: "node-showJSArea",
+                                text: "See Generated Javascript",
+                                click: function() {
+                                    $("#blocklyArea").css("display","none");
+                                    $("#jsArea").css("display","block");
+                                    $("#node-showBlocklyArea").css("display","block");
+                                    $("#node-showJSArea").css("display","none");
+                                    Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
+                                    var javascript = Blockly.JavaScript.workspaceToCode(node.workspace);
+                                    node.jseditor.setValue(javascript);
+                                    node.jseditor.clearSelection(); 
+                                }
+                            },
+                            {
+                                id: "node-dialog-cancel",
+                                text: RED._("common.label.cancel"),
+                                click: function() {
+                                    var loadedXml = node.loadedXml;
+                                    node.workspace.dispose();
+                                    //Jeff: re-create workspace after RED.tray.close finished
+                                    RED.tray.close(() => createWorkspace(node, loadedXml));
+                                }
+                            },
+                            {
+                                id: "node-dialog-ok",
+                                text: RED._("common.label.done"),
+                                class: "primary",
+                                click: function() {
+                                    var dom = Blockly.Xml.workspaceToDom(node.workspace);
+                                    var loadedXml = Blockly.Xml.domToPrettyText(dom);
+                                    node.workspace.dispose();
+                                    RED.tray.close(() => createWorkspace(node, loadedXml));
+                                }
+                            }
+                        ],
+                        resize: function(dimensions) {
+                            var height = $("#blocklyArea").height();
+                            var width = $("#blocklyArea").width();
+                            $("#blocklyDiv").css("height",height+"px");
+                            $("#blocklyDiv").css("width",width+"px");
+                            Blockly.svgResize(node.workspace);
+                            node.workspace.scrollCenter();
+                        },
+                        open: function(tray) {
+                            $("#node-showBlocklyArea").css({"float":"left","display":"none"});
+                            $("#node-showJSArea").css("float","left");
+                            var trayBody = tray.find('.red-ui-tray-body');
+                            //var blocklyAreaContent = $('<div id="blocklyArea" style="width: 100%; height: 100%; min-height:700px;"></div>').appendTo(trayBody);
+                            //var blocklyDivContent = $('<div id="blocklyDiv"></div>').appendTo(blocklyAreaContent);
+                            $(expandTemplate).appendTo(trayBody);
+                            //Jeff: load workspace to a temp XML
+                            var dom = Blockly.Xml.workspaceToDom(node.workspace);
+                            node.loadedXml = Blockly.Xml.domToPrettyText(dom);
+                            node.workspace.dispose();
+                            createWorkspace(node, node.loadedXml);
+                            node.jseditor = RED.editor.createEditor({
+                                id: "aceDiv",
+                                mode: 'ace/mode/javascript',
+                                value: "",
+                                globals: {
+                                    msg:true,
+                                    context:true,
+                                    RED: true,
+                                    util: true,
+                                    flow: true,
+                                    global: true,
+                                    console: true,
+                                    Buffer: true,
+                                    setTimeout: true,
+                                    clearTimeout: true,
+                                    setInterval: true,
+                                    clearInterval: true
+                                }
+                            });
+                            node.jseditor.setFontSize(14); 
+                            node.jseditor.textInput.setReadOnly(true);
+                        },
+                        close: function() {
+                            delete node.loadedXml;   
+                            node.jseditor.destroy();
+                            delete node.jseditor;
+                        },
+                        show: function() {
+
+                        }
                     }
-                })
-            })*/
+                    RED.tray.show(trayOptions);
+                }
+            }
+
+            //Jeff: expand Blockly editing area
+            $("#blocklyExpandDiv").on("click", expandBlocklyHandler());
         },
         oneditsave: function() {
             var node = this;
@@ -438,8 +620,8 @@
             // Store the workspace content as an xml string (which will produce a minimal ugly string).
             // To obtain a more readable (but larger) string, use Blockly.Xml.domToPrettyText instead.
             var dom = Blockly.Xml.workspaceToDom(node.workspace);
-            node.workspaceXml = Blockly.Xml.domToText(dom);
-               
+            node.workspaceXml = Blockly.Xml.domToPrettyText(dom);
+
             cleanup(node);
         },
         oneditcancel: function() {
@@ -449,21 +631,23 @@
         },
         oneditresize: function (size) {
             var node = this;
-            
-            // Resize Blockly to fill the available space on screen
-            resize(node);
+            var height = $("#blocklyArea").height();
+            var width = $("#blocklyArea").width();
+            $("#blocklyDiv").css("height",height+"px");
+            $("#blocklyDiv").css("width",width+"px");
+            Blockly.svgResize(node.workspace);
+            //node.workspace.scrollCenter();
         }
     });
 </script>
 
-<script type="text/x-red" data-template-name="Blockly">
+<script type="text/html" data-template-name="Blockly">
     <div class="form-row">
         <label for="node-input-name"><i class="icon-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
     </div>
-    </br>
     <div class="form-row">
-        <!-- Two tabsheets -->
+        <!-- Three tabsheets -->
         <ul style="background: #fff; min-width: 600px; margin-bottom: 20px;" id="node-blocky-tabs"></ul>
     </div>
     <div id="node-blocky-tabs-content" style="min-height: 350px">
@@ -472,6 +656,9 @@
                 <!-- Blockly editor -->
                 <div id="blocklyArea" style="width: 100%; height: 450px; min-height:350px;">
                     <div id="blocklyDiv"></div>
+                    <div style="position: absolute; left:188px; bottom: calc(100% - 110px); z-index: 99;">
+                        <button id="blocklyExpandDiv" class="red-ui-button red-ui-button-small"><i class="fa fa-expand"></i></button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -482,8 +669,15 @@
                 <div id="aceDiv" style="width: 100%; height: 450px; min-height:350px;"></div>
             </div>
         </div>
+        <div id="node-blocky-tab-xml">
+            <div class="form-row node-text-editor-row">
+                <!-- <div style="position: absolute; right:0; bottom:calc(100% + 3px);"><button id="node-function-expand-js" class="editor-button editor-button-small"><i class="fa fa-expand"></i></button></div>-->
+                <!-- Ace XML editor for generated XML code -->
+                <div id="aceXMLDiv" style="width: 100%; height: 450px; min-height:350px;">
+                </div>
+            </div>
+        </div>
     </div>
-    </br>
     <div class="form-row">
         <label for="node-input-outputs"><i class="fa fa-random"></i> Outputs</label>
         <input id="node-input-outputs" style="width: 20px;" value="1">
@@ -539,7 +733,7 @@
     </br>
 </script>
 
-<script type="text/x-red" data-help-name="Blockly">
+<script type="text/html" data-help-name="Blockly">
     <p>A visual programming interface, to make programming a function node easier. Just drag and drop <a target="_blank" href="https://developers.google.com/blockly/">Blockly</a> 
     blocks to build your program logic, without having to write the Javascript code yourself.  The generated javascript code will be run against the messages being received by the node.</p>
     <p>The messages are passed in as a JavaScript object called <code>msg</code>.</p>
