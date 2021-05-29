@@ -35,6 +35,7 @@
     <block type="node_flow_memory"></block>
     <block type="node_global_memory"></block>
     <block type="node_context_memory"></block>
+    <block type="node_env"></block>
     <block type="node_return_message">
       <value name="MESSAGE_INPUT">
         <shadow type="node_msg"></shadow>
@@ -60,6 +61,7 @@
       </value> 
     </block>
     <block type="node_properties"></block>
+    <block type="node_done"></block>
     <block type="node_close"></block>
   </category>
 </xml>
