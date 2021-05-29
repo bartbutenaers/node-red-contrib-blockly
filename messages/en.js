@@ -33,6 +33,7 @@ Blockly.Msg.NODE_PROPERTIES = "get node %1";
 Blockly.Msg.NODE_PROPERTIES_TOOLTIP = "Get the specified node property via the Node-Red function API.";
 Blockly.Msg.NODE_PROPERTIES_ID = "identifier";
 Blockly.Msg.NODE_PROPERTIES_NAME = "name";
+Blockly.Msg.NODE_PROPERTIES_OUTPUT_COUNT = "output count";
 Blockly.Msg.NODE_FLOW_MEMORY = "flow";
 Blockly.Msg.NODE_FLOW_MEMORY_TOOLTIP = "Access the data in the Node-Red flow memory.";
 Blockly.Msg.NODE_CONTEXT_MEMORY = "(node)context";
@@ -49,6 +50,10 @@ Blockly.Msg.NODE_RETURN_TOOLTIP = "Return to stop processing (without sending a 
 Blockly.Msg.NODE_CLOSE = "On node closed";
 Blockly.Msg.NODE_CLOSE_1 = "%1";
 Blockly.Msg.NODE_CLOSE_TOOLTIP = "Statements that should be executed when the node is being closed.";
+Blockly.Msg.NODE_DONE = "message done";
+Blockly.Msg.NODE_DONE_TOOLTIP = "Handling the message has been finished.";
+Blockly.Msg.NODE_ENV = "environment";
+Blockly.Msg.NODE_ENV_TOOLTIP = "Access the value of an environment variable.";
 
 // =========================================================================================
 // Buffer blocks
