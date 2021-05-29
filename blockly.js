@@ -19,6 +19,7 @@
 // This means the code should be copied again, each time the function node changes.
 // That can be the case e.g. when the function node's API changes.
 // Some changes made to the original 80-function.js file:
+// - At the top, the 'path' and 'fs' npm libraries have been required.
 // - At the end of this file, a section has been added about RED.httpAdmin.get.
 // - At the end of this file, a blockly functions library has been specified.
 // - The function name is changed to BlocklyNode.
@@ -30,7 +31,9 @@
 module.exports = function(RED) {
     var util = require("util");
     var vm = require("vm");
-
+    var path = require("path");
+    var fs = require("fs");
+    
     function sendResults(node,send,_msgid,msgs,cloneFirstMessage) {
         if (msgs == null) {
             return;
@@ -497,16 +500,52 @@ module.exports = function(RED) {
     RED.nodes.registerType("Blockly",BlocklyNode);
     RED.library.register("blockly_functions");
      
-    // Make all the static resources from this node public available (i.e. third party JQuery plugin tableHeadFixer.js).
-    RED.httpAdmin.get('/blocky/js/*', function(req, res){
-        var options = {
-            root: __dirname,
-            dotfiles: 'deny'
-        };
+    // -------------------------------------------------------------------------------------------------
+    // Determining the path to the files in the dependent blockly module once.
+    // See https://discourse.nodered.org/t/use-files-from-dependent-npm-module/17978/5?u=bartbutenaers
+    // -------------------------------------------------------------------------------------------------
+    var blocklyModulePath = require.resolve("blockly");
+    
+    // For example suppose the require.resolved results in blocklyModulePath = /home/pi/.node-red/node_modules/blockly/index.js
+    // All the requested libraries will be located in the same folder as the index.js file.
+    blocklyModulePath = blocklyModulePath.replace("index.js", "");
+
+    if (!fs.existsSync(blocklyModulePath)) {
+        console.log("The blockly npm library path " + blocklyModulePath + " does not exist");
+        blocklyModulePath = null;
+    }
+    
+    // -------------------------------------------------------------------------------------------------
+    // Determining the path to the files in the dependent @blockly/field-date module once.
+    // See https://discourse.nodered.org/t/use-files-from-dependent-npm-module/17978/5?u=bartbutenaers
+    // -------------------------------------------------------------------------------------------------
+    // The date picker widget is inside a separate npm package
+    // The require.resolve wiill result in fieldDataModulePath = /home/pi/.node-red/node_modules/@blockly/field-date/dist/date_compressed.js
+    var fieldDataModulePath = require.resolve("@blockly/field-date");
+
+    if (!fs.existsSync(fieldDataModulePath)) {
+        console.log("The blockly npm library path " + fieldDataModulePath + " does not exist");
+        fieldDataModulePath = null;
+    } 
+     
+    // Make all the static resources from this node public available (i.e. files from the blockly npm package).
+    RED.httpAdmin.get('/blocky/js/*', function(req, res) {
+        var requestedFilePath;
         
         res.set('Cache-Control', 'public, max-age=31557600, s-maxage=31557600'); // 1 year
+        
+        if (req.params[0].startsWith("npm2")) {
+            requestedFilePath = fieldDataModulePath;
+        }
+        else if (req.params[0].startsWith("npm")) {
+            var requestedFileName = req.params[0].replace("npm", "");
+            requestedFilePath = path.join(blocklyModulePath, requestedFileName);
+        }
+        else {
+            requestedFilePath = path.join(__dirname, req.params[0]);
+        }
        
-        // Send the requested file to the client (in this case it will be tableHeadFixer.js)
-        res.sendFile(req.params[0], options)
+        // Send the requested file to the client
+        res.sendFile(requestedFilePath)
     });
 }
