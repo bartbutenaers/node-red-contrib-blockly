@@ -32,7 +32,7 @@
     "node-red"     : {
         "nodes": {
             "blockly": "blockly.js",
-            "blockly-config": blockly_config.js"
+            "blockly-config": "blockly_config.js"
         }
     }
 }
