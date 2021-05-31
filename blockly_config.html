@@ -1,0 +1,89 @@
+<!--
+  Copyright 2021, Bart Butenaers
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  http://www.apache.org/licenses/LICENSE-2.0
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<script type="text/javascript">
+    RED.nodes.registerType('blockly-config',{
+        category: 'config',
+        color: '#ff758d',
+        defaults: {
+            showTrashcan: {value: true},
+            allowComments: {value: true},
+            showZoomControl: {value: true},
+            toolboxPosition: {value: "left"},
+            renderer: {value: "geras"},
+            name: {value: ""}
+        },        
+        inputs:1,
+        outputs:1,
+        icon: "font-awesome/fa-cog",
+        label: function() {
+            return this.name || "Blockly config";
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="blockly-config">
+    <div class="form-row">
+        <label for="node-config-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-config-input-name" placeholder="Name">
+    </div>
+    <br>
+    <div class="form-row">
+        <label for='node-config-input-showTrashcan'><i class='fa fa-trash'></i> Trashcan</label>
+        <input type='checkbox' id='node-config-input-showTrashcan' style='width:auto ;border:none; vertical-align:baseline;' placeholder='0'>
+        <span for='node-config-input-showTrashcan'> Show trashcan icon in workspace</span>
+    </div>
+    <div class="form-row">
+        <label for='node-config-input-allowComments'><i class='fa fa-comment-o '></i> Comment</label>
+        <input type='checkbox' id='node-config-input-allowComments' style='width:auto ;border:none; vertical-align:baseline;' placeholder='0'>
+        <span for='node-config-input-allowComments'> Allow comments on blocks</span>
+    </div>    
+    <div class="form-row">
+        <label for='node-config-input-showZoomControl'><i class='fa fa-binoculars'></i> Zoom</label>
+        <input type='checkbox' id='node-config-input-showZoomControl' style='width:auto ;border:none; vertical-align:baseline;' placeholder='0'>
+        <span for='node-config-input-showZoomControl'> Show zoom control icons in workspace</span>
+    </div>        
+    <div class="form-row">
+        <label for="node-config-input-toolboxPosition"><i class="fa fa-list-alt"></i> Toolbox</label>
+        <select id="node-config-input-toolboxPosition">
+            <option value="left">Left</option> 
+            <option value="right">Right</option>
+            <option value="top">Top</option>
+        </select>
+    </div> 
+    <div class="form-row">
+        <label for="node-config-input-renderer"><i class="fa fa-paint-brush"></i> Renderer</label>
+        <select id="node-config-input-renderer">
+            <option value="geras">Geras</option> 
+            <option value="thrasos">Thrasos</option>
+            <option value="zelos">Zelos</option>
+        </select>
+    </div> 
+</script>
+
+<script type="text/html" data-help-name="blockly-config">
+    <p><strong>Show trashcan icon in workspace:</strong><br/>
+    If activated, a trash can icon will be displayed in the Blockly workspace.</p>
+    <p><strong>Allow comments on blocks:</strong><br/>
+    If activated, comments can be added to a block (via the right-click context menu).</p>
+    <p><strong>Show zoom control icons in workspace:</strong><br/>
+    If activated, zoom control icons will be displayed in the Blockly workspace.</p>
+    <p><strong>Toolbox:</strong><br/>
+    Specify the location of the toolbox in the workspace (left, right or top).</p>
+    <p><strong>Renderer:</strong><br/>
+    Specify a renderer to determine how the blocks need to be drawed visually in the workspace:
+    <ul>
+        <li><i>Geras:</i> The default Blockly look and feel.</li>
+        <li><i>Thrasos:</i></li>
+        <li><i>Zelos:</i> A Scratch-like look and feel.</li>
+    </ul></p>
+</script>

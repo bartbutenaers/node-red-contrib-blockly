@@ -117,7 +117,44 @@
 
 <script type="text/javascript">
     function createWorkspace(node, workspaceXml) {
-        // Create the workspace
+        // Default settings in case no config node has been specified
+        var showTrashcan     = true;
+        var allowComments    = true;
+        var showZoomControl  = true;
+        var horizontalLayout = false;
+        var toolboxPosition  = "start";
+        var renderer         = "geras";
+ debugger;       
+        // When a config node has been specified, then use the settings from that node
+        var configNodeId = $("#node-input-blocklyConfig").val() || {};
+        if (configNodeId && configNodeId !== "_ADD_") {
+            var configNode = RED.nodes.node(configNodeId);
+            
+            if (configNode) {
+                showTrashcan    = configNode.showTrashcan;
+                allowComments   = configNode.allowComments;
+                showZoomControl = configNode.showZoomControl;
+                renderer        = configNode.renderer;
+ 
+                // The toolboxPosition from the config screen determines two separate blockly settings!
+                switch(configNode.toolboxPosition) {
+                    case "left":
+                        horizontalLayout = false;
+                        toolboxPosition  = "start";                    
+                        break;
+                    case "right":
+                        horizontalLayout = false;
+                        toolboxPosition  = "end";   
+                        break;
+                    case "top":
+                        horizontalLayout = true;
+                        toolboxPosition  = "start";   
+                        break;
+                }
+            }
+        }
+
+        // Create the workspace (with the specified settings)
         node.workspace = Blockly.inject('blocklyDiv', {
             grid: {
                 spacing: 25,
@@ -127,13 +164,16 @@
             },     
             toolbox: toolboxXmlDocument.firstElementChild,
             zoom: {
-                controls: true, 
+                controls: showZoomControl, 
                 wheel: true
             },
-            trashcan: false,
-            comments: true,
+            renderer: renderer,
+            trashcan: showTrashcan,
+            comments: allowComments,
             disable: true,
-            scrollbars: true
+            scrollbars: true,
+            horizontalLayout: horizontalLayout,
+            toolboxPosition : toolboxPosition 
         });
         
         // The 'msg' variable represents the parameter from the Node-Red 'input' event.
@@ -261,7 +301,8 @@
             language: {value:"en"},
             func: {value:"\nreturn msg;"}, // The generated Javascript code
             workspaceXml: {value:"<xml xmlns=\"https:\/\/developers.google.com\/blockly\/xml\"><\/xml>"}, // Needed for Blockly version "5.20210325.1". Can't be empty
-            outputs: {value:1}, // Standard field that will be used by Node-Red to draw N output ports in the flow editor
+            outputs: {value:1}, // Standard field that will be used by Node-Red to draw N output ports in the flow editor,
+            blocklyConfig: {value:"", type: "blockly-config", required: false},
             name: {value:""}
         },
         inputs:1,
@@ -272,7 +313,7 @@
         },
         oneditprepare: function() {
             var node = this;
-            
+
             // Blockly has an onKeyDown handler, that handles a number of key combinations (ctrl-'C' to copy the selected
             // blocks, 'D' to delete the selected blocks, ctrl-'Z' to undo the last action).  However afterwards the keydown event
             // is passed to Node-Red which cannot handle it, resulting in errors in the log.
@@ -606,6 +647,12 @@
 
             //Jeff: expand Blockly editing area
             $("#blocklyExpandDiv").on("click", expandBlocklyHandler());
+     
+            // When a new config is selected, a new Blockly workspace should be drawn (with the new config settings)        
+            $("#node-input-blocklyConfig").on('change', function() {
+            var test = this.value;
+                reloadBlockly(node);
+            });
         },
         oneditsave: function() {
             var node = this;
@@ -644,9 +691,15 @@
 
 <script type="text/html" data-template-name="Blockly">
     <div class="form-row">
-        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name" style="width:70%;">
     </div>
+    <div class="form-row">
+        <label for="node-input-blocklyConfig"><i class="fa fa-cog"></i> Config</label>
+        <!-- Node-Red will replace this input element by a drop-down (with available OnVif device configurations) -->
+        <input type="text" id="node-input-blocklyConfig">
+    </div>
+    </br>
     <div class="form-row">
         <!-- Three tabsheets -->
         <ul style="background: #fff; min-width: 600px; margin-bottom: 20px;" id="node-blocky-tabs"></ul>
@@ -657,7 +710,7 @@
                 <!-- Blockly editor -->
                 <div id="blocklyArea" style="width: 100%; height: 450px; min-height:350px;">
                     <div id="blocklyDiv"></div>
-                    <div style="position: absolute; left:188px; bottom: calc(100% - 110px); z-index: 99;">
+                    <div style="position: absolute; left:188px; bottom: calc(100% - 172px); z-index: 99;">
                         <button id="blocklyExpandDiv" class="red-ui-button red-ui-button-small"><i class="fa fa-expand"></i></button>
                     </div>
                 </div>
