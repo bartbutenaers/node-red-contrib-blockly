@@ -112,6 +112,12 @@
     function createWorkspace(node, workspaceXml) {
         // Convert the toolbox xml document to an xml string.
         var toolboxXmlString = new XMLSerializer().serializeToString(toolboxXmlDocument.documentElement);
+      
+        // When the scale is stored - the previous time the workspace was displayed - we will restore that scale.
+        if (!node.scale) {
+            // Use default scale like a user has pressed the zoom-out button once (instead of default 1.0)
+            node.scale = 0.8333;
+        }
     
         // Create the workspace
         node.workspace = Blockly.inject('blocklyDiv', {
@@ -124,9 +130,10 @@
             toolbox: toolboxXmlString,
             zoom: {
                 controls: true, 
-                wheel: true
+                wheel: true,
+                startScale: node.scale
             },
-            trashcan: false,
+            trashcan: true,
             comments: true,
             disable: true,
             scrollbars: true
@@ -142,7 +149,7 @@
         Blockly.Xml.domToWorkspace(dom, node.workspace); 
         
         // Make sure the workspace is sized correctly in the beginning
-        resize(node);
+        resize(node, true);
     }
     
     function cleanup(node) {
@@ -172,7 +179,7 @@
     }
     
     // See https://developers.google.com/blockly/guides/configure/web/resizable
-    function resize(node) {        
+    function resize(node, translate) {        
         // Resize the Blockly workspace, as soon as available (i.e. not when called from oneditprepare).
         if (node.workspace) {
             var blocklyArea = document.getElementById('blocklyArea');
@@ -193,10 +200,27 @@
             blocklyDiv.style.top = y + 'px';
             blocklyDiv.style.width = blocklyArea.offsetWidth + 'px';
             blocklyDiv.style.height = blocklyArea.offsetHeight + 'px';
+          
+            // Remember the original scroll location of the Blockly workspace
+            var metrics = Blockly.mainWorkspace.getMetrics();
+            var scrollX = (metrics.viewLeft - metrics.contentLeft );
+            var scrollY = (metrics.viewTop - metrics.contentTop );
             
             // Make sure the Blockly svg area is resized according the DIV element.
             // Blocky itself also calls svgResize underneath, but only when e.g. the toolbox changes size)
             Blockly.svgResize(node.workspace);
+          
+            // Restore the workspace translation, similar to the previous time the workspace was displayed
+            if (translate) {
+                if (node.scrollX && node.scrollY) {
+                    // Scroll to the position stored in this node (from the previous time this config screen was displayed)
+                    Blockly.mainWorkspace.scrollbar.set(node.scrollX, node.scrollY);
+                }
+            }
+            else {
+                // Scroll to the position just before the resizing
+                Blockly.mainWorkspace.scrollbar.set(scrollX, scrollY);
+            }
         }
     };
     
@@ -307,10 +331,11 @@
                     if (tab.id === "node-blocky-tab-javascript") {
                         fillAceEditor(node);
                     }
-                    
-                    // Recalculate the size of the editor which will be displayed. 
-                    // Indeed due to the previous tab switch, the (invisible) editor will have size 0x0...
-                    resize(node);
+                     else {
+                        // Recalculate the size of the editor which will be displayed. 
+                        // Indeed due to the previous tab switch, the (invisible) editor will have size 0x0...
+                        resize(node, false);
+                    }
                 }
             });
             tabs.addTab({
@@ -426,6 +451,14 @@
         },
         oneditsave: function() {
             var node = this;
+          
+            // Store the workspace zoom level, to restore it when the workspace is opened again
+            node.scale = node.workspace.scale;
+          
+            // Store the workspace translation (X and Y coordinates), to restore it when the workspace is opened again
+            var metrics = Blockly.mainWorkspace.getMetrics();
+            node.scrollX = (metrics.viewLeft - metrics.contentLeft );
+            node.scrollY = (metrics.viewTop - metrics.contentTop );
                         
             // Store the number of output ports in Blockly,  so the blocks can take that number into account (if required)
             //Blockly.nodeOutputs = $("#node-input-outputs").val(); 
@@ -450,8 +483,10 @@
         oneditresize: function (size) {
             var node = this;
             
-            // Resize Blockly to fill the available space on screen
-            resize(node);
+            if ($("#node-blocky-tab-workspace").is(':visible')) {
+                // Resize Blockly to fill the available space on screen
+                resize(node, false);
+            }
         }
     });
 </script>

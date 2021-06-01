@@ -92,6 +92,12 @@ Blockly.Msg.OBJECT_KEYS_TOOLTIP = "オブジェクトからすべてのキーを
 // =========================================================================================
 // Extra blocks
 // =========================================================================================
+Blockly.Msg.TEXT_SPECIAL_CHARACTER = "特殊文字 %1";
+Blockly.Msg.TEXT_SPECIAL_CHARACTER_TOOLTIP = "'\'を前につけることでエスケープされない特殊文字";
+Blockly.Msg.TEXT_SPECIAL_CHARACTER_LF = "復帰文字(LF) (\\n)";
+Blockly.Msg.TEXT_SPECIAL_CHARACTER_CR = "改行文字(CR) (\\r)";
+Blockly.Msg.TEXT_SPECIAL_CHARACTER_CRLF = "復帰改行文字(CRLF) (\\r\\n)";
+Blockly.Msg.TEXT_SPECIAL_CHARACTER_TAB = "タブ文字 (\\t)";
 Blockly.Msg.TIMER_CONDITIONAL = "%2 から %3 まで %1 秒ごとにくりかえす";
 Blockly.Msg.TIMER_CONDITIONAL_TOOLTIP = "条件が満たされるまで定期的にくりかえす";
 Blockly.Msg.TIMER_COUNTING = "%2 秒ごとに %3 %4 を %1 回 くりかえす";
