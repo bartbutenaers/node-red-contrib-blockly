@@ -62,9 +62,8 @@
             "blocky/js/lib/json/toolbox.xml",
             "blocky/js/lib/buffer/toolbox.xml",
             "blocky/js/lib/datetime/toolbox.xml",       
-            "blocky/js/lib/basic/toolbox.xml",
-            "blocky/js/lib/extra/toolbox.xml"
-            //"blocky/js/lib/bas/toolbox.xml",
+            "blocky/js/lib/extra/toolbox.xml",
+            "blocky/js/lib/basic/toolbox.xml"
         ].forEach(function(filePath) {
             var request = new XMLHttpRequest();
             request.open('GET', filePath, false);  // `false` makes the request synchronous
@@ -123,12 +122,11 @@
         var showZoomControl  = true;
         var horizontalLayout = false;
         var toolboxPosition  = "start";
-        var renderer         = "geras";
- debugger;       
+        var renderer         = "geras";          
+            
         // When a config node has been specified, then use the settings from that node
-        var configNodeId = $("#node-input-blocklyConfig").val() || {};
-        if (configNodeId && configNodeId !== "_ADD_") {
-            var configNode = RED.nodes.node(configNodeId);
+        if (node.selectedConfigNodeId && node.selectedConfigNodeId !== "_ADD_") {
+            var configNode = RED.nodes.node(node.selectedConfigNodeId);
             
             if (configNode) {
                 showTrashcan    = configNode.showTrashcan;
@@ -374,7 +372,11 @@
                     }
                 }
             });
-
+            
+            // Store the loaded config node id (temporarliy) in the node, because the blockly-node's config screen will
+            // be cleaned up before we navigate to the tray screen.  From then on the $("#node-input-blocklyConfig") won't be accessible anymore...
+            // Don't use node.blocklyConfig for this purpose, because that need to be unchanged in case the "Cancel" button is clicked.
+            node.selectedConfigNodeId = $("#node-input-blocklyConfig").val();
 
             // Jeff: Moved to here for initializing Blockly workspace before creating tabs. It will be reloaded when the tabs created.
             createWorkspace(node, node.workspaceXml);
@@ -476,7 +478,7 @@
                 // When another language is selected, then load the file with the translations in that language.
                 // Those translated texts will override the english text (which has been loaded at the start in the en.js file).
                 [
-                  "blocky/js/lib/basic/msg/js/" + this.value + ".js",
+                  "blocky/js/npm/msg/" + this.value + ".js",
                   "blocky/js/messages/" + this.value + ".js",
                 ].forEach(function(src) {
                     var script = document.createElement('script');
@@ -551,6 +553,7 @@
                                     var dom = Blockly.Xml.workspaceToDom(node.workspace);
                                     var loadedXml = Blockly.Xml.domToPrettyText(dom);
                                     node.workspace.dispose();
+
                                     createWorkspace(node, loadedXml);
                                 }
                             },
@@ -574,6 +577,7 @@
                                 click: function() {
                                     var loadedXml = node.loadedXml;
                                     node.workspace.dispose();
+
                                     //Jeff: re-create workspace after RED.tray.close finished
                                     RED.tray.close(() => createWorkspace(node, loadedXml));
                                 }
@@ -586,6 +590,7 @@
                                     var dom = Blockly.Xml.workspaceToDom(node.workspace);
                                     var loadedXml = Blockly.Xml.domToPrettyText(dom);
                                     node.workspace.dispose();
+
                                     RED.tray.close(() => createWorkspace(node, loadedXml));
                                 }
                             }
@@ -608,6 +613,7 @@
                             //Jeff: load workspace to a temp XML
                             var dom = Blockly.Xml.workspaceToDom(node.workspace);
                             node.loadedXml = Blockly.Xml.domToPrettyText(dom);
+
                             node.workspace.dispose();
                             createWorkspace(node, node.loadedXml);
                             node.jseditor = RED.editor.createEditor({
@@ -650,7 +656,11 @@
      
             // When a new config is selected, a new Blockly workspace should be drawn (with the new config settings)        
             $("#node-input-blocklyConfig").on('change', function() {
-            var test = this.value;
+                // Store the newly selected config node id (temporarliy) in the node, because the blockly-node's config screen will
+                // be cleaned up before we navigate to the tray screen.  From then on the $("#node-input-blocklyConfig") won't be accessible anymore...
+                // Don't use node.blocklyConfig for this purpose, because that need to be unchanged in case the "Cancel" button is clicked.
+                node.selectedConfigNodeId = $("#node-input-blocklyConfig").val();
+      
                 reloadBlockly(node);
             });
         },

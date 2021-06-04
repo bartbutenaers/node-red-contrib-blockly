@@ -531,9 +531,7 @@ module.exports = function(RED) {
     // Make all the static resources from this node public available (i.e. files from the blockly npm package).
     RED.httpAdmin.get('/blocky/js/*', function(req, res) {
         var requestedFilePath;
-        
-        res.set('Cache-Control', 'public, max-age=31557600, s-maxage=31557600'); // 1 year
-        
+
         if (req.params[0].startsWith("npm2")) {
             requestedFilePath = fieldDataModulePath;
         }
