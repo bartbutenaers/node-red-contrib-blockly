@@ -471,27 +471,29 @@
        
 
             
-            $("#node-input-language").change(function () {         
+            $("#node-input-language").change(function () {
+                var counter = 0;
+                
                 // Make sure the Blockly datetime_convert_from_date block is always aware about the number of outputs
                 Blockly.blocklyEditorLanguage = this.value;
-            
-                var languageScripts = [
-                  "blocky/js/npm/msg/" + Blockly.blocklyEditorLanguage + ".js",
-                  "blocky/js/messages/" + Blockly.blocklyEditorLanguage + ".js"
-                ];
-                
+        
                 // When another language is selected, then load the file with the translations in that language.
                 // Those translated texts will override the english text (which has been loaded at the start in the en.js file).
-                for (var i = 0; i < languageScripts.length; i++) {
+                [
+                  "blocky/js/npm/msg/" + Blockly.blocklyEditorLanguage + ".js",
+                  "blocky/js/messages/" + Blockly.blocklyEditorLanguage + ".js"
+                ].forEach(function(src) {
                     var script = document.createElement('script');
                     script.type="text/javascript";
                     script.async = false; // Force synchronous loading, to load them in the correct sequence
                   
                     // Show the entire workspace in the new selected value, by rendering after the scripts are loaded
                     script.onload = function() {
+                        counter++;
+                        
                         // Only do this when the last script has been loaded, otherwise we get errors do to missing messages.
                         // See https://github.com/bartbutenaers/node-red-contrib-blockly/issues/63#issuecomment-855301449
-                        if (i === languageScripts.length-1) {
+                        if (counter === 2) {
                             // Blocks may look completely different in another language, due to differences in word-order. 
                             // As a result the language of a running Blockly instance cannot be changed.  
                             // To avoid a page reload, build the workspace again (based on the original workspace xml).
@@ -506,9 +508,9 @@
                         }
                     }
                   
-                    script.src = languageScripts[i]; 
+                    script.src = src; 
                     document.head.appendChild(script);
-                }
+                });
             });
             
             RED.library.create({
