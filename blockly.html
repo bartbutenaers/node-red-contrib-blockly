@@ -296,7 +296,6 @@
         category: 'function',
         color: '#FFAAAA',       
         defaults: {
-            language: {value:"en"},
             func: {value:"\nreturn msg;"}, // The generated Javascript code
             workspaceXml: {value:"<xml xmlns=\"https:\/\/developers.google.com\/blockly\/xml\"><\/xml>"}, // Needed for Blockly version "5.20210325.1". Can't be empty
             outputs: {value:1}, // Standard field that will be used by Node-Red to draw N output ports in the flow editor,
@@ -468,51 +467,7 @@
             setTimeout(function() {
                 tabs.resize();
             }, 0);
-       
 
-            
-            $("#node-input-language").change(function () {
-                var counter = 0;
-                
-                // Make sure the Blockly datetime_convert_from_date block is always aware about the number of outputs
-                Blockly.blocklyEditorLanguage = this.value;
-        
-                // When another language is selected, then load the file with the translations in that language.
-                // Those translated texts will override the english text (which has been loaded at the start in the en.js file).
-                [
-                  "blocky/js/npm/msg/" + Blockly.blocklyEditorLanguage + ".js",
-                  "blocky/js/messages/" + Blockly.blocklyEditorLanguage + ".js"
-                ].forEach(function(src) {
-                    var script = document.createElement('script');
-                    script.type="text/javascript";
-                    script.async = false; // Force synchronous loading, to load them in the correct sequence
-                  
-                    // Show the entire workspace in the new selected value, by rendering after the scripts are loaded
-                    script.onload = function() {
-                        counter++;
-                        
-                        // Only do this when the last script has been loaded, otherwise we get errors do to missing messages.
-                        // See https://github.com/bartbutenaers/node-red-contrib-blockly/issues/63#issuecomment-855301449
-                        if (counter === 2) {
-                            // Blocks may look completely different in another language, due to differences in word-order. 
-                            // As a result the language of a running Blockly instance cannot be changed.  
-                            // To avoid a page reload, build the workspace again (based on the original workspace xml).
-                            // See https://github.com/google/blockly/issues/701
-                            var dom = Blockly.Xml.workspaceToDom(node.workspace);
-                            var workspaceXml = Blockly.Xml.domToPrettyText(dom);
-                            
-                            // Destroy the current workspace
-                            node.workspace.dispose();
-                            
-                            createWorkspace(node, workspaceXml);
-                        }
-                    }
-                  
-                    script.src = src; 
-                    document.head.appendChild(script);
-                });
-            });
-            
             RED.library.create({
                 url:"blockly_functions", // where to get the data from
                 type:"Blockly", // the type of object the library is for
@@ -668,9 +623,62 @@
                 // be cleaned up before we navigate to the tray screen.  From then on the $("#node-input-blocklyConfig") won't be accessible anymore...
                 // Don't use node.blocklyConfig for this purpose, because that need to be unchanged in case the "Cancel" button is clicked.
                 node.selectedConfigNodeId = $("#node-input-blocklyConfig").val();
-      
-                reloadBlockly(node);
+                
+                var counter = 0;
+                var language = "en";
+
+                if (node.selectedConfigNodeId && node.selectedConfigNodeId !== "_ADD_") {
+                    var configNode = RED.nodes.node(node.selectedConfigNodeId);
+                    if (configNode && configNode.language) {
+                        language = configNode.language;
+                    }
+                }
+                
+                // Make sure the Blockly datetime_convert_from_date block is always aware about the number of outputs
+                Blockly.blocklyEditorLanguage = language;
+        
+                // When another language is selected, then load the file with the translations in that language.
+                // Those translated texts will override the english text (which has been loaded at the start in the en.js file).
+                // First load the english texts and afterwards the translated texts: if some translations are missing, the original
+                // english texts will be used.  Note that the blocky/js/npm/msg/en.js file contains a Blockly.Msg = {} 
+                var scripts = [
+                  "blocky/js/npm/msg/en.js",
+                  "blocky/js/npm/msg/" + language + ".js",
+                  "blocky/js/messages/en.js",
+                  "blocky/js/messages/" + language + ".js"
+                ]
+                
+                scripts.forEach(function(src) {
+                    var script = document.createElement('script');
+                    script.type = "text/javascript";
+                    script.async = false; // Force synchronous loading, to load them in the correct sequence
+                  
+                    // Show the entire workspace in the new selected value, by rendering after the scripts are loaded
+                    script.onload = function() {
+                        counter++;
+                        
+                        // Only do this when the last script has been loaded, otherwise we get errors do to missing messages.
+                        // See https://github.com/bartbutenaers/node-red-contrib-blockly/issues/63#issuecomment-855301449
+                        if (counter === scripts.length) {
+                            // Blocks may look completely different in another language, due to differences in word-order. 
+                            // As a result the language of a running Blockly instance cannot be changed.  
+                            // To avoid a page reload, build the workspace again (based on the original workspace xml).
+                            // See https://github.com/google/blockly/issues/701
+                            var dom = Blockly.Xml.workspaceToDom(node.workspace);
+                            var workspaceXml = Blockly.Xml.domToPrettyText(dom);
+                            
+                            // Destroy the current workspace
+                            node.workspace.dispose();
+                            
+                            createWorkspace(node, workspaceXml);
+                        }
+                    }
+                  
+                    script.src = src; 
+                    document.head.appendChild(script);
+                });
             });
+            $("#node-input-blocklyConfig").change();
         },
         oneditsave: function() {
             var node = this;
@@ -753,53 +761,6 @@
     <div class="form-row">
         <label for="node-input-outputs"><i class="fa fa-random"></i> Outputs</label>
         <input id="node-input-outputs" style="width: 20px;" value="1">
-        <label for="node-input-language" style="margin-left:80px;"><i class="fa fa-exchange" disabled></i> Language</label>
-        <select class="form-control" id="node-input-language" style="width:200px">
-            <!--<option value='ar'>العربية</option>-->
-            <!--<option value='be-tarask'>Taraškievica</option>-->
-            <!--<option value='br'>Brezhoneg</option>-->
-            <!--<option value='ca'>Català</option>-->
-            <!--<option value='cs'>Česky</option>-->
-            <!--<option value='da'>Dansk</option>-->
-            <!--<option value='de'>Deutsch</option>-->
-            <!--<option value='el'>Ελληνικά</option>-->
-            <option value='en'>English</option>
-            <!--<option value='es'>Español</option>-->
-            <!--<option value='et'>Eesti</option>-->
-            <!--<option value='fa'>فارسی</option>-->
-            <option value='fr'>Français</option>
-            <!--<option value='he'>עברית</option>-->
-            <!--<option value='hrx'>Hunsrik</option>-->
-            <!--<option value='hu'>Magyar</option>-->
-            <!--<option value='ia'>Interlingua</option>-->
-            <!--<option value='is'>Íslenska</option>-->
-            <!--<option value='it'>Italiano</option>-->
-            <option value='ja'>日本語</option>
-            <!--<option value='kab'>Kabyle</option>-->
-            <!--<option value='ko'>한국어</option>-->
-            <!--<option value='mk'>Македонски</option>-->
-            <!--<option value='ms'>Bahasa Melayu</option>-->
-            <!--<option value='nb'>Norsk Bokmål</option>-->
-            <option value='nl'>Nederlands, Vlaams</option>
-            <!--<option value='oc'>Lenga d\'òc</option>-->
-            <!--<option value='pl'>Polski</option>-->
-            <!--<option value='pms'>Piemontèis</option>-->
-            <!--<option value='pt-br'>Português Brasileiro</option>-->
-            <!--<option value='ro'>Română</option>-->
-            <option value='ru'>Русский</option>
-            <!--<option value='sc'>Sardu</option>-->
-            <!--<option value='sk'>Slovenčina</option>-->
-            <!--<option value='sr'>Српски</option>-->
-            <!--<option value='sv'>Svenska</option>-->
-            <!--<option value='ta'>தமிழ்</option>-->
-            <!--<option value='th'>ภาษาไทย</option>-->
-            <!--<option value='tlh'>tlhIngan Hol</option>-->
-            <!--<option value='tr'>Türkçe</option>-->
-            <!--<option value='uk'>Українська</option>-->
-            <!--<option value='vi'>Tiếng Việt</option>-->
-            <!--<option value='zh-hans'>简体中文</option>-->
-            <!--<option value='zh-hant'>正體中文</option>-->
-        </select>
     </div>
     <div class="form-tips" id="tip-version" style="width: 100%;max-width: 100%;" hidden>Tip: The 'get node property' block cannot be used, since Node-red version 0.19.0 is minimal required.</div>
     </br>

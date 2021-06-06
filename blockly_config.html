@@ -15,6 +15,7 @@
         category: 'config',
         color: '#ff758d',
         defaults: {
+            language: {value: "en"},
             showTrashcan: {value: true},
             allowComments: {value: true},
             showZoomControl: {value: true},
@@ -51,7 +52,56 @@
         <label for='node-config-input-showZoomControl'><i class='fa fa-binoculars'></i> Zoom</label>
         <input type='checkbox' id='node-config-input-showZoomControl' style='width:auto ;border:none; vertical-align:baseline;' placeholder='0'>
         <span for='node-config-input-showZoomControl'> Show zoom control icons in workspace</span>
-    </div>        
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-language"><i class="fa fa-globe"></i> Language</label>
+        <select id="node-config-input-language">    
+            <!--<option value='ar'>العربية</option>-->
+            <!--<option value='be-tarask'>Taraškievica</option>-->
+            <!--<option value='br'>Brezhoneg</option>-->
+            <!--<option value='ca'>Català</option>-->
+            <!--<option value='cs'>Česky</option>-->
+            <!--<option value='da'>Dansk</option>-->
+            <!--<option value='de'>Deutsch</option>-->
+            <!--<option value='el'>Ελληνικά</option>-->
+            <option value='en'>English</option>
+            <!--<option value='es'>Español</option>-->
+            <!--<option value='et'>Eesti</option>-->
+            <!--<option value='fa'>فارسی</option>-->
+            <option value='fr'>Français</option>
+            <!--<option value='he'>עברית</option>-->
+            <!--<option value='hrx'>Hunsrik</option>-->
+            <!--<option value='hu'>Magyar</option>-->
+            <!--<option value='ia'>Interlingua</option>-->
+            <!--<option value='is'>Íslenska</option>-->
+            <!--<option value='it'>Italiano</option>-->
+            <option value='ja'>日本語</option>
+            <!--<option value='kab'>Kabyle</option>-->
+            <!--<option value='ko'>한국어</option>-->
+            <!--<option value='mk'>Македонски</option>-->
+            <!--<option value='ms'>Bahasa Melayu</option>-->
+            <!--<option value='nb'>Norsk Bokmål</option>-->
+            <option value='nl'>Nederlands, Vlaams</option>
+            <!--<option value='oc'>Lenga d\'òc</option>-->
+            <!--<option value='pl'>Polski</option>-->
+            <!--<option value='pms'>Piemontèis</option>-->
+            <!--<option value='pt-br'>Português Brasileiro</option>-->
+            <!--<option value='ro'>Română</option>-->
+            <option value='ru'>Русский</option>
+            <!--<option value='sc'>Sardu</option>-->
+            <!--<option value='sk'>Slovenčina</option>-->
+            <!--<option value='sr'>Српски</option>-->
+            <!--<option value='sv'>Svenska</option>-->
+            <!--<option value='ta'>தமிழ்</option>-->
+            <!--<option value='th'>ภาษาไทย</option>-->
+            <!--<option value='tlh'>tlhIngan Hol</option>-->
+            <!--<option value='tr'>Türkçe</option>-->
+            <!--<option value='uk'>Українська</option>-->
+            <!--<option value='vi'>Tiếng Việt</option>-->
+            <!--<option value='zh-hans'>简体中文</option>-->
+            <!--<option value='zh-hant'>正體中文</option>-->
+        </select>
+    </div>    
     <div class="form-row">
         <label for="node-config-input-toolboxPosition"><i class="fa fa-list-alt"></i> Toolbox</label>
         <select id="node-config-input-toolboxPosition">
@@ -77,6 +127,8 @@
     If activated, comments can be added to a block (via the right-click context menu).</p>
     <p><strong>Show zoom control icons in workspace:</strong><br/>
     If activated, zoom control icons will be displayed in the Blockly workspace.</p>
+    <p><strong>Language:</strong><br/>
+    Specify in which language the text should appear in the workspace.</p>
     <p><strong>Toolbox:</strong><br/>
     Specify the location of the toolbox in the workspace (left, right or top).</p>
     <p><strong>Renderer:</strong><br/>
