@@ -116,6 +116,8 @@ Blockly.Msg.MISC_JSEXPRESS= "Javascript expression %1";
 Blockly.Msg.MISC_JSEXPRESS_TOOLTIP = "Use with caution. Enter JS code when no blocks offer certain functionality.";
 Blockly.Msg.MISC_COMMENT = "Comment %1";
 Blockly.Msg.MISC_COMMENT_TOOLTIP = "Add comments to explain how the logic works.";
+Blockly.Msg.MISC_JSMULTILINE = "Multiline JS code %1";
+Blockly.Msg.MISC_JSMULTILINE_TOOLTIP = "Enter multiline Javascript code when no blocks offer certain functionality.";
 
 // =========================================================================================
 // Datetime blocks
