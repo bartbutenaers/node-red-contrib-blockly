@@ -325,7 +325,7 @@
             func: {value:"\nreturn msg;"}, // The generated Javascript code
             workspaceXml: {value:"<xml xmlns=\"https:\/\/developers.google.com\/blockly\/xml\"><\/xml>"}, // Needed for Blockly version "5.20210325.1". Can't be empty
             outputs: {value:1}, // Standard field that will be used by Node-Red to draw N output ports in the flow editor,
-            blocklyConfig: {value:"", type: "blockly-config", required: false},
+            blocklyConfig: {type: "blockly-config", required: false}, // No default value (see https://discourse.nodered.org/t/default-config-node/46773/9?u=bartbutenaers)
             name: {value:""}
         },
         inputs:1,
