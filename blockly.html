@@ -219,6 +219,32 @@
         delete node.workspace;
     }
     
+    function cleanup(node) {
+        // Make sure that the Node-Red handles all keydown events again (e.g. 'D' to delete a node), instead of Blockly. 
+        Blockly.blocklyEditorVisible = false;
+        
+        // When blocks are still available in Blockly's clipboard, Blockly CANNOT paste them in another workspace (of another node).
+        // This means we can empty the clipboard (by setting it to null).  However we will store first a copy of their clipboard 
+        // (as xml string) into our own custom clipboard, which we CAN use to paste in another workspace.
+        if (Blockly.clipboardXml_) {
+            Blockly.customClipboard = '<xml xmlns="http://www.w3.org/1999/xhtml">' + Blockly.Xml.domToPrettyText(Blockly.clipboardXml_) + '</xml>';
+            Blockly.clipboardXml_ = null;
+        }
+                            
+        // When a copy is done in this blockly node, an error will occur if that content is pasted later in another blockly node.
+        // Copy-paste across workspaces is not supported by Blockly (https://github.com/google/blockly/issues/334)
+        Blockly.clipboardXml_ = null;
+        Blockly.clipboardSource_ = null;
+
+        // Cleanup the ACE editor
+        node.aceEditor.destroy();
+        delete node.aceEditor;
+             
+        // Cleanup the Blockly workspace
+        node.workspace.dispose(); 
+        delete node.workspace;
+    }
+    
     // See https://developers.google.com/blockly/guides/configure/web/resizable
     function resize(node) {        
         // Resize the Blockly workspace, as soon as available (i.e. not when called from oneditprepare).
@@ -405,7 +431,6 @@
             // By having a read-only Javascript editor, we can make sure that the workspace and Js code are always in sync ...
             node.aceEditor.textInput.setReadOnly(true);
 
-
             // Jeff: create XML editor
             node.aceXMLEditor = RED.editor.createEditor({
                 id: 'aceXMLDiv',
@@ -425,8 +450,6 @@
                     createWorkspace(node, loadedXml);
                 }
             });
-
-
 
             // Show three tabsheets
             var tabs = RED.tabs.create({
@@ -486,7 +509,6 @@
                 $("#tip-version").hide();
             }
             
-
             //Jeff: called when the expand button clicked
             var expandTemplate = 
             '<!-- Blockly editor -->'+
