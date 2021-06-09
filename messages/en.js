@@ -52,7 +52,7 @@ Blockly.Msg.NODE_CLOSE_1 = "%1";
 Blockly.Msg.NODE_CLOSE_TOOLTIP = "Statements that should be executed when the node is being closed.";
 Blockly.Msg.NODE_DONE = "message done";
 Blockly.Msg.NODE_DONE_TOOLTIP = "Handling the message has been finished.";
-Blockly.Msg.NODE_ENV = "environment";
+Blockly.Msg.NODE_ENV = "get environment variable %1";
 Blockly.Msg.NODE_ENV_TOOLTIP = "Access the value of an environment variable.";
 
 // =========================================================================================
