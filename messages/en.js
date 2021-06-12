@@ -130,7 +130,7 @@ Blockly.Msg.MISC_JSMULTILINE_TOOLTIP = "Enter multiline Javascript code when no 
 // =========================================================================================
 Blockly.Msg.DATETIME_INPUT = "date %1";
 Blockly.Msg.DATETIME_INPUT_TOOLTIP = "A date.";
-Blockly.Msg.DATETIME_TIMESTAMP = "timestamp";
+Blockly.Msg.DATETIME_TIMESTAMP = "%1 timestamp";
 Blockly.Msg.DATETIME_TIMESTAMP_TOOLTIP = "Get the current timestamp (i.e. date and time of now).";
 Blockly.Msg.DATETIME_CONVERT_FROM_DATE = "get %1 from timestamp %2";
 Blockly.Msg.DATETIME_CONVERT_FROM_DATE_TOOLTIP = "Get the specified information from a timestamp";
@@ -151,3 +151,5 @@ Blockly.Msg.DATETIME_CONVERT_TO_DATE = "create date from %1";
 Blockly.Msg.DATETIME_CONVERT_TO_DATE_TOOLTIP = "Create a date from the specified value.";
 Blockly.Msg.DATETIME_FORMAT = "convert timestamp %1 to format %2";
 Blockly.Msg.DATETIME_FORMAT_TOOLTIP = "Convert a timestamp to a specified format";
+Blockly.Msg.DATETIME_UTC = "UTC";
+Blockly.Msg.DATETIME_LOCAL = "local";
