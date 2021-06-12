@@ -61,7 +61,7 @@
             "blocky/js/lib/nodered/toolbox.xml",
             "blocky/js/lib/json/toolbox.xml",
             "blocky/js/lib/buffer/toolbox.xml",
-            "blocky/js/lib/datetime/toolbox.xml",       
+            "blocky/js/lib/datetime/toolbox.xml",        
             "blocky/js/lib/extra/toolbox.xml",
             "blocky/js/lib/basic/toolbox.xml"
         ].forEach(function(filePath) {
@@ -408,37 +408,20 @@
 
             node.aceEditor = RED.editor.createEditor({
                 id: 'aceDiv',
-                mode: 'ace/mode/javascript',
+                mode: 'ace/mode/nrjavascript', // serverside NodeRed editor
                 value: node.func,
-                globals: { 
-                    msg:true,
-                    context:true,
-                    RED: true,
-                    util: true,
-                    flow: true,
-                    global: true,
-                    console: true,
-                    Buffer: true,
-                    setTimeout: true,
-                    clearTimeout: true,
-                    setInterval: true,
-                    clearInterval: true
-                }
+                readOnly: true
             });
-            node.aceEditor.setFontSize(14);             
-            // It is not allowed to change the generated Javascript code.
-            // Indeed we cannot generate an updated Blockly workspace, starting from the updated Javascript code.
-            // By having a read-only Javascript editor, we can make sure that the workspace and Js code are always in sync ...
-            node.aceEditor.textInput.setReadOnly(true);
+            node.aceEditor.setFontSize(14); 
 
             // Jeff: create XML editor
             node.aceXMLEditor = RED.editor.createEditor({
                 id: 'aceXMLDiv',
                 mode: 'ace/mode/xml',
                 value: node.workspaceXml,
+                readOnly: true
             });
             node.aceXMLEditor.setFontSize(12);
-            node.aceXMLEditor.textInput.setReadOnly(true);
             // Jeff: invoke when either fillAceXMLEditor triggered or loaded XML from library
             node.aceXMLEditor.on("change", function () {
                 var loadedXml = node.aceXMLEditor.getValue();
@@ -602,26 +585,12 @@
                             node.workspace.dispose();
                             createWorkspace(node, node.loadedXml);
                             node.jseditor = RED.editor.createEditor({
-                                id: "aceDiv",
-                                mode: 'ace/mode/javascript',
-                                value: "",
-                                globals: {
-                                    msg:true,
-                                    context:true,
-                                    RED: true,
-                                    util: true,
-                                    flow: true,
-                                    global: true,
-                                    console: true,
-                                    Buffer: true,
-                                    setTimeout: true,
-                                    clearTimeout: true,
-                                    setInterval: true,
-                                    clearInterval: true
-                                }
+                                id: 'aceDiv',
+                                mode: 'ace/mode/nrjavascript', // serverside NodeRed editor
+                                value: node.func,
+                                readOnly: true
                             });
                             node.jseditor.setFontSize(14); 
-                            node.jseditor.textInput.setReadOnly(true);
                         },
                         close: function() {
                             delete node.loadedXml;   
