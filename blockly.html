@@ -287,7 +287,8 @@
         node.aceEditor.setValue(javascript);
         
         // After setValue all code will be selected otherwise
-        node.aceEditor.clearSelection(); 
+        // Fix for clearSelection (see https://github.com/bartbutenaers/node-red-contrib-blockly/issues/74#issuecomment-862681796)
+        node.aceEditor.moveCursorTo(0,0); 
     }
 
 
@@ -303,7 +304,8 @@
         node.aceXMLEditor.setValue(loadedxml);
 
         // After setValue all code will be selected otherwise
-        node.aceXMLEditor.clearSelection();
+        // Fix for clearSelection (see https://github.com/bartbutenaers/node-red-contrib-blockly/issues/74#issuecomment-862681796)
+        node.aceXMLEditor.moveCursorTo(0,0);
     }
 
 
@@ -536,7 +538,8 @@
                                     Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
                                     var javascript = Blockly.JavaScript.workspaceToCode(node.workspace);
                                     node.jseditor.setValue(javascript);
-                                    node.jseditor.clearSelection(); 
+                                    // Fix for clearSelection (see https://github.com/bartbutenaers/node-red-contrib-blockly/issues/74#issuecomment-862681796)
+                                    node.jseditor.moveCursorTo(0,0);
                                 }
                             },
                             {
