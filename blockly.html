@@ -15,6 +15,9 @@
     // Load all external files (.js and .xml) ONCE for every page refresh
     // *****************************************************************************************
     
+    // Blockly has no own workspace changed handler, so we will need to create our own.
+    // See https://groups.google.com/g/blockly/c/sSpvp_Kz-To
+    
     // Make sure that all Blockly library files are loaded in the correct order.
     // Don't use jQuery (see https://discourse.nodered.org/t/scope-of-variables-in-external-js-scripts/1048/2)
     [
@@ -34,7 +37,9 @@
         "blocky/js/lib/buffer/bufferBlocksCodeGen.js",
         "blocky/js/lib/buffer/bufferBlocksDefs.js",
         "blocky/js/lib/datetime/dateTimeBlocksCodeGen.js",
-        "blocky/js/lib/datetime/dateTimeBlocksDefs.js"
+        "blocky/js/lib/datetime/dateTimeBlocksDefs.js",
+        "blocky/js/lib/timer/timerBlocksCodeGen.js",
+        "blocky/js/lib/timer/timerBlocksDefs.js"
     ].forEach(function(src) {
         var script = document.createElement('script');
         script.type="text/javascript";
@@ -61,7 +66,8 @@
             "blocky/js/lib/nodered/toolbox.xml",
             "blocky/js/lib/json/toolbox.xml",
             "blocky/js/lib/buffer/toolbox.xml",
-            "blocky/js/lib/datetime/toolbox.xml",        
+            "blocky/js/lib/datetime/toolbox.xml",
+            "blocky/js/lib/timer/toolbox.xml",            
             "blocky/js/lib/extra/toolbox.xml",
             "blocky/js/lib/basic/toolbox.xml"
         ].forEach(function(filePath) {
@@ -173,6 +179,16 @@
             horizontalLayout: horizontalLayout,
             toolboxPosition : toolboxPosition 
         });
+
+        // Trigger an event to indicate that a new Blockly workspace has been created.
+        // Blockly doesn't offer such an event.  See https://groups.google.com/g/blockly/c/sSpvp_Kz-To
+        // Such an event is required, because this node switches often its workspace (and some blocks need to be aware of that...).
+        // Note that custom data needs to be passed via the 'detail' field...
+        document.dispatchEvent(new CustomEvent("blocky_workspace_changed", {
+            detail: {
+                newWorkspace: node.workspace
+            }
+        }));
         
         // The 'msg' variable represents the parameter from the Node-Red 'input' event.
         // By adding it as a reserved wordt in Javascript, we can avoid that users create their own 'msg' variable.

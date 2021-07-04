@@ -153,3 +153,23 @@ Blockly.Msg.DATETIME_FORMAT = "convert timestamp %1 to format %2";
 Blockly.Msg.DATETIME_FORMAT_TOOLTIP = "Convert a timestamp to a specified format";
 Blockly.Msg.DATETIME_UTC = "UTC";
 Blockly.Msg.DATETIME_LOCAL = "local";
+
+// =========================================================================================
+// Timer blocks
+// =========================================================================================
+Blockly.Msg.TIMER_SET_TIMEOUT = "Execute timeout %1 in %2 %3";
+Blockly.Msg.TIMER_SET_TIMEOUT_1 = "%1";
+Blockly.Msg.TIMER_SET_TIMEOUT_NAME = "timeout";
+Blockly.Msg.TIMER_SET_TIMEOUT_TOOLTIP = "Execute the included blocks after a specified time delay.";
+Blockly.Msg.TIMER_CLEAR_TIMEOUT = "Stop timeout %1";
+Blockly.Msg.TIMER_CLEAR_TIMEOUT_TOOLTIP = "Cancel the execution after the timeout";
+Blockly.Msg.TIMER_SET_INTERVAL = "Execute interval %1 every %2 %3";
+Blockly.Msg.TIMER_SET_INTERVAL_1 = "%1";
+Blockly.Msg.TIMER_SET_INTERVAL_NAME = "interval";
+Blockly.Msg.TIMER_SET_INTERVAL_TOOLTIP = "Execute the included blocks periodically at the specified time interval.";
+Blockly.Msg.TIMER_CLEAR_INTERVAL = "Stop interval %1";
+Blockly.Msg.TIMER_CLEAR_INTERVAL_TOOLTIP = "Cancel the block execution at intervals.";
+Blockly.Msg.TIMER_TIMER_MS = "msec";
+Blockly.Msg.TIMER_TIMER_SEC = "sec";
+Blockly.Msg.TIMER_TIMER_MIN = "min";
+Blockly.Msg.TIMER_NONE_SELECTED = "none";
