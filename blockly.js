@@ -499,51 +499,81 @@ module.exports = function(RED) {
     
     RED.nodes.registerType("Blockly",BlocklyNode);
     RED.library.register("blockly_functions");
-     
-    // -------------------------------------------------------------------------------------------------
-    // Determining the path to the files in the dependent blockly module once.
-    // See https://discourse.nodered.org/t/use-files-from-dependent-npm-module/17978/5?u=bartbutenaers
-    // -------------------------------------------------------------------------------------------------
-    var blocklyModulePath = require.resolve("blockly");
-    
-    // For example suppose the require.resolved results in blocklyModulePath = /home/pi/.node-red/node_modules/blockly/index.js
-    // All the requested libraries will be located in the same folder as the index.js file.
-    blocklyModulePath = blocklyModulePath.replace("index.js", "");
 
-    if (!fs.existsSync(blocklyModulePath)) {
-        console.log("The blockly npm library path " + blocklyModulePath + " does not exist");
-        blocklyModulePath = null;
-    }
-    
-    // -------------------------------------------------------------------------------------------------
-    // Determining the path to the files in the dependent @blockly/field-date module once.
-    // See https://discourse.nodered.org/t/use-files-from-dependent-npm-module/17978/5?u=bartbutenaers
-    // -------------------------------------------------------------------------------------------------
-    // The date picker widget is inside a separate npm package
-    // The require.resolve wiill result in fieldDataModulePath = /home/pi/.node-red/node_modules/@blockly/field-date/dist/date_compressed.js
-    var fieldDataModulePath = require.resolve("@blockly/field-date");
+    var blocklyNpmPaths = new Map();
 
-    if (!fs.existsSync(fieldDataModulePath)) {
-        console.log("The blockly npm library path " + fieldDataModulePath + " does not exist");
-        fieldDataModulePath = null;
-    } 
-     
-    // Make all the static resources from this node public available (i.e. files from the blockly npm package).
-    RED.httpAdmin.get('/blocky/js/*', function(req, res) {
+    // Make all the static NPM modules resources from this node public available
+    RED.httpAdmin.get('/blockly-contrib/npm/:package/*', function(req, res) {
         var requestedFilePath;
 
-        if (req.params[0].startsWith("npm2")) {
-            requestedFilePath = fieldDataModulePath;
+        // Try to get the npm package path from the cache
+        var npmPackagePath = blocklyNpmPaths.get(req.params.package);
+        
+        if (!npmPackagePath) {
+            try {
+                // Try to find the path of the installed NPM package.
+                // Note that this only works for modules that have an entrypoint (main) in their package.json file...
+                // See https://github.com/nodejs/node/issues/29549#issuecomment-531411955
+                npmPackagePath = require.resolve(req.params.package);
+            }
+            catch(err) {
+                // Do nothing: error logged below ...
+            }
+            
+            // TODO add a "main" entrypoint in the blockly node package.json file, and remove this fix !!!!!!!!!!!!!
+            if (req.params.package == "node-red-contrib-blockly") {
+                npmPackagePath = __dirname;
+            }
+            else {
+                if (npmPackagePath) {
+                    // Note that the req.params.package can contain a slash (e.g. the NPM package @blockly/field-date), which need
+                    // to be replaced by the path separator of the current OS.                    
+                    var packageName = req.params.package.replace("/", path.sep);
+                    
+                    // Make sure the packageName refers to the root folder of the package, because all paths in the config node 
+                    // editable list are relative to that root path.  Indeed require.resolve sometimes e.g. contains the path to an 
+                    // index.js or some other entry point in the package package.json file.  So remove that last part ...
+                    packageName = path.sep + packageName + path.sep;
+                    npmPackagePath = npmPackagePath.split(packageName)[0] + path.sep + packageName;
+
+                    // Cache the NPM package path
+                    blocklyNpmPaths.set(req.params.package, npmPackagePath);
+                }
+                else {
+                    console.log("The npm package " + req.params.package + " is not installed (but required via the Blockly config node)");
+                    res.writeHead(404);
+                    return res.end("NPM package not found.");
+                }
+            }
         }
-        else if (req.params[0].startsWith("npm")) {
-            var requestedFileName = req.params[0].replace("npm", "");
-            requestedFilePath = path.join(blocklyModulePath, requestedFileName);
+        
+        // The wildcard * can contain multiple path levels (e.g. a/b/c/d), which represents the relate file path (in the NPM package folder)
+        var relativePath = req.params[0];
+        
+        var requestedFilePath = path.join(npmPackagePath, relativePath);
+
+        if (!fs.existsSync(requestedFilePath)) {
+            console.log("The NPM file path " + requestedFilePath + " does not exist");
+            res.writeHead(404);
+            return res.end("NPM file not found.");
         }
-        else {
-            requestedFilePath = path.join(__dirname, req.params[0]);
-        }
-       
+        
         // Send the requested file to the client
         res.sendFile(requestedFilePath)
+    });
+    
+    // Make all the static local filesystem resources from this node public available
+    RED.httpAdmin.get('/blockly-contrib/file/*', function(req, res) {
+        // The wildcard * can contain multiple path levels (e.g. a/b/c/d), which represents the absolute file path (in the filesystem)
+        var absolutePath = req.params[0];
+        
+        if (!fs.existsSync(absolutePath)) {
+            console.log("The local file path " + absolutePath + " does not exist");
+            res.writeHead(404);
+            return res.end("Local file not found.");
+        }
+        
+        // Send the requested file to the client
+        res.sendFile(absolutePath)
     });
 }

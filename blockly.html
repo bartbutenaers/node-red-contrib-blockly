@@ -10,117 +10,204 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<script>
-    // *****************************************************************************************
-    // Load all external files (.js and .xml) ONCE for every page refresh
-    // *****************************************************************************************
-    
-    // Blockly has no own workspace changed handler, so we will need to create our own.
-    // See https://groups.google.com/g/blockly/c/sSpvp_Kz-To
-    
-    // Make sure that all Blockly library files are loaded in the correct order.
-    // Don't use jQuery (see https://discourse.nodered.org/t/scope-of-variables-in-external-js-scripts/1048/2)
-    [
-        "blocky/js/npm/blockly_compressed.js",
-        //TODO "blocky/js/npm/msg/messages.js", // See https://groups.google.com/forum/#!topic/blockly/TwJTZct59ec
-        "blocky/js/npm/blocks_compressed.js",
-        "blocky/js/npm/javascript_compressed.js",
-        "blocky/js/npm/msg/en.js",
-        "blocky/js/messages/en.js", // Messages of custom blocks
-        "blocky/js/npm2/field_date.js",
-        "blocky/js/lib/json/objectBlocksCodeGen.js",
-        "blocky/js/lib/json/objectBlocksDefs.js",
-        "blocky/js/lib/nodered/nodeRedBlocksCodeGen.js",
-        "blocky/js/lib/nodered/nodeRedBlocksDefs.js",
-        "blocky/js/lib/extra/extraBlocksCodeGen.js",
-        "blocky/js/lib/extra/extraBlocksDefs.js",
-        "blocky/js/lib/buffer/bufferBlocksCodeGen.js",
-        "blocky/js/lib/buffer/bufferBlocksDefs.js",
-        "blocky/js/lib/datetime/dateTimeBlocksCodeGen.js",
-        "blocky/js/lib/datetime/dateTimeBlocksDefs.js",
-        "blocky/js/lib/timer/timerBlocksCodeGen.js",
-        "blocky/js/lib/timer/timerBlocksDefs.js"
-    ].forEach(function(src) {
-        var script = document.createElement('script');
-        script.type="text/javascript";
-        script.async = false; // Force synchronous loading, to load them in the correct sequence
-        script.src = src; 
-        document.head.appendChild(script);
-    });
-    
-    if (document.implementation.createDocument) {
-        // Create a new XML document (which represents a toolbox), and keep it as a global variable.
-        // All toolbox.xml files will be loaded and combined into the XML document.  
-        // As soon as the XML document is complete, the toolbox will be displayed.
-        // In e.g. Chrome you can skip the third parameter, but e.g. in Firefox you need at least pass a null.
-        var toolboxXmlDocument = document.implementation.createDocument("https://developers.google.com/blockly/xml", "xml", null);
-    }
-    else {
-        console.error('This browser cannot create a Blockly toolbox XML document (via createDocument)');
-    }
-    
-    if (toolboxXmlDocument) {
-        // Load the xml toolbox files for all available blocks libraries, and combine those into a single toolbox.
-        // Remark: the categories are added in the same order as they are loaded here ...
-        [
-            "blocky/js/lib/nodered/toolbox.xml",
-            "blocky/js/lib/json/toolbox.xml",
-            "blocky/js/lib/buffer/toolbox.xml",
-            "blocky/js/lib/datetime/toolbox.xml",
-            "blocky/js/lib/timer/toolbox.xml",            
-            "blocky/js/lib/extra/toolbox.xml",
-            "blocky/js/lib/basic/toolbox.xml"
-        ].forEach(function(filePath) {
-            var request = new XMLHttpRequest();
-            request.open('GET', filePath, false);  // `false` makes the request synchronous
-            request.send();
-        
-            if (request.readyState == 4 && request.status == 200) {
-                // Get all categories in the new XML document
-                var newCategories = request.responseXML.getElementsByTagName("category");
-		
-                // Iterate backwards since categories can be moved away from this list (to the toolbox)
-                // 2021-03-25 Jeff: changed to while-loop to accommadate nested categories
-                while (newCategories.length > 0) {
-                    var newCategory = newCategories[0];
-                    
-
-                    // Get the category name
-                    var name = newCategory.getAttribute('name');
-
-                    // Try to find an existing category with the same name.
-                    // Indeed multiple toolboxes can put blocks in the same category...
-                    var existingCategory = toolboxXmlDocument.getElementsByName(name);
-                    
-                    if (existingCategory.length === 0) {
-                        // If the new category didn't exist yet in the toolbox, append the entire new category to the toolbox
-                        toolboxXmlDocument.documentElement.appendChild(newCategory);
-                    }
-                    else {
-                        var newBlocks = newCategory.children;
-
-                        // Move all the blocks (and their children) from the newCategory to the existingCategory.
-                        // Remark: appendChild will remove the block from newBlocks!
-                        while(newBlocks.length > 0) {
-                            existingCategory[0].appendChild(newBlocks[0]);
-                        }
-                        // Remove the category from newCategories so the next loop is clean
-                        newCategory.remove();
-                    }
-
-                }
-            }
-            else {
-                console.error("The toolbox XML files for Blocky cannot be loaded"); 
-            }
-        });
-    }
-    else {
-        console.error("The Blockly toolbox XML document has not been created"); 
-    }
-</script>
 
 <script type="text/javascript">
+    function loadResourcesFromServer(node, language, categories) {
+        var lastScriptToLoad;
+        
+        // When no categories are passed (e.g. when there is no config node selected), then use the default categories
+        if (!categories) {
+            categories = getDefaultBlocklyCategories();
+        }
+        
+        // Create a deep clone of the original category array (from the config node), to make sure the original array isn't updated by this function
+        categories = JSON.parse(JSON.stringify(categories));
+        
+        node.librariesLoaded = false;
+        
+        // Remove all the custom blockly scripts from the previous time.
+        // Because suppose a library has been removed in the config screen, then it would otherwise still be loaded and be used by blockly.
+        $('script[data-custom_blockly_library=true]').remove();
+
+        // Make sure that all standard Blockly library files are loaded FIRST AND IN THE CORRECT ORDER, by adding a dummy category.
+        // Don't use jQuery or script tags (see https://discourse.nodered.org/t/scope-of-variables-in-external-js-scripts/1048/2).
+        // The en.js file should be loaded before the blocks_compressed.js library, to avoid "No message string for..." console warnings.
+        categories.unshift({
+            name: "Dummy category",
+            files: [
+                "blockly-contrib/npm/blockly/blockly_compressed.js",    // Creates a global Blockly variable
+                "blockly-contrib/npm/blockly/msg/en.js",                // Fills the Blockly.Msg with english translations
+                "blockly-contrib/npm/blockly/blocks_compressed.js",
+                "blockly-contrib/npm/blockly/javascript_compressed.js"
+            ]
+        });
+
+        // When another (not-english) language has been selected, then the english files should be loaded first.
+        // And afterwards the other language files will be loaded.  That way there won't be a problem if some of
+        // the texts have not been translated: they will simply be showed in english.
+        // Note that the standard blockly en.js file contains a statement to clear all the Blockly.msg messages,
+        // which means this one needs to be loaded first.  And all translations also have to be reloaded afterwards ...
+        if (language != "en") {
+            categories.forEach(function(category) {
+                (category.files || []).forEach(function(file) {
+                    if(file.endsWith("/en.js")) {
+                        var translationFile = file.replace("/en.js", "/" + language + ".js");
+                        category.files.push(translationFile);
+                    }
+                });
+            });
+        }
+
+        // As soon as the toolbox files have been loaded, the javascript files for the categories will be loaded.
+        // The javascript files will be loaded synchronous, because there is a dependency order that needs to be fullfilled.
+        // However the files will be loaded in background, so we need to wait for an event that indicates that the script is loaded...
+        categories.forEach(function(category) {
+            (category.files || []).forEach(function(file) {
+                // Note that the english language files have already been handled above...
+                if(file.endsWith(".js")) {
+                    // Make sure that all Blockly library files are loaded in the correct order.
+                    // Don't use jQuery (see https://discourse.nodered.org/t/scope-of-variables-in-external-js-scripts/1048/2)
+                    lastScriptToLoad = document.createElement('script');
+                    lastScriptToLoad.type="text/javascript";
+                    lastScriptToLoad.async = false; // Force synchronous loading, to load them in the correct sequence
+                    lastScriptToLoad.src = file; 
+                    // Set a user attribute on the script element, to allow us to identify it afterwards as on of the blockly related libs
+                    // https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset
+                    lastScriptToLoad.dataset.custom_blockly_library = true;
+                    document.head.appendChild(lastScriptToLoad);
+                }
+            });
+        });
+        
+        // Currently only JS and XML files are allowed.  Not sure yet how to handle other types.
+        categories.forEach(function(category) {
+            (category.files || []).forEach(function(file) {                
+                if(!file.endsWith(".js") && !file.endsWith(".xml")) {
+                    console.log("Unknown resource type (" + file + ")");
+                }
+            });
+        });
+        
+        // The workspace can only be created when all script files have been loaded, otherwise errors will occur...
+        // By loading the standard Blockly library again, a new Blockly instance will be created which must be initialized here.
+        // And then the language files can be loaded into the new empty Blockly.Msg
+        lastScriptToLoad.onload = function() {
+            node.librariesLoaded = true;
+            
+            Blockly.blocklyEditorVisible = true;
+
+            // Make sure the Blockly datetime_convert_from_date block is always aware about the number of outputs
+            Blockly.blocklyEditorLanguage = language;
+                
+            // Make sure the Blockly node_send and node_return_message blocks are already at the beginning aware about the number of outputs
+            Blockly.nodeOutputs = node.outputs
+
+            // The 'msg' variable represents the parameter from the Node-Red 'input' event.
+            // By adding it as a reserved wordt in Javascript, we can avoid that users create their own 'msg' variable.
+            // Idem for the 'global', 'flow' and 'context' memory in Node-Red.
+            Blockly.JavaScript.addReservedWords(['msg', 'flow', 'context', 'global']);
+            
+            // Blockly has an onKeyDown handler, that handles a number of key combinations (ctrl-'C' to copy the selected
+            // blocks, 'D' to delete the selected blocks, ctrl-'Z' to undo the last action).  However afterwards the keydown event
+            // is passed to Node-Red which cannot handle it, resulting in errors in the log.
+            // See https://github.com/bartbutenaers/node-red-contrib-blockly/issues/2
+            // Make sure that Blockly only handles the keydown events when the Blockly editor is visible, and otherwise Node-Red will handle them.
+            if (Blockly.blocklyEditorVisible === undefined) {
+                Blockly.originalKeyDownHandler = Blockly.onKeyDown_;
+                Blockly.onKeyDown_ = function(e) {
+                    if (Blockly.blocklyEditorVisible) {
+                        // Let Blockly handle the keydown event
+                        Blockly.originalKeyDownHandler(e);
+                        
+                        // 
+                        if (e.altKey || e.ctrlKey || e.metaKey) {
+                            // Don't use meta keys during drags
+                            if (!Blockly.mainWorkspace.isDragging()) {
+                                // When pressing CTRL-V (paste) ...
+                                if (e.keyCode == 86) {
+                                    if (!Blockly.clipboardXml_ && Blockly.customClipboard) {
+                                        // When the originalClipboardXml_ is null and the customClipboard is not empty, this means
+                                        // we need to paste blocks that have been copied (to the customClipboard) in another node.
+                                        var xmlDom = Blockly.Xml.textToDom(Blockly.customClipboard);
+                                        Blockly.Xml.domToWorkspace(xmlDom, Blockly.mainWorkspace);
+                                    }
+                                }
+                            }
+                        }
+                        
+                        // Stop the events from propagating up the DOM tree
+                        e.stopPropagation();
+                    }
+                }
+            }
+            
+            if (document.implementation.createDocument) {
+                // Create a new XML document (which represents a toolbox), and keep it as a global variable.
+                // All toolbox.xml files will be loaded and combined into the XML document.  
+                // As soon as the XML document is complete, the toolbox will be displayed.
+                // In e.g. Chrome you can skip the third parameter, but e.g. in Firefox you need at least pass a null.
+                node.toolboxXmlDocument = document.implementation.createDocument("https://developers.google.com/blockly/xml", "xml", null);
+            }
+            else {
+                console.error('This browser cannot create a Blockly toolbox XML document (via createDocument)');
+                return;
+            }
+
+            // Load the toolbox (XML) files for all categories.  This is done synchronous to make sure they are displayed in the specified order.
+            categories.forEach(function(category) {
+                (category.files || []).forEach(function(file) {                
+                    if(file.endsWith(".xml")) {
+                        var request = new XMLHttpRequest();
+                        request.open('GET', file, false);  // `false` makes the request synchronous
+                        request.send();
+                    
+                        if (request.readyState == 4 && request.status == 200) {
+                            // Get all categories in the new XML document
+                            var newCategories = request.responseXML.getElementsByTagName("category");
+                    
+                            // Iterate backwards since categories can be moved away from this list (to the toolbox)
+                            // 2021-03-25 Jeff: changed to while-loop to accommadate nested categories
+                            while (newCategories.length > 0) {
+                                var newCategory = newCategories[0];
+                                
+
+                                // Get the category name
+                                var name = newCategory.getAttribute('name');
+
+                                // Try to find an existing category with the same name.
+                                // Indeed multiple toolboxes can put blocks in the same category...
+                                var existingCategory = node.toolboxXmlDocument.getElementsByName(name);
+                                
+                                if (existingCategory.length === 0) {
+                                    // If the new category didn't exist yet in the toolbox, append the entire new category to the toolbox
+                                    node.toolboxXmlDocument.documentElement.appendChild(newCategory);
+                                }
+                                else {
+                                    var newBlocks = newCategory.children;
+
+                                    // Move all the blocks (and their children) from the newCategory to the existingCategory.
+                                    // Remark: appendChild will remove the block from newBlocks!
+                                    while(newBlocks.length > 0) {
+                                        existingCategory[0].appendChild(newBlocks[0]);
+                                    }
+                                    // Remove the category from newCategories so the next loop is clean
+                                    newCategory.remove();
+                                }
+                            }
+                        }
+                        else {
+                            console.error("The toolbox XML files for Blockly cannot be loaded"); 
+                        }
+                    }
+                });
+            });
+            
+            // Create the workspace as soon as the last script has been loaded.  
+            // This is possible because the scripts are loaded sequentially (via async = false)
+            createWorkspace(node, node.workspaceXml);            
+        }
+    }
+
     function createWorkspace(node, workspaceXml) {
         // Default settings in case no config node has been specified
         var showTrashcan     = true;
@@ -128,7 +215,12 @@
         var showZoomControl  = true;
         var horizontalLayout = false;
         var toolboxPosition  = "start";
-        var renderer         = "geras";          
+        var renderer         = "geras";
+
+        // When previously another workspace was already created, then cleanup that one first (to avoid displaying multiple workspaces).
+        if (node.workspace) {
+            node.workspace.dispose();
+        }        
 
         // When a config node has been specified, then use the settings from that node
         if (node.selectedConfigNodeId && node.selectedConfigNodeId !== "_ADD_") {
@@ -158,50 +250,70 @@
             }
         }
 
-        // Create the workspace (with the specified settings)
-        node.workspace = Blockly.inject('blocklyDiv', {
-            grid: {
-                spacing: 25,
-                length: 3,
-                colour: '#ccc',
-                snap: true
-            },     
-            toolbox: toolboxXmlDocument.firstElementChild,
-            zoom: {
-                controls: showZoomControl, 
-                wheel: true
-            },
-            renderer: renderer,
-            trashcan: showTrashcan,
-            comments: allowComments,
-            disable: true,
-            scrollbars: true,
-            horizontalLayout: horizontalLayout,
-            toolboxPosition : toolboxPosition 
-        });
-
-        // Trigger an event to indicate that a new Blockly workspace has been created.
-        // Blockly doesn't offer such an event.  See https://groups.google.com/g/blockly/c/sSpvp_Kz-To
-        // Such an event is required, because this node switches often its workspace (and some blocks need to be aware of that...).
-        // Note that custom data needs to be passed via the 'detail' field...
-        document.dispatchEvent(new CustomEvent("blocky_workspace_changed", {
-            detail: {
-                newWorkspace: node.workspace
+        // Only load the Blockly workspace when all libraries have been loaded yet, in order to avoid errors
+        if (node.librariesLoaded == true) {
+            // Create the workspace (with the specified settings)
+            node.workspace = Blockly.inject('blocklyDiv', {
+                grid: {
+                    spacing: 25,
+                    length: 3,
+                    colour: '#ccc',
+                    snap: true
+                },     
+                toolbox: node.toolboxXmlDocument.firstElementChild,
+                zoom: {
+                    controls: showZoomControl, 
+                    wheel: true
+                },
+                renderer: renderer,
+                trashcan: showTrashcan,
+                comments: allowComments,
+                disable: true,
+                scrollbars: true,
+                horizontalLayout: horizontalLayout,
+                toolboxPosition : toolboxPosition
+            });
+     
+            // Trigger an event to indicate that a new Blockly workspace has been created.
+            // Blockly doesn't offer such an event.  See https://groups.google.com/g/blockly/c/sSpvp_Kz-To
+            // Such an event is required, because this node switches often its workspace (and some blocks need to be aware of that...).
+            // Note that custom data needs to be passed via the 'detail' field...
+            document.dispatchEvent(new CustomEvent("blocky_workspace_changed", {
+                detail: {
+                    newWorkspace: node.workspace
+                }
+            }));
+            
+            try {            
+                // Load the workspace content again from the specified XML string
+                var dom = Blockly.Xml.textToDom(workspaceXml);
+                Blockly.Xml.domToWorkspace(dom, node.workspace); 
             }
-        }));
-        
-        // The 'msg' variable represents the parameter from the Node-Red 'input' event.
-        // By adding it as a reserved wordt in Javascript, we can avoid that users create their own 'msg' variable.
-        // Idem for the 'global', 'flow' and 'context' memory in Node-Red.
-        Blockly.JavaScript.addReservedWords(['msg', 'flow', 'context', 'global']);
-        
-        // Restore the workspace content from the XML string
-        var dom = Blockly.Xml.textToDom(workspaceXml);
-        Blockly.Xml.domToWorkspace(dom, node.workspace); 
-        
-        // Make sure the workspace is sized correctly in the beginning
-        resize(node);
-        node.workspace.scrollCenter();
+            catch(err) {
+                // We will arrive here when the current set of block libraries (as specified in the config node) doesn't support some blocks anymore.
+                var errorText = "Some blocks will be removed from the workspace (because the current categories don't support them): " + err;
+                
+                // When the config screen of this node is openened, Node-RED will call twice the onchange handler of the config node.
+                // To avoid that we would get the same error notification twice, we will skip one of both messages (during 1 second).
+                if (node.errorNotificationTimer) {
+                    clearTimeout(node.errorNotificationTimer);
+                }
+                node.errorNotificationTimer = setTimeout(function() {
+                    RED.notify(errorText, "error");
+                }, 500);
+
+                // When some of the block definitions are missing, we will convert the workspace to Dom and back to workspace.
+                // By doing that Blockly will remove the blocks without definition, and shows a workspace without those blocks.
+                // That is much better compared to showing an empty workspace...
+                // See https://groups.google.com/g/blockly/c/zdcUuRqWkxU/m/JfEdMv8MAQAJ
+                var dom = Blockly.Xml.workspaceToDom(node.workspace);
+                Blockly.Xml.domToWorkspace(dom, node.workspace);
+            }
+            
+            // Make sure the workspace is sized correctly in the beginning
+            resize(node);
+            node.workspace.scrollCenter();
+        }
     }
     
     function cleanup(node) {
@@ -235,32 +347,6 @@
         delete node.workspace;
     }
     
-    function cleanup(node) {
-        // Make sure that the Node-Red handles all keydown events again (e.g. 'D' to delete a node), instead of Blockly. 
-        Blockly.blocklyEditorVisible = false;
-        
-        // When blocks are still available in Blockly's clipboard, Blockly CANNOT paste them in another workspace (of another node).
-        // This means we can empty the clipboard (by setting it to null).  However we will store first a copy of their clipboard 
-        // (as xml string) into our own custom clipboard, which we CAN use to paste in another workspace.
-        if (Blockly.clipboardXml_) {
-            Blockly.customClipboard = '<xml xmlns="http://www.w3.org/1999/xhtml">' + Blockly.Xml.domToPrettyText(Blockly.clipboardXml_) + '</xml>';
-            Blockly.clipboardXml_ = null;
-        }
-                            
-        // When a copy is done in this blockly node, an error will occur if that content is pasted later in another blockly node.
-        // Copy-paste across workspaces is not supported by Blockly (https://github.com/google/blockly/issues/334)
-        Blockly.clipboardXml_ = null;
-        Blockly.clipboardSource_ = null;
-
-        // Cleanup the ACE editor
-        node.aceEditor.destroy();
-        delete node.aceEditor;
-             
-        // Cleanup the Blockly workspace
-        node.workspace.dispose(); 
-        delete node.workspace;
-    }
-    
     // See https://developers.google.com/blockly/guides/configure/web/resizable
     function resize(node) {        
         // Resize the Blockly workspace, as soon as available (i.e. not when called from oneditprepare).
@@ -285,7 +371,7 @@
             blocklyDiv.style.height = blocklyArea.offsetHeight + 'px';
             
             // Make sure the Blockly svg area is resized according the DIV element.
-            // Blocky itself also calls svgResize underneath, but only when e.g. the toolbox changes size)
+            // Blockly itself also calls svgResize underneath, but only when e.g. the toolbox changes size)
             Blockly.svgResize(node.workspace);
             
         }
@@ -331,10 +417,8 @@
         //var dom = Blockly.Xml.textToDom(loadedXml);
         //node.workspace.clear();
         //Blockly.Xml.domToWorkspace(dom, node.workspace);
-        node.workspace.dispose();
         createWorkspace(node, loadedXml);
     }
-
 
     RED.nodes.registerType('Blockly',{
         category: 'function',
@@ -354,44 +438,9 @@
         },
         oneditprepare: function() {
             var node = this;
-
-            // Blockly has an onKeyDown handler, that handles a number of key combinations (ctrl-'C' to copy the selected
-            // blocks, 'D' to delete the selected blocks, ctrl-'Z' to undo the last action).  However afterwards the keydown event
-            // is passed to Node-Red which cannot handle it, resulting in errors in the log.
-            // See https://github.com/bartbutenaers/node-red-contrib-blockly/issues/2
-            // Make sure that Blockly only handles the keydown events when the Blockly editor is visible, and otherwise Node-Red will handle them.
-            if (Blockly.blocklyEditorVisible === undefined) {
-                Blockly.originalKeyDownHandler = Blockly.onKeyDown_;
-                Blockly.onKeyDown_ = function(e) {
-                    if (Blockly.blocklyEditorVisible) {
-                        // Let Blockly handle the keydown event
-                        Blockly.originalKeyDownHandler(e);
-                        
-                        // 
-                        if (e.altKey || e.ctrlKey || e.metaKey) {
-                            // Don't use meta keys during drags
-                            if (!Blockly.mainWorkspace.isDragging()) {
-                                // When pressing CTRL-V (paste) ...
-                                if (e.keyCode == 86) {
-                                    if (!Blockly.clipboardXml_ && Blockly.customClipboard) {
-                                        // When the originalClipboardXml_ is null and the customClipboard is not empty, this means
-                                        // we need to paste blocks that have been copied (to the customClipboard) in another node.
-                                        var xmlDom = Blockly.Xml.textToDom(Blockly.customClipboard);
-                                        Blockly.Xml.domToWorkspace(xmlDom, Blockly.mainWorkspace);
-                                    }
-                                }
-                            }
-                        }
-                        
-                        // Stop the events from propagating up the DOM tree
-                        e.stopPropagation();
-                    }
-                }
-            }
-            Blockly.blocklyEditorVisible = true;
-       
-            // Make sure the Blockly node_send and node_return_message blocks are already at the beginning aware about the number of outputs
-            Blockly.nodeOutputs = this.outputs
+            
+            node.librariesLoaded = false;
+debugger;
 
             $( "#node-input-outputs" ).spinner({
                 min:1,
@@ -415,14 +464,6 @@
                     }
                 }
             });
-            
-            // Store the loaded config node id (temporarliy) in the node, because the blockly-node's config screen will
-            // be cleaned up before we navigate to the tray screen.  From then on the $("#node-input-blocklyConfig") won't be accessible anymore...
-            // Don't use node.blocklyConfig for this purpose, because that need to be unchanged in case the "Cancel" button is clicked.
-            node.selectedConfigNodeId = $("#node-input-blocklyConfig").val();
-
-            // Jeff: Moved to here for initializing Blockly workspace before creating tabs. It will be reloaded when the tabs created.
-            createWorkspace(node, node.workspaceXml);
 
             node.aceEditor = RED.editor.createEditor({
                 id: 'aceDiv',
@@ -446,7 +487,6 @@
                 // Jeff: it seems everytime anything loads to the editor it removes the previous contents and then inject the new contents.
                 // so there are two changes. 
                 if (loadedXml != "") {
-                    node.workspace.dispose();
                     Blockly.nodeOutputs = parseInt($("#node-input-outputs")[0].value);
                     createWorkspace(node, loadedXml);
                 }
@@ -454,38 +494,46 @@
 
             // Show three tabsheets
             var tabs = RED.tabs.create({
-                id: "node-blocky-tabs",
+                id: "node-blockly-tabs",
                 onchange: function(tab) {
                     // Show only the content (i.e. the children) of the selected tabsheet, and hide the others
-                    $("#node-blocky-tabs-content").children().hide();
+                    $("#node-blockly-tabs-content").children().hide();
                     $("#" + tab.id).show();
 
-                    // Every time the ace editor is displayed, the Javascript code should be regenerated (from the Blockly workspace);
-                    // and the xml editor should be refilled (from the Blockly workspace)
-                    if (tab.id === "node-blocky-tab-javascript") {
-                        fillAceXMLEditor(node);
-                        fillAceEditor(node);
-                    }
-                    if (tab.id === "node-blocky-tab-xml") {
-                        fillAceXMLEditor(node);
-                    }
-                    if (tab.id === "node-blocky-tab-workspace") {
-                        reloadBlockly(node);
+                    // We will also arrive here when addTab is being called.  In that case it has on use to continue...
+                    if (node.librariesLoaded) {
+                        // Every time the ace editor is displayed, the Javascript code should be regenerated (from the Blockly workspace);
+                        // and the xml editor should be refilled (from the Blockly workspace)
+                        if (tab.id === "node-blockly-tab-javascript") {
+                            fillAceXMLEditor(node);
+                            fillAceEditor(node);
+                        }
+                        if (tab.id === "node-blockly-tab-xml") {
+                            fillAceXMLEditor(node);
+                        }
+                        if (tab.id === "node-blockly-tab-workspace") {
+                            reloadBlockly(node);
+                        }
                     }
                 }
             });
             tabs.addTab({
-                id: "node-blocky-tab-workspace",
+                id: "node-blockly-tab-workspace",
                 label: "Editor"
             });
             tabs.addTab({
-                id: "node-blocky-tab-javascript",
+                id: "node-blockly-tab-javascript",
                 label: "Generated Javascript"
             });
             tabs.addTab({
-                id: "node-blocky-tab-xml",
+                id: "node-blockly-tab-xml",
                 label: "Generated XML"
             });
+            
+            // Store the loaded config node id (temporarliy) in the node, because the blockly-node's config screen will
+            // be cleaned up before we navigate to the tray screen.  From then on the $("#node-input-blocklyConfig") won't be accessible anymore...
+            // Don't use node.blocklyConfig for this purpose, because that need to be unchanged in case the "Cancel" button is clicked.
+            node.selectedConfigNodeId = $("#node-input-blocklyConfig").val();
 
             // Need to wait for it to be rendered before the sizing of the tabs can be properly calculated
             setTimeout(function() {
@@ -538,7 +586,6 @@
                                     $("#node-showBlocklyArea").css("display","none");
                                     var dom = Blockly.Xml.workspaceToDom(node.workspace);
                                     var loadedXml = Blockly.Xml.domToPrettyText(dom);
-                                    node.workspace.dispose();
 
                                     createWorkspace(node, loadedXml);
                                 }
@@ -563,7 +610,6 @@
                                 text: RED._("common.label.cancel"),
                                 click: function() {
                                     var loadedXml = node.loadedXml;
-                                    node.workspace.dispose();
 
                                     //Jeff: re-create workspace after RED.tray.close finished
                                     RED.tray.close(() => createWorkspace(node, loadedXml));
@@ -576,7 +622,6 @@
                                 click: function() {
                                     var dom = Blockly.Xml.workspaceToDom(node.workspace);
                                     var loadedXml = Blockly.Xml.domToPrettyText(dom);
-                                    node.workspace.dispose();
 
                                     RED.tray.close(() => createWorkspace(node, loadedXml));
                                 }
@@ -601,7 +646,6 @@
                             var dom = Blockly.Xml.workspaceToDom(node.workspace);
                             node.loadedXml = Blockly.Xml.domToPrettyText(dom);
 
-                            node.workspace.dispose();
                             createWorkspace(node, node.loadedXml);
                             node.jseditor = RED.editor.createEditor({
                                 id: 'aceDiv',
@@ -626,9 +670,9 @@
 
             //Jeff: expand Blockly editing area
             $("#blocklyExpandDiv").on("click", expandBlocklyHandler());
-     
+            
             // When a new config is selected, a new Blockly workspace should be drawn (with the new config settings)        
-            $("#node-input-blocklyConfig").on('change', function() {
+            $("#node-input-blocklyConfig").on('change', function(event) {
                 // Store the newly selected config node id (temporarliy) in the node, because the blockly-node's config screen will
                 // be cleaned up before we navigate to the tray screen.  From then on the $("#node-input-blocklyConfig") won't be accessible anymore...
                 // Don't use node.blocklyConfig for this purpose, because that need to be unchanged in case the "Cancel" button is clicked.
@@ -636,59 +680,31 @@
                 
                 var counter = 0;
                 var language = "en";
+                var categories;
 
                 if (node.selectedConfigNodeId && node.selectedConfigNodeId !== "_ADD_") {
                     var configNode = RED.nodes.node(node.selectedConfigNodeId);
-                    if (configNode && configNode.language) {
-                        language = configNode.language;
-                    }
-                }
-                
-                // Make sure the Blockly datetime_convert_from_date block is always aware about the number of outputs
-                Blockly.blocklyEditorLanguage = language;
-        
-                // When another language is selected, then load the file with the translations in that language.
-                // Those translated texts will override the english text (which has been loaded at the start in the en.js file).
-                // First load the english texts and afterwards the translated texts: if some translations are missing, the original
-                // english texts will be used.  Note that the blocky/js/npm/msg/en.js file contains a Blockly.Msg = {} 
-                var scripts = [
-                  "blocky/js/npm/msg/en.js",
-                  "blocky/js/npm/msg/" + language + ".js",
-                  "blocky/js/messages/en.js",
-                  "blocky/js/messages/" + language + ".js"
-                ]
-                
-                scripts.forEach(function(src) {
-                    var script = document.createElement('script');
-                    script.type = "text/javascript";
-                    script.async = false; // Force synchronous loading, to load them in the correct sequence
-                  
-                    // Show the entire workspace in the new selected value, by rendering after the scripts are loaded
-                    script.onload = function() {
-                        counter++;
+                    if (configNode) {
+                        if (configNode.language) {
+                            language = configNode.language;
+                        }
                         
-                        // Only do this when the last script has been loaded, otherwise we get errors do to missing messages.
-                        // See https://github.com/bartbutenaers/node-red-contrib-blockly/issues/63#issuecomment-855301449
-                        if (counter === scripts.length) {
-                            // Blocks may look completely different in another language, due to differences in word-order. 
-                            // As a result the language of a running Blockly instance cannot be changed.  
-                            // To avoid a page reload, build the workspace again (based on the original workspace xml).
-                            // See https://github.com/google/blockly/issues/701
-                            var dom = Blockly.Xml.workspaceToDom(node.workspace);
-                            var workspaceXml = Blockly.Xml.domToPrettyText(dom);
-                            
-                            // Destroy the current workspace
-                            node.workspace.dispose();
-                            
-                            createWorkspace(node, workspaceXml);
+                        // Only when the "customize toolbox categories" checkbox is enabled (in the config node screen), we will use the custom categories.
+                        if (configNode.customizeToolbox) {
+                            categories = configNode.categories;
                         }
                     }
-                  
-                    script.src = src; 
-                    document.head.appendChild(script);
-                });
+                }
+
+                // Load all the files from the servers, as specified in the config node.
+                // This also includes the language files.  At the start we have loaded the en.js files, because we are sure that all sentences
+                // are available in english.  Afterwards other language files can be loaded, thus overwriting the english sentences.  By doing
+                // it that way, missing sentences in the translations are not a problem (since those sentences will simply be displayed in english).
+                // CAUTION: the "blockly-contrib/npm/blockly/msg/en.js" file contains a Blockly.Msg = {} , which means all previous loaded 
+                // messages will be removed!
+                loadResourcesFromServer(node, language, categories);
             });
-            $("#node-input-blocklyConfig").change();
+            // This is being called by Node-RED also $("#node-input-blocklyConfig").change();
         },
         oneditsave: function() {
             var node = this;
@@ -715,17 +731,22 @@
         },
         oneditresize: function (size) {
             var node = this;
-            var height = $("#blocklyArea").height();
-            var width = $("#blocklyArea").width();
-            $("#blocklyDiv").css("height",height+"px");
-            $("#blocklyDiv").css("width",width+"px");
-            Blockly.svgResize(node.workspace);
-            //node.workspace.scrollCenter();
+            
+            // Only execute this functionality as soon as the Blockly libraries have been loaded (i.e. the Blockly global variable exists)
+            if (Window.Blockly) {
+                var height = $("#blocklyArea").height();
+                var width = $("#blocklyArea").width();
+                $("#blocklyDiv").css("height",height+"px");
+                $("#blocklyDiv").css("width",width+"px");
+                Blockly.svgResize(node.workspace);
+                //node.workspace.scrollCenter();
+            }
         }
     });
 </script>
 
 <script type="text/html" data-template-name="Blockly">
+
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name" style="width:70%;">
@@ -738,10 +759,10 @@
     </br>
     <div class="form-row">
         <!-- Three tabsheets -->
-        <ul style="background: #fff; min-width: 600px; margin-bottom: 20px;" id="node-blocky-tabs"></ul>
+        <ul style="background: #fff; min-width: 600px; margin-bottom: 20px;" id="node-blockly-tabs"></ul>
     </div>
-    <div id="node-blocky-tabs-content" style="min-height: 350px">
-        <div id="node-blocky-tab-workspace">
+    <div id="node-blockly-tabs-content" style="min-height: 350px">
+        <div id="node-blockly-tab-workspace">
             <div class="form-row">
                 <!-- Blockly editor -->
                 <div id="blocklyArea" style="width: 100%; height: 450px; min-height:350px;">
@@ -752,14 +773,14 @@
                 </div>
             </div>
         </div>
-        <div id="node-blocky-tab-javascript">
+        <div id="node-blockly-tab-javascript">
             <div class="form-row node-text-editor-row">
                 <!-- <div style="position: absolute; right:0; bottom:calc(100% + 3px);"><button id="node-function-expand-js" class="editor-button editor-button-small"><i class="fa fa-expand"></i></button></div>-->
                 <!-- Ace editor for generated Javascript code -->
                 <div id="aceDiv" style="width: 100%; height: 450px; min-height:350px;"></div>
             </div>
         </div>
-        <div id="node-blocky-tab-xml">
+        <div id="node-blockly-tab-xml">
             <div class="form-row node-text-editor-row">
                 <!-- <div style="position: absolute; right:0; bottom:calc(100% + 3px);"><button id="node-function-expand-js" class="editor-button editor-button-small"><i class="fa fa-expand"></i></button></div>-->
                 <!-- Ace XML editor for generated XML code -->

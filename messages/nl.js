@@ -115,7 +115,7 @@ Blockly.Msg.MISC_COMMENT_TOOLTIP = "Voeg commentaar toe om uit te leggen hoe de 
 // =========================================================================================
 Blockly.Msg.DATETIME_INPUT = "datum %1";
 Blockly.Msg.DATETIME_INPUT_TOOLTIP = "Een datum.";
-Blockly.Msg.DATETIME_TIMESTAMP = "tijdstip";
+Blockly.Msg.DATETIME_TIMESTAMP = "%1 tijdstip";
 Blockly.Msg.DATETIME_TIMESTAMP_TOOLTIP = "Zoek het huidige tijdstip (d.w.z. datum en tijd van nu).";
 Blockly.Msg.DATETIME_CONVERT_FROM_DATE = "zoek %1 van tijdstip %2";
 Blockly.Msg.DATETIME_CONVERT_FROM_DATE_TOOLTIP = "Zoek de opgegeven infromatie van een tijdstip";
