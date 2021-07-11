@@ -39,7 +39,8 @@
                 "blockly-contrib/npm/blockly/msg/en.js",                // Fills the Blockly.Msg with english translations
                 "blockly-contrib/npm/blockly/blocks_compressed.js",
                 "blockly-contrib/npm/blockly/javascript_compressed.js",
-                "blockly-contrib/npm/@blockly%2Fplugin-workspace-search/dist/index.js"
+                "blockly-contrib/npm/@blockly%2Fplugin-workspace-search/dist/index.js",
+                "blockly-contrib/npm/@blockly%2Fzoom-to-fit/dist/index.js"
             ]
         });
 
@@ -275,8 +276,15 @@
                 toolboxPosition : toolboxPosition
             });
             
+            // Enable the search bar on the workspace (via the workspace-search plugin)
             const workspaceSearch = new WorkspaceSearch(node.workspace);
             workspaceSearch.init();
+            
+            if (showZoomControl) {
+                // Enable the zoom to fit control icon on the workspace (via the zoom-to-fit plugin)
+                const zoomToFit = new ZoomToFitControl(node.workspace);
+                zoomToFit.init();
+            }
      
             // Trigger an event to indicate that a new Blockly workspace has been created.
             // Blockly doesn't offer such an event.  See https://groups.google.com/g/blockly/c/sSpvp_Kz-To
@@ -444,7 +452,6 @@
             var node = this;
             
             node.librariesLoaded = false;
-debugger;
 
             $( "#node-input-outputs" ).spinner({
                 min:1,
