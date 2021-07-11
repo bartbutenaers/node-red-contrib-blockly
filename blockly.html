@@ -38,7 +38,8 @@
                 "blockly-contrib/npm/blockly/blockly_compressed.js",    // Creates a global Blockly variable
                 "blockly-contrib/npm/blockly/msg/en.js",                // Fills the Blockly.Msg with english translations
                 "blockly-contrib/npm/blockly/blocks_compressed.js",
-                "blockly-contrib/npm/blockly/javascript_compressed.js"
+                "blockly-contrib/npm/blockly/javascript_compressed.js",
+                "blockly-contrib/npm/@blockly%2Fplugin-workspace-search/dist/index.js"
             ]
         });
 
@@ -273,6 +274,9 @@
                 horizontalLayout: horizontalLayout,
                 toolboxPosition : toolboxPosition
             });
+            
+            const workspaceSearch = new WorkspaceSearch(node.workspace);
+            workspaceSearch.init();
      
             // Trigger an event to indicate that a new Blockly workspace has been created.
             // Blockly doesn't offer such an event.  See https://groups.google.com/g/blockly/c/sSpvp_Kz-To
