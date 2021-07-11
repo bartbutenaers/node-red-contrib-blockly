@@ -40,7 +40,8 @@
                 "blockly-contrib/npm/blockly/blocks_compressed.js",
                 "blockly-contrib/npm/blockly/javascript_compressed.js",
                 "blockly-contrib/npm/@blockly%2Fplugin-workspace-search/dist/index.js",
-                "blockly-contrib/npm/@blockly%2Fzoom-to-fit/dist/index.js"
+                "blockly-contrib/npm/@blockly%2Fzoom-to-fit/dist/index.js",
+                "blockly-contrib/npm/@blockly%2Fworkspace-backpack/dist/index.js"
             ]
         });
 
@@ -216,6 +217,7 @@
         var allowComments    = true;
         var showZoomControl  = true;
         var horizontalLayout = false;
+        var enableBackPack   = false;
         var toolboxPosition  = "start";
         var renderer         = "geras";
 
@@ -233,6 +235,7 @@
                 allowComments   = configNode.allowComments;
                 showZoomControl = configNode.showZoomControl;
                 renderer        = configNode.renderer;
+                enableBackPack  = configNode.enableBackPack;
  
                 // The toolboxPosition from the config screen determines two separate blockly settings!
                 switch(configNode.toolboxPosition) {
@@ -284,6 +287,12 @@
                 // Enable the zoom to fit control icon on the workspace (via the zoom-to-fit plugin)
                 const zoomToFit = new ZoomToFitControl(node.workspace);
                 zoomToFit.init();
+            }
+            
+            if (enableBackPack) {
+                // Enable the backpack icon on the workspace (via the workspace-backpack plugin)
+                const backpack = new Backpack(node.workspace);
+                backpack.init();
             }
      
             // Trigger an event to indicate that a new Blockly workspace has been created.

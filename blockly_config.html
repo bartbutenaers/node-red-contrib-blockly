@@ -101,6 +101,7 @@
             showTrashcan: {value: true},
             allowComments: {value: true},
             showZoomControl: {value: true},
+            enableBackPack: {value: false},
             toolboxPosition: {value: "left"},
             renderer: {value: "geras"},
             categories: {value: null},
@@ -257,6 +258,11 @@
                 <span for='node-config-input-showZoomControl'> Show zoom control icons in workspace</span>
             </div>
             <div class="form-row">
+                <label for='node-config-input-enableBackPack'><i class='fa fa-briefcase'></i> Backpack</label>
+                <input type='checkbox' id='node-config-input-enableBackPack' style='width:auto ;border:none; vertical-align:baseline;' placeholder='0'>
+                <span for='node-config-input-enableBackPack'> Show backpack icon in workspace</span>
+            </div>
+            <div class="form-row">
                 <label for='node-config-input-customizeToolbox'><i class='fa fa-list'></i> Categories</label>
                 <input type='checkbox' id='node-config-input-customizeToolbox' style='width:auto ;border:none; vertical-align:baseline;' placeholder='0'>
                 <span for='node-config-input-customizeToolbox'> Customize toolbox categories (use with caution!)</span>
@@ -343,6 +349,8 @@
     If activated, comments can be added to a block (via the right-click context menu).</p>
     <p><strong>Show zoom control icons in workspace:</strong><br/>
     If activated, zoom control icons will be displayed in the Blockly workspace.</p>
+    <p><strong>Show backpack icon in workspace:</strong><br/>
+    If activated, a backpack icon will be displayed in the Blockly workspace.  Via this way you can manage your favorite blocks.</p>    
     <p><strong>Categories:</strong><br/>
     If activated, the toolbox categories can be customized.</p>
     <p style="color:#FF0000">CAUTION: if you remove block libraries (for blocks that are already being used in the workspace), then your workspace might become unusable!  Moreover when a new version of the Blockly node is published, then you most probably might not get our changes to the toolbox (e.g. a new category).  So this option should only be used by advanced users!</p>
