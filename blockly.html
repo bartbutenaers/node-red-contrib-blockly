@@ -207,7 +207,17 @@
             
             // Create the workspace as soon as the last script has been loaded.  
             // This is possible because the scripts are loaded sequentially (via async = false)
-            createWorkspace(node, node.workspaceXml);            
+            if (node.workspace) {
+                // When there has been a previous workspace, show the content of that workspace.
+                // Because that workspace might have changes (which have not been stored yet into node.workspaceXml), which need to be kept
+                var dom = Blockly.Xml.workspaceToDom(node.workspace);
+                var originalXml = Blockly.Xml.domToPrettyText(dom);
+                createWorkspace(node, originalXml);
+            }
+            else {
+                // Since their is no previous workspace, let's show the last stored xml
+                createWorkspace(node, node.workspaceXml);
+            }      
         }
     }
 
