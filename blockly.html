@@ -217,7 +217,7 @@
             else {
                 // Since their is no previous workspace, let's show the last stored xml
                 createWorkspace(node, node.workspaceXml);
-            }      
+            }                
         }
     }
 
@@ -230,11 +230,8 @@
         var enableBackPack   = false;
         var toolboxPosition  = "start";
         var renderer         = "geras";
-
-        // When previously another workspace was already created, then cleanup that one first (to avoid displaying multiple workspaces).
-        if (node.workspace) {
-            node.workspace.dispose();
-        }        
+        var configNodeId     = "";
+        var backpackContents = [];
 
         // When a config node has been specified, then use the settings from that node
         if (node.selectedConfigNodeId && node.selectedConfigNodeId !== "_ADD_") {
@@ -246,6 +243,7 @@
                 showZoomControl = configNode.showZoomControl;
                 renderer        = configNode.renderer;
                 enableBackPack  = configNode.enableBackPack;
+                configNodeId    = configNode.id;
  
                 // The toolboxPosition from the config screen determines two separate blockly settings!
                 switch(configNode.toolboxPosition) {
@@ -264,6 +262,59 @@
                 }
             }
         }
+        
+        // When previously a zoom-to-fit plugin has been activated, then clean it up
+        if (node.zoomToFit) {
+            node.zoomToFit.dispose();
+            node.zoomToFit = null;
+        }
+
+        // Persist the backpack content, to make sure it can be restored in new workspace instances (e.g. when switching to full-screen mode).
+        // If backpack is not enabled, further on a new workspace setting will be created without backpack ...
+        if (enableBackPack) {
+            // Note that the backpack instance is linked to this node (since the corresponding workspace instance is also stored in this node), 
+            // but its content will be stored in the config node in the oneditsave...
+            
+            if (!node.backpack || configNodeId !== node.previousConfigNodeId) {
+                if (node.selectedConfigNodeId && node.selectedConfigNodeId !== "_ADD_") {
+                    var configNode = RED.nodes.node(node.selectedConfigNodeId);
+                    if (configNode) {
+                        // Start from scratch (starting from the backpack content stored in the config node) when:
+                        // 1) There was previously no backpack activated in this node workspace, which means the user has enable the backpack now.
+                        // 2) The config node has changed.  Since enableBackPack is true, the user has selected another config node with its own backpack enabled.
+                        backpackContents = configNode.backpackContents;
+                    }
+                }
+            }
+            else {
+                if (node.backpack) {
+                    // We are still using the same config node.  Since the user might already have made changes to the config node backpack, we need
+                    // to start again from the previous backpack instance in this workspace (since that would contain those changes).
+                    // Otherwise all changes would be lost...
+                    backpackContents = node.backpack.getContents();
+                }
+            }
+        }
+        
+        // Remember the current config node id for the next time we arrive in this function
+        node.previousConfigNodeId = configNodeId;
+        
+        // When previously a workspace-backpack plugin has been activated (for the previous workspace instance), then clean it up
+        if (node.backpack) {
+            node.backpack.dispose();
+            node.backpack = null;
+        }
+        
+        // Blockly requires an empty array for the content of an empty backpack (instead of undefined or null)
+        if (!backpackContents) {
+            backpackContents = [];
+        }
+
+        // When previously another workspace was already created, then cleanup that one first (to avoid displaying multiple workspaces).
+        if (node.workspace) {
+            node.workspace.dispose();
+            node.workspace = null;
+        }  
 
         // Only load the Blockly workspace when all libraries have been loaded yet, in order to avoid errors
         if (node.librariesLoaded == true) {
@@ -295,14 +346,20 @@
             
             if (showZoomControl) {
                 // Enable the zoom to fit control icon on the workspace (via the zoom-to-fit plugin)
-                const zoomToFit = new ZoomToFitControl(node.workspace);
-                zoomToFit.init();
+                node.zoomToFit = new ZoomToFitControl(node.workspace);
+                node.zoomToFit.init();
             }
             
             if (enableBackPack) {
                 // Enable the backpack icon on the workspace (via the workspace-backpack plugin)
-                const backpack = new Backpack(node.workspace);
-                backpack.init();
+                node.backpack = new Backpack(node.workspace);
+                node.backpack.init();
+                
+                // Reload the previous backpack content, to make sure it stays the same in new workspace instances (e.g. when switching to full-screen mode)
+                if (enableBackPack) {
+                    // Show the required backpack content
+                    node.backpack.setContents(backpackContents);
+                }
             }
      
             // Trigger an event to indicate that a new Blockly workspace has been created.
@@ -372,6 +429,17 @@
         node.aceXMLEditor.destroy();
         delete node.aceXMLEditor;
 
+        // When previously a zoom-to-fit plugin has been activated, then clean it up
+        if (node.zoomToFit) {
+            node.zoomToFit.dispose();
+            node.zoomToFit = null;
+        }
+        
+        // When previously a workspace-backpack plugin has been activated (for the previous workspace instance), then clean it up
+        if (node.backpack) {
+            node.backpack.dispose();
+            node.backpack = null;
+        }
 
         // Cleanup the Blockly workspace
         node.workspace.dispose(); 
@@ -459,6 +527,7 @@
             workspaceXml: {value:"<xml xmlns=\"https:\/\/developers.google.com\/blockly\/xml\"><\/xml>"}, // Needed for Blockly version "5.20210325.1". Can't be empty
             outputs: {value:1}, // Standard field that will be used by Node-Red to draw N output ports in the flow editor,
             blocklyConfig: {type: "blockly-config", required: false}, // No default value (see https://discourse.nodered.org/t/default-config-node/46773/9?u=bartbutenaers)
+            backpackContents: {value:[]},
             name: {value:""}
         },
         inputs:1,
@@ -471,6 +540,7 @@
             var node = this;
             
             node.librariesLoaded = false;
+            node.previousEnableBackPack = "none";
 
             $( "#node-input-outputs" ).spinner({
                 min:1,
@@ -725,7 +795,7 @@
                         }
                     }
                 }
-
+                                    
                 // Load all the files from the servers, as specified in the config node.
                 // This also includes the language files.  At the start we have loaded the en.js files, because we are sure that all sentences
                 // are available in english.  Afterwards other language files can be loaded, thus overwriting the english sentences.  By doing
@@ -751,6 +821,23 @@
             // To obtain a more readable (but larger) string, use Blockly.Xml.domToPrettyText instead.
             var dom = Blockly.Xml.workspaceToDom(node.workspace);
             node.workspaceXml = Blockly.Xml.domToPrettyText(dom);
+            
+            node.backpackContents = [];
+            if (node.backpack) {
+                // Store the current content of the backpack into the selected config node.
+                if (node.selectedConfigNodeId && node.selectedConfigNodeId !== "_ADD_") {
+                    var configNode = RED.nodes.node(node.selectedConfigNodeId);
+    
+                    if (configNode) {
+                        configNode.backpackContents = node.backpack.getContents();
+                        
+                        // Let Node-RED know that the config node has become dirty, so the "Deploy" button will become active
+                        // (because the user might only have changed the config node's backpack, and not changed this node)
+                        configNode.dirty = true;
+                        RED.nodes.dirty(true);
+                    }
+                }
+            }
 
             cleanup(node);
         },
@@ -768,8 +855,11 @@
                 var width = $("#blocklyArea").width();
                 $("#blocklyDiv").css("height",height+"px");
                 $("#blocklyDiv").css("width",width+"px");
-                Blockly.svgResize(node.workspace);
-                //node.workspace.scrollCenter();
+                
+                if (node.workspace) {
+                    Blockly.svgResize(node.workspace);
+                    //node.workspace.scrollCenter();
+                }
             }
         }
     });
