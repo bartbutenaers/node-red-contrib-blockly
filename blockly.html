@@ -489,7 +489,28 @@
         
         // After setValue all code will be selected otherwise
         // Fix for clearSelection (see https://github.com/bartbutenaers/node-red-contrib-blockly/issues/74#issuecomment-862681796)
-        node.aceEditor.moveCursorTo(0,0); 
+        node.aceEditor.moveCursorTo(0,0);
+        
+        // Count the number of (syntax) errors in the generated javascript code
+        var errorCount = 0;
+        var annotations = node.aceEditor.getSession().getAnnotations();
+        for (var k=0; k < annotations.length; k++) {
+            if (annotations[k].type === "error") {
+                errorCount += annotations.length;
+                break;
+            }
+        }
+        
+        // Give the "Javascript" tabsheet a red color if the generated javascript code contains (syntax) errors
+        if (errorCount > 0) {
+            $("#red-ui-tab-node-blockly-tab-javascript").css('background-color', "#EC7055");
+        }
+        else {
+            // No (syntax) errors in the generated java
+            $("#red-ui-tab-node-blockly-tab-javascript").css('background-color', "#FFFFFF");
+        }
+        
+        return errorCount;
     }
 
 
@@ -528,6 +549,11 @@
             outputs: {value:1}, // Standard field that will be used by Node-Red to draw N output ports in the flow editor,
             blocklyConfig: {type: "blockly-config", required: false}, // No default value (see https://discourse.nodered.org/t/default-config-node/46773/9?u=bartbutenaers)
             backpackContents: {value:[]},
+            // Use the noerr property to let Node-RED know whether the generated Javascript contains a syntax error or not.
+            // This way the flow editor knows whether a red triangle should be drawn for this node or not.
+            // The noerr property will be filled in the oneditsave, since it is useless to check the code for syntax errors every time the validator is called.
+            // Normally the generated function should never contain syntax errors, but due to an issue in the code generator in some block this might happen ...
+            noerr: {value:0,required:true, validate:function(v) { return !v; }},
             name: {value:""}
         },
         inputs:1,
@@ -808,6 +834,9 @@
         },
         oneditsave: function() {
             var node = this;
+            
+            // Store the number of (syntax) errors in the generated javascript code
+            node.noerr = fillAceEditor(node);
                         
             // Store the number of output ports in Blockly,  so the blocks can take that number into account (if required)
             //Blockly.nodeOutputs = $("#node-input-outputs").val(); 
