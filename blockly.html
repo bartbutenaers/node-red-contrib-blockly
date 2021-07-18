@@ -491,6 +491,7 @@
         // Fix for clearSelection (see https://github.com/bartbutenaers/node-red-contrib-blockly/issues/74#issuecomment-862681796)
         node.aceEditor.moveCursorTo(0,0);
         
+        /*
         // Count the number of (syntax) errors in the generated javascript code
         var errorCount = 0;
         var annotations = node.aceEditor.getSession().getAnnotations();
@@ -500,7 +501,7 @@
                 break;
             }
         }
-        
+    
         // Give the "Javascript" tabsheet a red color if the generated javascript code contains (syntax) errors
         if (errorCount > 0) {
             $("#red-ui-tab-node-blockly-tab-javascript").css('background-color', "#EC7055");
@@ -509,8 +510,8 @@
             // No (syntax) errors in the generated java
             $("#red-ui-tab-node-blockly-tab-javascript").css('background-color', "#FFFFFF");
         }
-        
-        return errorCount;
+        */
+
     }
 
 
@@ -595,7 +596,8 @@
                 id: 'aceDiv',
                 mode: 'ace/mode/nrjavascript', // serverside NodeRed editor
                 value: node.func,
-                readOnly: true
+                readOnly: true,
+                renderValidationDecorations: "on" // See https://discourse.nodered.org/t/show-errors-in-ace-and-monaco-editor/48529/12?u=bartbutenaers
             });
             node.aceEditor.setFontSize(14); 
 
@@ -834,9 +836,17 @@
         },
         oneditsave: function() {
             var node = this;
-            
+      
             // Store the number of (syntax) errors in the generated javascript code
-            node.noerr = fillAceEditor(node);
+            fillAceEditor(node);
+            node.noerr = 0;
+            var annotations = node.aceEditor.getSession().getAnnotations();
+            for (var k=0; k < annotations.length; k++) {
+                if (annotations[k].type === "error") {
+                    node.noerr += annotations.length;
+                    break;
+                }
+            }
                         
             // Store the number of output ports in Blockly,  so the blocks can take that number into account (if required)
             //Blockly.nodeOutputs = $("#node-input-outputs").val(); 
