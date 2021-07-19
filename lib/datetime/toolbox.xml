@@ -6,5 +6,7 @@
       </value>
     </block>
     <block type="datetime_timestamp"></block>
+    <block type="datetime_input">
+    </block>
   </category>
 </xml>

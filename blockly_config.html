@@ -1,0 +1,370 @@
+<!--
+  Copyright 2021, Bart Butenaers
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  http://www.apache.org/licenses/LICENSE-2.0
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<script type="text/javascript">
+    function getDefaultBlocklyCategories() {
+        // Note that the same blockly-contrib/npm/node-red-contrib-blockly/messages/en.js is used for all our custom categories, since we use 
+        // a single language file for all our categories.  Similar to how the Blockly team at Google does it, since that is easier for the
+        // contributors that create translations in other languages...
+        // By repeating the same language file, it is possible for users to remove some categories (while the remaining categories still keep
+        // functioning correctly).
+        return [{
+                name: "Node-RED",
+                files: [
+                    "blockly-contrib/npm/node-red-contrib-blockly/lib/nodered/nodeRedBlocksCodeGen.js",
+                    "blockly-contrib/npm/node-red-contrib-blockly/lib/nodered/nodeRedBlocksDefs.js",
+                    "blockly-contrib/npm/node-red-contrib-blockly/lib/nodered/toolbox.xml",
+                    "blockly-contrib/npm/node-red-contrib-blockly/messages/en.js"
+                ]
+            },
+            {
+                name: "Objects",
+                files: [
+                    "blockly-contrib/npm/node-red-contrib-blockly/lib/json/objectBlocksCodeGen.js",
+                    "blockly-contrib/npm/node-red-contrib-blockly/lib/json/objectBlocksDefs.js",
+                    "blockly-contrib/npm/node-red-contrib-blockly/lib/json/toolbox.xml",
+                    "blockly-contrib/npm/node-red-contrib-blockly/messages/en.js"
+                ]
+            },
+            {
+                name: "Buffer",
+                files: [
+                    "blockly-contrib/npm/node-red-contrib-blockly/lib/buffer/bufferBlocksCodeGen.js",
+                    "blockly-contrib/npm/node-red-contrib-blockly/lib/buffer/bufferBlocksDefs.js",
+                    "blockly-contrib/npm/node-red-contrib-blockly/lib/buffer/toolbox.xml",
+                    "blockly-contrib/npm/node-red-contrib-blockly/messages/en.js"
+                ]
+            },
+            {
+                name: "Date/time",
+                files: [
+                    // Inside this category we use a datepicker plugin, which is available as a separate NPM package.
+                    // Note that this NPM package name (blockly/field-date) contains a slash, which needs to be replaced
+                    // by %2f (which represents a slash character inside the NPM package name element of the url).
+                    "blockly-contrib/npm/@blockly%2Ffield-date/dist/date_compressed.js",
+                    "blockly-contrib/npm/node-red-contrib-blockly/lib/datetime/dateTimeBlocksCodeGen.js",
+                    "blockly-contrib/npm/node-red-contrib-blockly/lib/datetime/dateTimeBlocksDefs.js",
+                    "blockly-contrib/npm/node-red-contrib-blockly/lib/datetime/toolbox.xml",
+                    "blockly-contrib/npm/node-red-contrib-blockly/messages/en.js"
+                ]
+            },
+            {
+                name: "Timer",
+                files: [
+                    "blockly-contrib/npm/node-red-contrib-blockly/lib/timer/timerBlocksCodeGen.js",
+                    "blockly-contrib/npm/node-red-contrib-blockly/lib/timer/timerBlocksDefs.js",
+                    "blockly-contrib/npm/node-red-contrib-blockly/lib/timer/toolbox.xml",
+                    "blockly-contrib/npm/node-red-contrib-blockly/messages/en.js"
+                ]
+            },
+            {
+                name: "Blockly extension",
+                files: [
+                    // Extra blocks that we have developed to show inside the existing standard Blockly categories
+                    "blockly-contrib/npm/node-red-contrib-blockly/lib/extra/extraBlocksCodeGen.js",
+                    "blockly-contrib/npm/node-red-contrib-blockly/lib/extra/extraBlocksDefs.js",
+                    "blockly-contrib/npm/node-red-contrib-blockly/lib/extra/toolbox.xml",
+                    "blockly-contrib/npm/node-red-contrib-blockly/messages/en.js"
+                ]
+            },
+            {
+                name: "Blockly standard",
+                files: [
+                    // The Blockly block definitions and code generaters are included in blocks_compressed.js and javascript_compressed.js",
+                    // which are offered by the Blockly team in the blockly NPM package.  Those files need to be loaded all the time, otherwise
+                    // we end up with lots of errors everywhere in this node.  Also the standard en.js file needs to be loaded always first,
+                    // because it contains a statement to clear ALL previously loaded messages.
+                    // Therefore those files will be loaded always and NOT here!!
+                    // However we have created our own toolbox.xml file, because you need to specify on your own which Blockly standard
+                    // blocks need to be displayed in the toolbox.  Therefore the toolbox.xml file is part of the node-red-contrib-blockly node.
+                    // This allows people to change this file to create their custom toolbox.
+                    "blockly-contrib/npm/node-red-contrib-blockly/lib/basic/toolbox.xml"
+                ]
+            }
+        ];
+    }
+
+    RED.nodes.registerType('blockly-config',{
+        category: 'config',
+        color: '#ff758d',
+        defaults: {
+            language: {value: "en"},
+            showTrashcan: {value: true},
+            allowComments: {value: true},
+            showZoomControl: {value: true},
+            enableBackPack: {value: false},
+            // The backpackContents will be set by the Blockly nodes, but need to be defined here (otherwise it won't be persisted by Node-RED)
+            backpackContents: {value: []},
+            toolboxPosition: {value: "left"},
+            renderer: {value: "geras"},
+            categories: {value: null},
+            customizeToolbox: {value: false},
+            name: {value: ""}
+        },        
+        inputs:1,
+        outputs:1,
+        icon: "font-awesome/fa-cog",
+        label: function() {
+            return this.name || "Blockly config";
+        },
+        oneditprepare: function() {
+            var node = this;
+
+            // Show tabsheets
+            node.tabs = RED.tabs.create({
+                id: "node-blockly-config-tabs",
+                onchange: function(tab) {
+                    // Show only the content (i.e. the children) of the selected tabsheet, and hide the others
+                    $("#node-blockly-config-tabs-content").children().hide();
+                    $("#" + tab.id).show();
+                    
+                    // Make sure that the editableList on this tab will fill the entire available area
+                    //resizeDialog();
+                }
+            });
+            node.tabs.addTab({
+                id: "node-blockly-config-tab-settings",
+                label: "Settings"
+            });
+            node.tabs.addTab({
+                id: "node-blockly-config-tab-categories",
+                label: "Categories"
+            });
+            
+            $('#node-config-input-customizeToolbox').change(function() {
+                // Enabling/disabling tabsheet is not supported by Node-RED (see https://discourse.nodered.org/t/disable-a-tabsheet-in-config-screen/32031)
+                if (this.checked) {
+                    // Enable the "categories" tabsheet
+                    $("#red-ui-tab-node-blockly-config-tab-categories").css('pointer-events', "");
+                    $("#red-ui-tab-node-blockly-config-tab-categories").css('opacity', "");
+                }
+                else {
+                    // Disable the "categories" tabsheet
+                    $("#red-ui-tab-node-blockly-config-tab-categories").css('pointer-events', "none");
+                    $("#red-ui-tab-node-blockly-config-tab-categories").css('opacity', "0.4");
+                }
+            });
+            $('#node-config-input-customizeToolbox').change();
+            
+            // The "categories" tabsheet is disabled by default, because it should only be used by advanced users!
+            // Not supported by Node-RED (see https://discourse.nodered.org/t/disable-a-tabsheet-in-config-screen/32031)
+            $("#red-ui-tab-node-blockly-config-tab-categories").css('pointer-events', "none");
+            $("#red-ui-tab-node-blockly-config-tab-categories").css('opacity', "0.4");
+            
+            if (!node.categories) {
+                // By default we expect all our categories need to be displayed.  Afterwards the user can modify this list if required.
+                node.categories = getDefaultBlocklyCategories();
+            }
+            
+            var categoriesList = $("#node-input-categories-container").css('min-height','200px').editableList({
+                // Apply css to the parent div to have margins, to make sure the percentages of the headers match those of the html elements below.
+                // Thanks to hotNipi for this tip !!!
+                header: $("<div>").css({"margin-left":"28px","margin-right":"10x"}).append($.parseHTML(
+                   "<div style='width:40%; display: inline-grid'><b>Category</b></div>" +
+                   "<div style='width:40%; display: inline-grid'><b>Resources</b></div>")),
+                addItem: function(container, i, category) {
+                    // Add a new row to the editableList
+                    var row = $('<div/>').appendTo(container);
+                    
+                    // Column 1 : Add an input field (type text) to the new row, that represents the category name
+                    var nameField = $('<input/>',{class:"node-input-category-name",type:"text"}).css({"width":"40%","margin-left":"5px","margin-right":"5px"}).appendTo(row);
+                    nameField.val(category.name || "");                   
+
+                    // Column 2 : Add an typedinput field (type object) to the new row, that represents the category files (i.e. all the files that need to be downloaded to the frontend)
+                    var filesField = $('<input/>',{class:"node-input-category-files",type:"text"}).css({"width":"40%","margin-left":"5px","margin-right":"5px"}).appendTo(row);
+                    filesField.typedInput({types: ['json']});
+                    filesField.typedInput("type", "json");
+                    filesField.typedInput("value", JSON.stringify(category.files || []));
+                },
+                buttons: [{
+                    label: "reset",
+                    icon: "fa fa-refresh",
+                    title: "reset to the default categories",
+                    click: function(evt) { 
+                        var answer = confirm("Do you really want to load the default categories/blocks?");
+                        if (answer == true) {
+                            $("#node-input-categories-container").editableList('empty');
+                            var defaultCategories = getDefaultBlocklyCategories();
+                            defaultCategories.forEach(function (category, index) {
+                                categoriesList.editableList('addItem', category);
+                            });
+                        }
+                    }
+                }],
+                removable: true,
+                sortable: true
+            });
+            
+            // Show all the categories (stored in this node) into the editableList
+            if (node.categories) {
+                node.categories.forEach(function (category, index) {
+                    categoriesList.editableList('addItem', category);
+                });
+            }
+        },
+        oneditsave: function() {
+            var node = this;
+
+            // Copy all the categories from the editableList to this node
+            node.categories = [];
+            var categoriesList = $("#node-input-categories-container").editableList('items');
+            categoriesList.each(function(i) {
+                var category  = $(this);
+                var name      = category.find(".node-input-category-name").val();
+                var files     = JSON.parse(category.find(".node-input-category-files").typedInput('value'));
+                
+                node.categories.push({name:name, files:files});
+            });
+        },
+        oneditresize: function(size) {
+            ///resizeDialog(size);
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="blockly-config">
+    <div class="form-row">
+        <label for="node-config-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-config-input-name" placeholder="Name">
+    </div>
+    <br>
+    <div class="form-row">
+        <!-- Tabsheets -->
+        <ul style="background: #fff; margin-bottom: 20px;" id="node-blockly-config-tabs"></ul>
+    </div>
+    <div id="node-blockly-config-tabs-content" style="min-height: 150px">
+        <!-- Content of all tabsheets -->
+        <div id="node-blockly-config-tab-settings" class="node-blockly-config-tab-content">
+            <div class="form-row">
+                <label for='node-config-input-showTrashcan'><i class='fa fa-trash'></i> Trashcan</label>
+                <input type='checkbox' id='node-config-input-showTrashcan' style='width:auto ;border:none; vertical-align:baseline;' placeholder='0'>
+                <span for='node-config-input-showTrashcan'> Show trashcan icon in workspace</span>
+            </div>
+            <div class="form-row">
+                <label for='node-config-input-allowComments'><i class='fa fa-comment-o'></i> Comment</label>
+                <input type='checkbox' id='node-config-input-allowComments' style='width:auto ;border:none; vertical-align:baseline;' placeholder='0'>
+                <span for='node-config-input-allowComments'> Allow comments on blocks</span>
+            </div>    
+            <div class="form-row">
+                <label for='node-config-input-showZoomControl'><i class='fa fa-binoculars'></i> Zoom</label>
+                <input type='checkbox' id='node-config-input-showZoomControl' style='width:auto ;border:none; vertical-align:baseline;' placeholder='0'>
+                <span for='node-config-input-showZoomControl'> Show zoom control icons in workspace</span>
+            </div>
+            <div class="form-row">
+                <label for='node-config-input-enableBackPack'><i class='fa fa-briefcase'></i> Backpack</label>
+                <input type='checkbox' id='node-config-input-enableBackPack' style='width:auto ;border:none; vertical-align:baseline;' placeholder='0'>
+                <span for='node-config-input-enableBackPack'> Show backpack icon in workspace</span>
+            </div>
+            <div class="form-row">
+                <label for='node-config-input-customizeToolbox'><i class='fa fa-list'></i> Categories</label>
+                <input type='checkbox' id='node-config-input-customizeToolbox' style='width:auto ;border:none; vertical-align:baseline;' placeholder='0'>
+                <span for='node-config-input-customizeToolbox'> Customize toolbox categories (use with caution!)</span>
+            </div>
+            <div class="form-row">
+                <label for="node-config-input-language"><i class="fa fa-globe"></i> Language</label>
+                <select id="node-config-input-language">    
+                    <!--<option value='ar'>العربية</option>-->
+                    <!--<option value='be-tarask'>Taraškievica</option>-->
+                    <!--<option value='br'>Brezhoneg</option>-->
+                    <!--<option value='ca'>Català</option>-->
+                    <!--<option value='cs'>Česky</option>-->
+                    <!--<option value='da'>Dansk</option>-->
+                    <!--<option value='de'>Deutsch</option>-->
+                    <!--<option value='el'>Ελληνικά</option>-->
+                    <option value='en'>English</option>
+                    <!--<option value='es'>Español</option>-->
+                    <!--<option value='et'>Eesti</option>-->
+                    <!--<option value='fa'>فارسی</option>-->
+                    <option value='fr'>Français</option>
+                    <!--<option value='he'>עברית</option>-->
+                    <!--<option value='hrx'>Hunsrik</option>-->
+                    <!--<option value='hu'>Magyar</option>-->
+                    <!--<option value='ia'>Interlingua</option>-->
+                    <!--<option value='is'>Íslenska</option>-->
+                    <!--<option value='it'>Italiano</option>-->
+                    <option value='ja'>日本語</option>
+                    <!--<option value='kab'>Kabyle</option>-->
+                    <!--<option value='ko'>한국어</option>-->
+                    <!--<option value='mk'>Македонски</option>-->
+                    <!--<option value='ms'>Bahasa Melayu</option>-->
+                    <!--<option value='nb'>Norsk Bokmål</option>-->
+                    <option value='nl'>Nederlands, Vlaams</option>
+                    <!--<option value='oc'>Lenga d\'òc</option>-->
+                    <!--<option value='pl'>Polski</option>-->
+                    <!--<option value='pms'>Piemontèis</option>-->
+                    <!--<option value='pt-br'>Português Brasileiro</option>-->
+                    <!--<option value='ro'>Română</option>-->
+                    <option value='ru'>Русский</option>
+                    <!--<option value='sc'>Sardu</option>-->
+                    <!--<option value='sk'>Slovenčina</option>-->
+                    <!--<option value='sr'>Српски</option>-->
+                    <!--<option value='sv'>Svenska</option>-->
+                    <!--<option value='ta'>தமிழ்</option>-->
+                    <!--<option value='th'>ภาษาไทย</option>-->
+                    <!--<option value='tlh'>tlhIngan Hol</option>-->
+                    <!--<option value='tr'>Türkçe</option>-->
+                    <!--<option value='uk'>Українська</option>-->
+                    <!--<option value='vi'>Tiếng Việt</option>-->
+                    <!--<option value='zh-hans'>简体中文</option>-->
+                    <!--<option value='zh-hant'>正體中文</option>-->
+                </select>
+            </div>    
+            <div class="form-row">
+                <label for="node-config-input-toolboxPosition"><i class="fa fa-arrows"></i> Toolbox</label>
+                <select id="node-config-input-toolboxPosition">
+                    <option value="left">Left</option> 
+                    <option value="right">Right</option>
+                    <option value="top">Top</option>
+                </select>
+            </div> 
+            <div class="form-row">
+                <label for="node-config-input-renderer"><i class="fa fa-paint-brush"></i> Renderer</label>
+                <select id="node-config-input-renderer">
+                    <option value="geras">Geras</option> 
+                    <option value="thrasos">Thrasos</option>
+                    <option value="zelos">Zelos</option>
+                </select>
+            </div>
+        </div>
+        <div id="node-blockly-config-tab-categories" class="node-blockly-config-tab-content">
+            <div class="form-row">
+                <!-- Table with blockly toolbox categories -->
+                <ol id="node-input-categories-container" class="auto-height-container"></ol>
+            </div>  
+        </div>
+    </div>            
+</script>
+
+<script type="text/html" data-help-name="blockly-config">
+    <p><strong>Show trashcan icon in workspace:</strong><br/>
+    If activated, a trash can icon will be displayed in the Blockly workspace.</p>
+    <p><strong>Allow comments on blocks:</strong><br/>
+    If activated, comments can be added to a block (via the right-click context menu).</p>
+    <p><strong>Show zoom control icons in workspace:</strong><br/>
+    If activated, zoom control icons will be displayed in the Blockly workspace.</p> 
+    <p><strong>Show backpack icon in workspace:</strong><br/>
+    If activated, a backpack icon will be displayed in the Blockly workspace.  Via this way you can manage your favorite blocks.</p> 
+    <p><strong>Categories:</strong><br/>
+    If activated, the toolbox categories can be customized.</p>
+    <p style="color:#FF0000">CAUTION: if you remove block libraries (for blocks that are already being used in the workspace), then your workspace might become unusable!  Moreover when a new version of the Blockly node is published, then you most probably might not get our changes to the toolbox (e.g. a new category).  So this option should only be used by advanced users!</p>
+    <p><strong>Language:</strong><br/>
+    Specify in which language the text should appear in the workspace.</p>
+    <p><strong>Toolbox:</strong><br/>
+    Specify the location of the toolbox in the workspace (left, right or top).</p>
+    <p><strong>Renderer:</strong><br/>
+    Specify a renderer to determine how the blocks need to be drawed visually in the workspace:
+    <ul>
+        <li><i>Geras:</i> The default Blockly look and feel.</li>
+        <li><i>Thrasos:</i></li>
+        <li><i>Zelos:</i> A Scratch-like look and feel.</li>
+    </ul></p>
+</script>

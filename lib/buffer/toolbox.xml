@@ -44,6 +44,14 @@
         <shadow type="buffer_empty"></shadow>
       </value>
     </block>
+    <block type="buffer_concatenate">
+      <value name="BUFFER_FIRST">
+        <shadow type="buffer_empty"></shadow>
+      </value>
+      <value name="BUFFER_SECOND">
+        <shadow type="buffer_empty"></shadow>
+      </value>
+    </block>
     <block type="buffer_set_index">
       <value name="BUFFER">
         <shadow type="buffer_empty"></shadow>

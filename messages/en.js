@@ -33,6 +33,7 @@ Blockly.Msg.NODE_PROPERTIES = "get node %1";
 Blockly.Msg.NODE_PROPERTIES_TOOLTIP = "Get the specified node property via the Node-Red function API.";
 Blockly.Msg.NODE_PROPERTIES_ID = "identifier";
 Blockly.Msg.NODE_PROPERTIES_NAME = "name";
+Blockly.Msg.NODE_PROPERTIES_OUTPUT_COUNT = "output count";
 Blockly.Msg.NODE_FLOW_MEMORY = "flow";
 Blockly.Msg.NODE_FLOW_MEMORY_TOOLTIP = "Access the data in the Node-Red flow memory.";
 Blockly.Msg.NODE_CONTEXT_MEMORY = "(node)context";
@@ -49,6 +50,10 @@ Blockly.Msg.NODE_RETURN_TOOLTIP = "Return to stop processing (without sending a 
 Blockly.Msg.NODE_CLOSE = "On node closed";
 Blockly.Msg.NODE_CLOSE_1 = "%1";
 Blockly.Msg.NODE_CLOSE_TOOLTIP = "Statements that should be executed when the node is being closed.";
+Blockly.Msg.NODE_DONE = "message done";
+Blockly.Msg.NODE_DONE_TOOLTIP = "Handling the message has been finished.";
+Blockly.Msg.NODE_ENV = "get environment variable %1";
+Blockly.Msg.NODE_ENV_TOOLTIP = "Access the value of an environment variable.";
 
 // =========================================================================================
 // Buffer blocks
@@ -67,6 +72,8 @@ Blockly.Msg.BUFFER_CHECK = "check if buffer %1";
 Blockly.Msg.BUFFER_CHECK_TOOLTIP = "Check if the input value is a buffer.";
 Blockly.Msg.BUFFER_COPY = "copy from buffer %1 to buffer %2";
 Blockly.Msg.BUFFER_COPY_TOOLTIP = "Copy from the first buffer to the second buffer";
+Blockly.Msg.BUFFER_CONCATENATE = "Concatenate buffer %1 and %2";
+Blockly.Msg.BUFFER_CONCATENATE_TOOLTIP = "Concatenate the two buffers to create a new buffer";
 Blockly.Msg.BUFFER_EMPTY = "empty buffer";
 Blockly.Msg.BUFFER_EMPTY_TOOLTIP = "Create an empty buffer, i.e. buffer with size 0.";
 Blockly.Msg.BUFFER_BYTE = "byte %1";
@@ -113,15 +120,19 @@ Blockly.Msg.SWITCH_CASE_LIST_TOOLTIP = "List of all available cases";
 Blockly.Msg.SWITCH_DO = "do";
 Blockly.Msg.MISC_JAVASCRIPT= "Javascript statement %1;";
 Blockly.Msg.MISC_JAVASCRIPT_TOOLTIP = "Enter Javascript code when no blocks offer certain functionality.";
+Blockly.Msg.MISC_JSEXPRESS= "Javascript expression %1";
+Blockly.Msg.MISC_JSEXPRESS_TOOLTIP = "Use with caution. Enter JS code when no blocks offer certain functionality.";
 Blockly.Msg.MISC_COMMENT = "Comment %1";
 Blockly.Msg.MISC_COMMENT_TOOLTIP = "Add comments to explain how the logic works.";
+Blockly.Msg.MISC_JSMULTILINE = "Multiline JS code %1";
+Blockly.Msg.MISC_JSMULTILINE_TOOLTIP = "Enter multiline Javascript code when no blocks offer certain functionality.";
 
 // =========================================================================================
 // Datetime blocks
 // =========================================================================================
 Blockly.Msg.DATETIME_INPUT = "date %1";
 Blockly.Msg.DATETIME_INPUT_TOOLTIP = "A date.";
-Blockly.Msg.DATETIME_TIMESTAMP = "timestamp";
+Blockly.Msg.DATETIME_TIMESTAMP = "%1 timestamp";
 Blockly.Msg.DATETIME_TIMESTAMP_TOOLTIP = "Get the current timestamp (i.e. date and time of now).";
 Blockly.Msg.DATETIME_CONVERT_FROM_DATE = "get %1 from timestamp %2";
 Blockly.Msg.DATETIME_CONVERT_FROM_DATE_TOOLTIP = "Get the specified information from a timestamp";
@@ -142,3 +153,25 @@ Blockly.Msg.DATETIME_CONVERT_TO_DATE = "create date from %1";
 Blockly.Msg.DATETIME_CONVERT_TO_DATE_TOOLTIP = "Create a date from the specified value.";
 Blockly.Msg.DATETIME_FORMAT = "convert timestamp %1 to format %2";
 Blockly.Msg.DATETIME_FORMAT_TOOLTIP = "Convert a timestamp to a specified format";
+Blockly.Msg.DATETIME_UTC = "UTC";
+Blockly.Msg.DATETIME_LOCAL = "local";
+
+// =========================================================================================
+// Timer blocks
+// =========================================================================================
+Blockly.Msg.TIMER_SET_TIMEOUT = "Execute timeout %1 in %2 %3";
+Blockly.Msg.TIMER_SET_TIMEOUT_1 = "%1";
+Blockly.Msg.TIMER_SET_TIMEOUT_NAME = "timeout";
+Blockly.Msg.TIMER_SET_TIMEOUT_TOOLTIP = "Execute the included blocks after a specified time delay.";
+Blockly.Msg.TIMER_CLEAR_TIMEOUT = "Stop timeout %1";
+Blockly.Msg.TIMER_CLEAR_TIMEOUT_TOOLTIP = "Cancel the execution after the timeout";
+Blockly.Msg.TIMER_SET_INTERVAL = "Execute interval %1 every %2 %3";
+Blockly.Msg.TIMER_SET_INTERVAL_1 = "%1";
+Blockly.Msg.TIMER_SET_INTERVAL_NAME = "interval";
+Blockly.Msg.TIMER_SET_INTERVAL_TOOLTIP = "Execute the included blocks periodically at the specified time interval.";
+Blockly.Msg.TIMER_CLEAR_INTERVAL = "Stop interval %1";
+Blockly.Msg.TIMER_CLEAR_INTERVAL_TOOLTIP = "Cancel the block execution at intervals.";
+Blockly.Msg.TIMER_TIMER_MS = "msec";
+Blockly.Msg.TIMER_TIMER_SEC = "sec";
+Blockly.Msg.TIMER_TIMER_MIN = "min";
+Blockly.Msg.TIMER_NONE_SELECTED = "none";
