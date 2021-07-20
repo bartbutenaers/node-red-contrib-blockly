@@ -33,6 +33,7 @@ Blockly.Msg.NODE_PROPERTIES = "ノード %1 のプロパティを取得";
 Blockly.Msg.NODE_PROPERTIES_TOOLTIP = "Node-RED function APIで指定したノードのプロパティを取得";
 Blockly.Msg.NODE_PROPERTIES_ID = "ノード識別ID";
 Blockly.Msg.NODE_PROPERTIES_NAME = "ノード名称";
+Blockly.Msg.NODE_PROPERTIES_OUTPUT_COUNT = "出力数";
 Blockly.Msg.NODE_FLOW_MEMORY = "flowコンテキスト";
 Blockly.Msg.NODE_FLOW_MEMORY_TOOLTIP = "Node-REDのFlowコンテキストデータにアクセス";
 Blockly.Msg.NODE_CONTEXT_MEMORY = "(ノード)コンテキスト";
@@ -49,6 +50,10 @@ Blockly.Msg.NODE_RETURN_TOOLTIP = "処理を終了し戻ります(メッセー�
 Blockly.Msg.NODE_CLOSE = "ノードが終了する時";
 Blockly.Msg.NODE_CLOSE_1 = "%1";
 Blockly.Msg.NODE_CLOSE_TOOLTIP = "ノードが終了する時に実行されるステートメント";
+Blockly.Msg.NODE_DONE = "メッセージ処理完了";
+Blockly.Msg.NODE_DONE_TOOLTIP = "メッセージの処理終了時";
+Blockly.Msg.NODE_ENV = "環境変数 %1 を取得";
+Blockly.Msg.NODE_ENV_TOOLTIP = "環境変数の値にアクセス";
 
 // =========================================================================================
 // Buffer blocks
@@ -67,6 +72,8 @@ Blockly.Msg.BUFFER_CHECK = "%1 がBufferかチェック";
 Blockly.Msg.BUFFER_CHECK_TOOLTIP = "入力値がBufferかどうかチェック";
 Blockly.Msg.BUFFER_COPY = "Buffer %1 から %2 にコピー";
 Blockly.Msg.BUFFER_COPY_TOOLTIP = "最初のBufferを次のBufferにコピー";
+Blockly.Msg.BUFFER_CONCATENATE = "Buffer %1 と %2 を連結";
+Blockly.Msg.BUFFER_CONCATENATE_TOOLTIP = "2つの Buffer を連結して、新しい Buffer を作成";
 Blockly.Msg.BUFFER_EMPTY = "空のBuffer";
 Blockly.Msg.BUFFER_EMPTY_TOOLTIP = "空のBufferを作る(サイズゼロのBuffer)";
 Blockly.Msg.BUFFER_BYTE = "バイト値 %1";
@@ -92,6 +99,12 @@ Blockly.Msg.OBJECT_KEYS_TOOLTIP = "オブジェクトからすべてのキーを
 // =========================================================================================
 // Extra blocks
 // =========================================================================================
+Blockly.Msg.TEXT_SPECIAL_CHARACTER = "特殊文字 %1";
+Blockly.Msg.TEXT_SPECIAL_CHARACTER_TOOLTIP = "'\'を前につけてエスケープしない特殊文字";
+Blockly.Msg.TEXT_SPECIAL_CHARACTER_LF = "改行(LF) (\\n)";
+Blockly.Msg.TEXT_SPECIAL_CHARACTER_CR = "キャリッジリターン(CR) (\\r)";
+Blockly.Msg.TEXT_SPECIAL_CHARACTER_CRLF = "CRLF (\\r\\n)";
+Blockly.Msg.TEXT_SPECIAL_CHARACTER_TAB = "水平タブ(TAB) (\\t)";
 Blockly.Msg.TIMER_CONDITIONAL = "%2 から %3 まで %1 秒ごとにくりかえす";
 Blockly.Msg.TIMER_CONDITIONAL_TOOLTIP = "条件が満たされるまで定期的にくりかえす";
 Blockly.Msg.TIMER_COUNTING = "%2 秒ごとに %3 %4 を %1 回 くりかえす";
@@ -107,15 +120,19 @@ Blockly.Msg.SWITCH_CASE_LIST_TOOLTIP = "全ての有効な条件";
 Blockly.Msg.SWITCH_DO = "do";
 Blockly.Msg.MISC_JAVASCRIPT= "Javascript ステートメント %1;";
 Blockly.Msg.MISC_JAVASCRIPT_TOOLTIP = "特定の機能を提供するブロックがない場合、Javascriptコードを入力できる";
+Blockly.Msg.MISC_JSEXPRESS= "Javascript式 %1";
+Blockly.Msg.MISC_JSEXPRESS_TOOLTIP = "使用には注意が必要特定の機能を提供するブロックがない場合、Javascriptコードを入力できる";
 Blockly.Msg.MISC_COMMENT = "%1 のコメント";
 Blockly.Msg.MISC_COMMENT_TOOLTIP = "ロジックの動作を説明するコメントを追加";
+Blockly.Msg.MISC_JSMULTILINE = "複数行のJSコード %1";
+Blockly.Msg.MISC_JSMULTILINE_TOOLTIP = "特定の機能を提供するブロックがない場合に、複数行のJavascriptコードを入力できる";
 
 // =========================================================================================
 // Datetime blocks
 // =========================================================================================
 Blockly.Msg.DATETIME_INPUT = "日付 %1";
 Blockly.Msg.DATETIME_INPUT_TOOLTIP = "日付";
-Blockly.Msg.DATETIME_TIMESTAMP = "タイムスタンプ";
+Blockly.Msg.DATETIME_TIMESTAMP = "%1 タイムスタンプ";
 Blockly.Msg.DATETIME_TIMESTAMP_TOOLTIP = "今のタイムスタンプを取得 (今の日付時刻のこと)";
 Blockly.Msg.DATETIME_CONVERT_FROM_DATE = "タイムスタンプ %2 から日時情報 %1 を取得";
 Blockly.Msg.DATETIME_CONVERT_FROM_DATE_TOOLTIP = "タイムスタンプから指定した情報を取得";
@@ -136,3 +153,25 @@ Blockly.Msg.DATETIME_CONVERT_TO_DATE = "%1 から日付を生成";
 Blockly.Msg.DATETIME_CONVERT_TO_DATE_TOOLTIP = "指定した値から日付を生成";
 Blockly.Msg.DATETIME_FORMAT = "タイムスタンプ %1 を %2 形式に変換";
 Blockly.Msg.DATETIME_FORMAT_TOOLTIP = "タイムスタンプを指定した形式に変換";
+Blockly.Msg.DATETIME_UTC = "UTC";
+Blockly.Msg.DATETIME_LOCAL = "ローカル";
+
+// =========================================================================================
+// Timer blocks
+// =========================================================================================
+Blockly.Msg.TIMER_SET_TIMEOUT = "%1 を 遅延時間 %2 %3 後にを実行";
+Blockly.Msg.TIMER_SET_TIMEOUT_1 = "%1";
+Blockly.Msg.TIMER_SET_TIMEOUT_NAME = "タイマー実行";
+Blockly.Msg.TIMER_SET_TIMEOUT_TOOLTIP = "指定した遅延時間後に含まれたブロックを実行";
+Blockly.Msg.TIMER_CLEAR_TIMEOUT = "タイマー実行 %1 を停止";
+Blockly.Msg.TIMER_CLEAR_TIMEOUT_TOOLTIP = "タイマー実行をキャンセル";
+Blockly.Msg.TIMER_SET_INTERVAL = "%1 を %2 %3 毎に定期実行";
+Blockly.Msg.TIMER_SET_INTERVAL_1 = "%1";
+Blockly.Msg.TIMER_SET_INTERVAL_NAME = "定期実行";
+Blockly.Msg.TIMER_SET_INTERVAL_TOOLTIP = "指定された時間間隔で含まれたブロックを定期的に実行";
+Blockly.Msg.TIMER_CLEAR_INTERVAL = "定期実行 %1 を停止";
+Blockly.Msg.TIMER_CLEAR_INTERVAL_TOOLTIP = "定期実行ブロックをキャンセル";
+Blockly.Msg.TIMER_TIMER_MS = "ミリ秒";
+Blockly.Msg.TIMER_TIMER_SEC = "秒";
+Blockly.Msg.TIMER_TIMER_MIN = "分";
+Blockly.Msg.TIMER_NONE_SELECTED = "選択なし"; 
