@@ -4,8 +4,9 @@ A Node Red node that offers a visual programming interface, to make programming 
 Moreover the generated Javascript code can be displayed, so you can learn Javascript coding step by step...
 
 Thanks to lots of people, for their assistance during the development of this node:
-* On the Google Blockly [forum](https://groups.google.com/forum/#!forum/blockly): Andrew Marshall, Mark Friedman, Erik Pasternak, Timo Herngreen, ...
-* On the Node-RED [forum](https://discourse.nodered.org/): Julian Knight for thinking out loud, Simon Walters for lots of stuff, ...
+* A lot of folks on the Google Blockly [forum](https://groups.google.com/forum/#!forum/blockly) ...
+* [Simon Walters](https://github.com/cymplecy) as analyst and righteous judge of this repository.
+* [Jeff](https://github.com/jsccjj) for contributing to features like full-screen mode.
 
 ## Install
 Run the following npm command in your Node-RED user directory (typically ~/.node-red):
@@ -34,7 +35,7 @@ As soon as an input message arrives, we will set the *'payload'* property of tha
 
 The following animation shows how this example flow can be constructed using the Blockly node:
 
-![Config screen](https://raw.githubusercontent.com/bartbutenaers/node-red-contrib-blockly/master/images/blockly_hello_world.gif)
+![blockly_2_0_demo](https://user-images.githubusercontent.com/14224149/126551137-5c99d6d9-7097-47c1-8d0b-ea71d27ec7f7.gif)
 
 Lots of other examples can be found in the [wiki](https://github.com/bartbutenaers/node-red-contrib-blockly/wiki) pages ...
 
@@ -90,15 +91,17 @@ Lots of other examples can be found in the [wiki](https://github.com/bartbutenae
 ## Config screen
 The node's config screen consists out of a series of elements:
 
-![Config screen](https://raw.githubusercontent.com/bartbutenaers/node-red-contrib-blockly/master/images/blockly_screen.png)
+![Config screen](https://user-images.githubusercontent.com/14224149/126552977-4b008412-81a3-491e-b74d-d5a32e484bb4.png)
 
 1. The **library** button is similar to the standard *function node*: the code from this Blockly node can be made globally available by adding it to a libary.  That library will be stored withing the 'libs' directory in your node-red user directory.
-2. The **editor** tabsheet displays a Blockly workspace editor.  Here blocks can be added, which will be converted afterwards to Javascript code.
-3. The **generated Javascript** tabsheets will display the Javascript code, which is generated based on the blocks in the Blockly editor.  This code is readonly, which means you cannot change it!  Reason is that it is *not possible* to generate Blockly blocks, starting from Javascript code ...
-4. The **language** dropdown offers all available languages.  The texts in the blocks will be translated in the specified language.  Starting from version 1.1.0 following languages will be available: English, French, Japanese, Dutch.  Please see below if you want to add another language to this selection.
-5. The Blockly **toolbox** shows all available blocks, grouped by category.
-6. The Blockly **editable area** shows all the blocks representing your custom logic.  Blocks can be dragged from the toolbox into the editable area.  A lot of user interaction is offered in this area:
-    + When pressing the delete button, the selected blocks will be removed.  
+2. The **config node** that contains the settings used in this Blockly node.  If no config node has been selected, then the default settings will be used.
+3. The **editor** tabsheet displays a Blockly workspace editor.  Here blocks can be added, which will be converted afterwards to Javascript code.
+4. The **generated Javascript** tabsheet will display the Javascript code, which is generated based on the blocks in the Blockly editor.  This code is readonly, which means you cannot change it!  Reason is that it is *not possible* to generate Blockly blocks, starting from Javascript code ...
+5. The **generated XML** tabsheet will display the XML, that represents the blocks in the Blockly editor.
+6. The Blockly **toolbox** shows all available blocks, grouped by category.
+7. The Blockly **editable area** shows all the blocks representing your custom logic.  Blocks can be dragged from the toolbox into the editable area.  A lot of user interaction is offered in this area:
+    + When pressing the delete button, the selected blocks will be removed. 
+    + When pressing ctrl-f, a search field will be displayed (containing a next and previous button). 
     + By clicking and dragging with the mouse, the user can start panning to alter which part of the area is being visualised.  
     + By clicking on a block and dragging with the mouse, the block (and all of its's chained next blocks) will be moved.
     + By rotating the mouse wheel, you can zoom in/out.
@@ -108,30 +111,49 @@ The node's config screen consists out of a series of elements:
     + ...
     
     Remark: the toolbox and the editable area together are called a *'workspace'.
-7. The **center* button allows the available blocks to be centered in the middle of visible workspace area.
-8. The **zoom in** button.
-9. The **zoom out** button.
-10. The number of **output ports** for the Blockly node in the Node-Red flow editor.  Make sure that this number doesn't exceed the output port number of the *'send'* block (see below).
+8. The **backpack** button allows to create a custom list of your favorite blocks.
+9. The **zoom to fit** button will automatically zoom the workspace, so all the blocks will become visible at once.  
+10. The **center* button allows the available blocks to be centered in the middle of visible workspace area.
+11. The **zoom in** button.
+12. The **zoom out** button.
+13. The **thrash can** button.  Click on the bin to show the removed blocks, and optionally restore them.
+14. The number of **output ports** for the Blockly node in the Node-Red flow editor.  Make sure that this number doesn't exceed the output port number of the *'send'* block (see below).
 
 ## Node-Red blocks
 When writing Javascript code in a standard *function node*, some Node-Red functionality can be called from within that code (see function node [API](https://nodered.org/docs/writing-functions#api-reference)).  To offer the same functionality in the Blockly editor, a series of extra blocks have been added.  These blocks are availble in the 'Node-Red' category in the toolbox:
 
-![Function API](https://raw.githubusercontent.com/bartbutenaers/node-red-contrib-blockly/master/images/blockly_api.png)
+![Function API](https://user-images.githubusercontent.com/14224149/126556426-e629916e-5739-482c-84f4-20bd14712a1b.png)
 
 1. **Get** the value of some property in an object.
-1. **Set** some property in an object to a specified value.
-1. **Send** to the specified output port the message, which is specified on the block input.  Make sure that the specified output number doesn't exceed the number of outputs on the Blockly node!
-1. The **input message (msg)** exposes the input message that arrive's in the Node-Red flow, on the Blockly node input port.
-1. The Node-Red **flow** memory can be used to store data that needs to be shared by all nodes in a flow.  
-1. The Node-Red **global** memory can be used to store data that needs to be shared by all nodes. 
-1. The Node-Red **(node)context** memory can be used to store data that needs to be shared by all blockly nodes. 
-1. **Return** the specified message.  This means that we stop processing (i.e. the next blocks will not be executed), and the message will be send on the output port.
-1. Show the specified text in the **node status**.  Both the status icon shape and color can be specified.
-1. **Remove** the node status from the node.
-1. **Log** the specified text in the console.  Multiple log levels are available (log, error, warning, trace, debug).  The warnings and errors will also be displayed in the flow editor debug tab.  The trace and debug levels are only used to display details, and are not visible if no logger for those levels is specified in Node-Red.
-1. **Clone message** can be used to create a new separate copy of the specified message.
-1. Get the specified **node property**.  Starting from Node-Red ***version 0.19*** both the Blockly node identifier, and the Blockly node name can be retrieved.
-1. Some things can be don when the **node is closed**, most of the time to cleanup stuff.
+2. **Set** some property in an object to a specified value.
+3. **Send** to the specified output port the message, which is specified on the block input.  Make sure that the specified output number doesn't exceed the number of outputs on the Blockly node!
+4. The **input message (msg)** exposes the input message that arrive's in the Node-Red flow, on the Blockly node input port.
+5. The Node-Red **flow** memory can be used to store data that needs to be shared by all nodes in a flow.  
+6. The Node-Red **global** memory can be used to store data that needs to be shared by all nodes. 
+7. The Node-Red **(node)context** memory can be used to store data that needs to be shared by all blockly nodes. 
+8. **Return** the specified message.  This means that we stop processing (i.e. the next blocks will not be executed), and the message will be send on the output port.
+9. Show the specified text in the **node status**.  Both the status icon shape and color can be specified.
+10. **Remove** the node status from the node.
+11. **Log** the specified text in the console.  Multiple log levels are available (log, error, warning, trace, debug).  The warnings and errors will also be displayed in the flow editor debug tab.  The trace and debug levels are only used to display details, and are not visible if no logger for those levels is specified in Node-Red.
+12. **Clone message** can be used to create a new separate copy of the specified message.
+13. Get the specified **node property**.  The node identifier, node name and node output count can be get.
+14. Specify that the processing of the message has been **completed**, so it can be handled by the Complete-node in the flow.
+15. Some things can be don when the **node is closed**, most of the time to cleanup stuff.
+
+## Config node settings
+The Blocky workspace can be configured via the settings in the selected config node:
+
+![Config node](https://user-images.githubusercontent.com/14224149/126557196-7d6f06c5-be68-43c9-8686-f707e8f94977.png)
+
+These settings will be applied to every Blockly node where this config node has been selected:
++ Specify whether a **trash can** icon needs to be displayed in the workspace.
++ Specify whether **comments** can be added to blocks in the workspace.
++ Specify whether the 4 **zoom** icons need to to be displayed in the workspace.
++ Specify whether a **backpack** icon need to be be displayed in the workspace.
++ Customize the toolbox **categories** to fit your needs. CAUTION: this is only for advanced users and need to be done with care!!  When this checkbox is activated, the "Categories" tabsheet will become enabled.
++ Specify the **language** that needs to be used in the blocks in the workspace.
++ Specify the location of the **toolbox**, relative to the workspace.
++ Specify the **renderer**, which determines how the blocks need to be drawn.
 
 ## Need a change ...
 When you need a change in this node, you can create a new Github issue.  A couple of remarks about this:
