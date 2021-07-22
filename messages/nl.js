@@ -33,6 +33,7 @@ Blockly.Msg.NODE_PROPERTIES = "zoek node %1";
 Blockly.Msg.NODE_PROPERTIES_TOOLTIP = "Zoek de opgegeven eigenschap via de Node-Red functie API.";
 Blockly.Msg.NODE_PROPERTIES_ID = "identificatie nummer";
 Blockly.Msg.NODE_PROPERTIES_NAME = "naam";
+Blockly.Msg.NODE_PROPERTIES_OUTPUT_COUNT = "aantal uitgangen";
 Blockly.Msg.NODE_FLOW_MEMORY = "flow";
 Blockly.Msg.NODE_FLOW_MEMORY_TOOLTIP = "Toegang krijgen tot de gegevens in het Node-Red flow geheugen.";
 Blockly.Msg.NODE_CONTEXT_MEMORY = "(node)context";
@@ -49,6 +50,10 @@ Blockly.Msg.NODE_RETURN_TOOLTIP = "Keer terug om de verwerking te stoppen (zonde
 Blockly.Msg.NODE_CLOSE = "Bij sluiten van de node";
 Blockly.Msg.NODE_CLOSE_1 = "%1";
 Blockly.Msg.NODE_CLOSE_TOOLTIP = "Acties die uitgevoerd moeten worden wanneer de node gesloten wordt.";
+Blockly.Msg.NODE_DONE = "bericht afgehandeld";
+Blockly.Msg.NODE_DONE_TOOLTIP = "Verwerking van het bericht is afgehandeld.";
+Blockly.Msg.NODE_ENV = "zoek omgevings veranderlijke %1";
+Blockly.Msg.NODE_ENV_TOOLTIP = "Haal de waarde van de omgevings veranderlijke op.";
 
 // =========================================================================================
 // Buffer blocks
@@ -67,6 +72,8 @@ Blockly.Msg.BUFFER_CHECK = "controleer of %1 buffer is";
 Blockly.Msg.BUFFER_CHECK_TOOLTIP = "Controleer of de ingangswaarde een buffer is.";
 Blockly.Msg.BUFFER_COPY = "kopiëer van buffer %1 naar buffer %2";
 Blockly.Msg.BUFFER_COPY_TOOLTIP = "Kopiëer van de eerste buffer naar de tweede buffer";
+Blockly.Msg.BUFFER_CONCATENATE = "Voeg buffer %1 en %2 samen";
+Blockly.Msg.BUFFER_CONCATENATE_TOOLTIP = "Voeg de 2 buffers samen om 1 grote nieuwe buffer te maken";
 Blockly.Msg.BUFFER_EMPTY = "lege buffer";
 Blockly.Msg.BUFFER_EMPTY_TOOLTIP = "Maak een lege buffer, d.w.z; een buffer met lengte 0.";
 Blockly.Msg.BUFFER_BYTE = "byte %1";
@@ -92,6 +99,12 @@ Blockly.Msg.OBJECT_KEYS_TOOLTIP = "Zoek alle eigenschappen van het object";
 // =========================================================================================
 // Extra blocks
 // =========================================================================================
+Blockly.Msg.TEXT_SPECIAL_CHARACTER = "speciaal leesteken %1";
+Blockly.Msg.TEXT_SPECIAL_CHARACTER_TOOLTIP = "Een speciaal leesteken dat niet vermeden moet worden (door een '\' ontsnappingsteken)";
+Blockly.Msg.TEXT_SPECIAL_CHARACTER_LF = "regel opschuiving (\\n)";
+Blockly.Msg.TEXT_SPECIAL_CHARACTER_CR = "sprong naar links (\\r)";
+Blockly.Msg.TEXT_SPECIAL_CHARACTER_CRLF = "sprong naar links, nieuwe regel (\\r\\n)";
+Blockly.Msg.TEXT_SPECIAL_CHARACTER_TAB = "inspringing (\\t)";
 Blockly.Msg.TIMER_CONDITIONAL = "Herhaal elke %1 seconden, totdat %2 %3";
 Blockly.Msg.TIMER_CONDITIONAL_TOOLTIP = "Herhaal met vaste intervallen tot een bepaalde voorwaarde voldaan is.";
 Blockly.Msg.TIMER_COUNTING = "Herhaal %1 keer elke %2 seconden %3 %4";
@@ -107,15 +120,19 @@ Blockly.Msg.SWITCH_CASE_LIST_TOOLTIP = "Lijst van alle mogelijke gevallen";
 Blockly.Msg.SWITCH_DO = "doe";
 Blockly.Msg.MISC_JAVASCRIPT= "Javascript statement %1;";
 Blockly.Msg.MISC_JAVASCRIPT_TOOLTIP = "Voer Javascript code in, wanneer de andere blokken bepaalde functionaliteit niet aanbieden.";
+Blockly.Msg.MISC_JSEXPRESS= "Javascript uitdrukking %1";
+Blockly.Msg.MISC_JSEXPRESS_TOOLTIP = "Gebruik dit voorzichtig. Geef enkel JS code in wanneer geen bloks deze functionaliteit aanbieden.";
 Blockly.Msg.MISC_COMMENT = "Commentaar %1";
 Blockly.Msg.MISC_COMMENT_TOOLTIP = "Voeg commentaar toe om uit te leggen hoe de logica werkt.";
+Blockly.Msg.MISC_JSMULTILINE = "Meerder lijnen JS code %1";
+Blockly.Msg.MISC_JSMULTILINE_TOOLTIP = "Geef enkel meerdere lijnen Javascript code in, wanneer geen andere blokken deze functionaliteit aanbieden.";
 
 // =========================================================================================
 // Datetime blocks
 // =========================================================================================
 Blockly.Msg.DATETIME_INPUT = "datum %1";
 Blockly.Msg.DATETIME_INPUT_TOOLTIP = "Een datum.";
-Blockly.Msg.DATETIME_TIMESTAMP = "tijdstip";
+Blockly.Msg.DATETIME_TIMESTAMP = "%1 tijdstip";
 Blockly.Msg.DATETIME_TIMESTAMP_TOOLTIP = "Zoek het huidige tijdstip (d.w.z. datum en tijd van nu).";
 Blockly.Msg.DATETIME_CONVERT_FROM_DATE = "zoek %1 van tijdstip %2";
 Blockly.Msg.DATETIME_CONVERT_FROM_DATE_TOOLTIP = "Zoek de opgegeven infromatie van een tijdstip";
@@ -136,3 +153,25 @@ Blockly.Msg.DATETIME_CONVERT_TO_DATE = "maak datum van %1";
 Blockly.Msg.DATETIME_CONVERT_TO_DATE_TOOLTIP = "Maak een datum o.b.v. de opgegeven waarde.";
 Blockly.Msg.DATETIME_FORMAT = "zet tijdstip %1 om naar formaat %2";
 Blockly.Msg.DATETIME_FORMAT_TOOLTIP = "Zet een tijdstip om naar een bepaald formaat.";
+Blockly.Msg.DATETIME_UTC = "UTC";
+Blockly.Msg.DATETIME_LOCAL = "lokaal";
+
+// =========================================================================================
+// Timer blocks
+// =========================================================================================
+Blockly.Msg.TIMER_SET_TIMEOUT = "Voer vertraging %1 uit in %2 %3";
+Blockly.Msg.TIMER_SET_TIMEOUT_1 = "%1";
+Blockly.Msg.TIMER_SET_TIMEOUT_NAME = "vertraging";
+Blockly.Msg.TIMER_SET_TIMEOUT_TOOLTIP = "Voer de ingesloten blokken uit na een opgegeven vertraging.";
+Blockly.Msg.TIMER_CLEAR_TIMEOUT = "Stop vertraging %1";
+Blockly.Msg.TIMER_CLEAR_TIMEOUT_TOOLTIP = "Annuleer de vertraagde uitvoering.";
+Blockly.Msg.TIMER_SET_INTERVAL = "Voer het interval %1 elke %2 %3 uit";
+Blockly.Msg.TIMER_SET_INTERVAL_1 = "%1";
+Blockly.Msg.TIMER_SET_INTERVAL_NAME = "interval";
+Blockly.Msg.TIMER_SET_INTERVAL_TOOLTIP = "Voer de ingesloten blokken periodiek uit met het opgegeven interval.";
+Blockly.Msg.TIMER_CLEAR_INTERVAL = "Stop interval %1";
+Blockly.Msg.TIMER_CLEAR_INTERVAL_TOOLTIP = "Annuleer de periodieke uitvoering van de blokken.";
+Blockly.Msg.TIMER_TIMER_MS = "msec";
+Blockly.Msg.TIMER_TIMER_SEC = "sec";
+Blockly.Msg.TIMER_TIMER_MIN = "min";
+Blockly.Msg.TIMER_NONE_SELECTED = "geen";
