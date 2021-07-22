@@ -95,13 +95,13 @@ The node's config screen consists out of a series of elements:
 
 1. The **library** button is similar to the standard *function node*: the code from this Blockly node can be made globally available by adding it to a libary.  That library will be stored withing the 'libs' directory in your node-red user directory.
 2. The **config node** that contains the settings used in this Blockly node.  If no config node has been selected, then the default settings will be used.
-3. The **editor** tabsheet displays a Blockly workspace editor.  Here blocks can be added, which will be converted afterwards to Javascript code.
+3. The **editor** tabsheet displays a Blockly workspace editor.  Here blocks can be added, which will be converted afterwards to Javascript code.  Note the fullscreen icon beside the toolbar label: see [wiki](https://github.com/bartbutenaers/node-red-contrib-blockly/wiki/Use-fullscreen-mode).
 4. The **generated Javascript** tabsheet will display the Javascript code, which is generated based on the blocks in the Blockly editor.  This code is readonly, which means you cannot change it!  Reason is that it is *not possible* to generate Blockly blocks, starting from Javascript code ...
 5. The **generated XML** tabsheet will display the XML, that represents the blocks in the Blockly editor.
 6. The Blockly **toolbox** shows all available blocks, grouped by category.
 7. The Blockly **editable area** shows all the blocks representing your custom logic.  Blocks can be dragged from the toolbox into the editable area.  A lot of user interaction is offered in this area:
     + When pressing the delete button, the selected blocks will be removed. 
-    + When pressing ctrl-f, a search field will be displayed (containing a next and previous button). 
+    + When pressing ctrl-f, a search field will be displayed (containing a next and previous button).  See [wiki](https://github.com/bartbutenaers/node-red-contrib-blockly/wiki/Search-for-Blockly-nodes).
     + By clicking and dragging with the mouse, the user can start panning to alter which part of the area is being visualised.  
     + By clicking on a block and dragging with the mouse, the block (and all of its's chained next blocks) will be moved.
     + By rotating the mouse wheel, you can zoom in/out.
@@ -111,7 +111,7 @@ The node's config screen consists out of a series of elements:
     + ...
     
     Remark: the toolbox and the editable area together are called a *'workspace'.
-8. The **backpack** button allows to create a custom list of your favorite blocks.
+8. The **backpack** button allows to create a custom list of your favorite blocks.  See [wiki](https://github.com/bartbutenaers/node-red-contrib-blockly/wiki/Add-your-favorite-blocks-to-a-backpack).
 9. The **zoom to fit** button will automatically zoom the workspace, so all the blocks will become visible at once.  
 10. The **center* button allows the available blocks to be centered in the middle of visible workspace area.
 11. The **zoom in** button.
@@ -137,7 +137,7 @@ When writing Javascript code in a standard *function node*, some Node-Red functi
 11. **Log** the specified text in the console.  Multiple log levels are available (log, error, warning, trace, debug).  The warnings and errors will also be displayed in the flow editor debug tab.  The trace and debug levels are only used to display details, and are not visible if no logger for those levels is specified in Node-Red.
 12. **Clone message** can be used to create a new separate copy of the specified message.
 13. Get the specified **node property**.  The node identifier, node name and node output count can be get.
-14. Specify that the processing of the message has been **completed**, so it can be handled by the Complete-node in the flow.
+14. Specify that the processing of the message has been **completed**, so it can be handled by the Complete-node in the flow.  See [wiki](https://github.com/bartbutenaers/node-red-contrib-blockly/wiki/Trigger-a-Complete-node-via-a-Done-block).
 15. Some things can be don when the **node is closed**, most of the time to cleanup stuff.
 
 ## Config node settings
@@ -150,7 +150,7 @@ These settings will be applied to every Blockly node where this config node has 
 + Specify whether **comments** can be added to blocks in the workspace.
 + Specify whether the 4 **zoom** icons need to to be displayed in the workspace.
 + Specify whether a **backpack** icon need to be be displayed in the workspace.
-+ Customize the toolbox **categories** to fit your needs. CAUTION: this is only for advanced users and need to be done with care!!  When this checkbox is activated, the "Categories" tabsheet will become enabled.
++ Customize the toolbox **categories** to fit your needs. CAUTION: this is only for advanced users and need to be done with care!!  When this checkbox is activated, the "Categories" tabsheet will become enabled.  See [wiki](https://github.com/bartbutenaers/node-red-contrib-blockly/wiki/Customizing-the-toolbox).
 + Specify the **language** that needs to be used in the blocks in the workspace.
 + Specify the location of the **toolbox**, relative to the workspace.
 + Specify the **renderer**, which determines how the blocks need to be drawn.
