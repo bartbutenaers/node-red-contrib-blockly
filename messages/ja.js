@@ -121,7 +121,7 @@ Blockly.Msg.SWITCH_DO = "do";
 Blockly.Msg.MISC_JAVASCRIPT= "Javascript ステートメント %1;";
 Blockly.Msg.MISC_JAVASCRIPT_TOOLTIP = "特定の機能を提供するブロックがない場合、Javascriptコードを入力できる";
 Blockly.Msg.MISC_JSEXPRESS= "Javascript式 %1";
-Blockly.Msg.MISC_JSEXPRESS_TOOLTIP = "使用には注意が必要特定の機能を提供するブロックがない場合、Javascriptコードを入力できる";
+Blockly.Msg.MISC_JSEXPRESS_TOOLTIP = "(使用には注意が必要)特定の機能を提供するブロックがない場合、Javascriptコードを入力できる";
 Blockly.Msg.MISC_COMMENT = "%1 のコメント";
 Blockly.Msg.MISC_COMMENT_TOOLTIP = "ロジックの動作を説明するコメントを追加";
 Blockly.Msg.MISC_JSMULTILINE = "複数行のJSコード %1";
@@ -159,7 +159,7 @@ Blockly.Msg.DATETIME_LOCAL = "ローカル";
 // =========================================================================================
 // Timer blocks
 // =========================================================================================
-Blockly.Msg.TIMER_SET_TIMEOUT = "%1 を 遅延時間 %2 %3 後にを実行";
+Blockly.Msg.TIMER_SET_TIMEOUT = "%1 を 遅延時間 %2 %3 後に実行";
 Blockly.Msg.TIMER_SET_TIMEOUT_1 = "%1";
 Blockly.Msg.TIMER_SET_TIMEOUT_NAME = "タイマー実行";
 Blockly.Msg.TIMER_SET_TIMEOUT_TOOLTIP = "指定した遅延時間後に含まれたブロックを実行";
