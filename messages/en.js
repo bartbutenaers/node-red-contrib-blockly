@@ -78,8 +78,8 @@ Blockly.Msg.BUFFER_EMPTY = "empty buffer";
 Blockly.Msg.BUFFER_EMPTY_TOOLTIP = "Create an empty buffer, i.e. buffer with size 0.";
 Blockly.Msg.BUFFER_BYTE = "byte %1";
 Blockly.Msg.BUFFER_BYTE_TOOLTIP = "A byte value.";
-Blockly.Msg.BUFFER_GET_INDEX = "get byte at index %1 of buffer %2";
-Blockly.Msg.BUFFER_GET_INDEX_TOOLTIP = "Get the byte value of the specified buffer index";
+Blockly.Msg.BUFFER_GET_INDEX = "get value at index %1 of buffer %2";
+Blockly.Msg.BUFFER_GET_INDEX_TOOLTIP = "Get the value of the specified buffer index";
 Blockly.Msg.BUFFER_SET_INDEX = "set byte at index %1 of buffer %2 to value %3";
 Blockly.Msg.BUFFER_SET_INDEX_TOOLTIP = "Set the byte value of the specified buffer index.";
 
