@@ -1,5 +1,5 @@
 <xml xmlns="http://www.w3.org/1999/xhtml" id="toolbox" style="display: none;">
-  <category name="Timers" colour="#BB8FCE">
+  <category name="Timers" colour="#DEDE1F">
     <block type="set_timeout">
     </block>
     <block type="clear_timeout">
