@@ -14,6 +14,11 @@ Run the following npm command in your Node-RED user directory (typically ~/.node
 npm install node-red-contrib-blockly
 ```
 
+## Performance
+The performance of this node is identical to the standard Function-node!
+
+Indeed the Javascript code will be generated once, when the content of the Blockly workspace has been edited.  From then on that generated code will run on the Node-RED server side, using exactly the "same" sandbox mechanism as used by the Function-node.
+
 ## Where used
 When implementing your custom logic into a Node-Red flow, sometimes the available nodes won't be sufficient.  In those cases the standard *function node* can be used, to implement your logic by entering custom Javascript coding.  However to avoid having to write Javascript code yourself, you can draw your logic by dragging and dropping blocks into the Blockly editor.
 
