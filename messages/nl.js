@@ -78,8 +78,8 @@ Blockly.Msg.BUFFER_EMPTY = "lege buffer";
 Blockly.Msg.BUFFER_EMPTY_TOOLTIP = "Maak een lege buffer, d.w.z; een buffer met lengte 0.";
 Blockly.Msg.BUFFER_BYTE = "byte %1";
 Blockly.Msg.BUFFER_BYTE_TOOLTIP = "Een byte waarde.";
-Blockly.Msg.BUFFER_GET_INDEX = "zoek byte op positie %1 van buffer %2";
-Blockly.Msg.BUFFER_GET_INDEX_TOOLTIP = "Zoek de byte waarde van de opgegeven buffer positie";
+Blockly.Msg.BUFFER_GET_INDEX = "zoek waarde op positie %1 van buffer %2";
+Blockly.Msg.BUFFER_GET_INDEX_TOOLTIP = "Zoek de waarde van de opgegeven buffer positie";
 Blockly.Msg.BUFFER_SET_INDEX = "zet de byte op positie %1 van buffer %2 op waarde %3";
 Blockly.Msg.BUFFER_SET_INDEX_TOOLTIP = "Zet de waarde van de byte op de opgegeven buffer positie.";
 
