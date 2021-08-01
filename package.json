@@ -1,6 +1,6 @@
 {
     "name"         : "node-red-contrib-blockly",
-    "version"      : "2.0.0-beta.1",
+    "version"      : "2.0.0-beta.2",
     "description"  : "A Node Red node for visual programming a function using Blockly",
     "dependencies": {
         "blockly": "^6.20210701.0",
