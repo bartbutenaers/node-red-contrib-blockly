@@ -78,8 +78,8 @@ Blockly.Msg.BUFFER_EMPTY = "空のBuffer";
 Blockly.Msg.BUFFER_EMPTY_TOOLTIP = "空のBufferを作る(サイズゼロのBuffer)";
 Blockly.Msg.BUFFER_BYTE = "バイト値 %1";
 Blockly.Msg.BUFFER_BYTE_TOOLTIP = "バイト値";
-Blockly.Msg.BUFFER_GET_INDEX = "Buffer %2 の %1 バイト目の文字を取得";
-Blockly.Msg.BUFFER_GET_INDEX_TOOLTIP = "Bufferの指定された位置から1バイト取得";
+Blockly.Msg.BUFFER_GET_INDEX = "Buffer %2 の %1 バイト目の値を取得";
+Blockly.Msg.BUFFER_GET_INDEX_TOOLTIP = "Bufferの指定された位置の値を取得";
 Blockly.Msg.BUFFER_SET_INDEX = "Buffer %2 の %1 バイト目の文字を %3 にセット";
 Blockly.Msg.BUFFER_SET_INDEX_TOOLTIP = "Bufferの指定された位置へ1バイトセット";
 
@@ -174,4 +174,4 @@ Blockly.Msg.TIMER_CLEAR_INTERVAL_TOOLTIP = "定期実行ブロックをキャン
 Blockly.Msg.TIMER_TIMER_MS = "ミリ秒";
 Blockly.Msg.TIMER_TIMER_SEC = "秒";
 Blockly.Msg.TIMER_TIMER_MIN = "分";
-Blockly.Msg.TIMER_NONE_SELECTED = "選択なし"; 
+Blockly.Msg.TIMER_NONE_SELECTED = "選択なし";
