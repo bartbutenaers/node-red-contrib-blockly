@@ -7,6 +7,7 @@ Thanks to lots of people, for their assistance during the development of this no
 * A lot of folks on the Google Blockly [forum](https://groups.google.com/forum/#!forum/blockly) ...
 * [Simon Walters](https://github.com/cymplecy) as analyst and righteous judge of this repository.
 * [Jeff](https://github.com/jsccjj) for contributing to features like full-screen mode.
+* All the translator folks that translate our block texts in multiple languages.
 
 ## Install
 Run the following npm command in your Node-RED user directory (typically ~/.node-red):
