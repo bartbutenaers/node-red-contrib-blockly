@@ -836,18 +836,7 @@
         },
         oneditsave: function() {
             var node = this;
-      
-            // Store the number of (syntax) errors in the generated javascript code
-            fillAceEditor(node);
-            node.noerr = 0;
-            var annotations = node.aceEditor.getSession().getAnnotations();
-            for (var k=0; k < annotations.length; k++) {
-                if (annotations[k].type === "error") {
-                    node.noerr += annotations.length;
-                    break;
-                }
-            }
-                        
+          
             // Store the number of output ports in Blockly,  so the blocks can take that number into account (if required)
             //Blockly.nodeOutputs = $("#node-input-outputs").val(); 
   
@@ -859,7 +848,23 @@
             // Store the workspace content as an xml string (which will produce a minimal ugly string).
             // To obtain a more readable (but larger) string, use Blockly.Xml.domToPrettyText instead.
             var dom = Blockly.Xml.workspaceToDom(node.workspace);
-            node.workspaceXml = Blockly.Xml.domToPrettyText(dom);
+            node.workspaceXml = Blockly.Xml.domToPrettyText(dom); 
+            
+            // When the generated code contains an error, store a 1 in node.noerr.  That way the validator (of the node.noerr property)
+            // can be used to show a red rectangle on the node in the flow editor.
+            // Note that the standard function-node uses node.aceEditor.getSession().getAnnotations() for this purpose.  However that 
+            // seemed not to work here, when the JS editor tabsheet has not been opened.  In that case we get the errors of the previous
+            // JS code (that was loaded when the config screen opens).
+            // Therefore we will use the function node constructor:
+            try {
+                node.noerr = 0;
+                new Function(node.func);
+            }
+            catch(e) {
+                if (e instanceof SyntaxError) {
+                    node.noerr = 1;
+                }
+            }
             
             node.backpackContents = [];
             if (node.backpack) {
