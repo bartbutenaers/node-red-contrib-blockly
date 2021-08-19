@@ -159,7 +159,7 @@ Blockly.Msg.DATETIME_LOCAL = "lokaal";
 // =========================================================================================
 // Timer blocks
 // =========================================================================================
-Blockly.Msg.TIMER_SET_TIMEOUT = "Voer vertraging %1 uit in %2 %3";
+Blockly.Msg.TIMER_SET_TIMEOUT = "Voer %1 vertraagd uit na %2 %3";
 Blockly.Msg.TIMER_SET_TIMEOUT_1 = "%1";
 Blockly.Msg.TIMER_SET_TIMEOUT_NAME = "vertraging";
 Blockly.Msg.TIMER_SET_TIMEOUT_TOOLTIP = "Voer de ingesloten blokken uit na een opgegeven vertraging.";
