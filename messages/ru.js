@@ -1,5 +1,5 @@
 // =========================================================================================
-// Node-Red blocks
+// Node-RED blocks
 // =========================================================================================
 Blockly.Msg.NODE_OBJECT_GET_JSON = "%1 %2 свойство %3";
 Blockly.Msg.NODE_OBJECT_GET_JSON_GET_TOOLTIP = "Получить свойство объекта.";
@@ -13,34 +13,34 @@ Blockly.Msg.NODE_OBJECT_SET_JSON = "установить %1 свойство %2 
 Blockly.Msg.NODE_OBJECT_SET_JSON_TOOLTIP = "Установить свойство объекта.";
 Blockly.Msg.NODE_OBJECT_SET_WARNING = "Вложенные свойства могут быть установлены только с помощью строковых литералов";
 Blockly.Msg.NODE_LOG = "текст журнала %1 с %2 уровнем";
-Blockly.Msg.NODE_LOG_TOOLTIP = "Войти через API функции Node-Red.";
+Blockly.Msg.NODE_LOG_TOOLTIP = "Войти через API функции Node-RED.";
 Blockly.Msg.NODE_LOG_LOG = "журнал";
 Blockly.Msg.NODE_LOG_WARNING = "предупреждение";
 Blockly.Msg.NODE_LOG_ERROR = "ошибка";
 Blockly.Msg.NODE_LOG_DEBUG = "отладка";
 Blockly.Msg.NODE_LOG_TRACE = "отслеживать";
 Blockly.Msg.NODE_MSG = "сообщение";
-Blockly.Msg.NODE_MSG_TOOLTIP = "Получить входное сообщение Node-Red.";
+Blockly.Msg.NODE_MSG_TOOLTIP = "Получить входное сообщение Node-RED.";
 Blockly.Msg.NODE_REMOVE_STATUS = "удалить статус узла";
-Blockly.Msg.NODE_REMOVE_STATUS_TOOLTIP = "Удалите статус узла через API функции Node-Red.";
+Blockly.Msg.NODE_REMOVE_STATUS_TOOLTIP = "Удалите статус узла через API функции Node-RED.";
 Blockly.Msg.NODE_CLONE = "клон %1";
-Blockly.Msg.NODE_CLONE_TOOLTIP = "Клонировать сообщение через API функции Node-Red.";
+Blockly.Msg.NODE_CLONE_TOOLTIP = "Клонировать сообщение через API функции Node-RED.";
 Blockly.Msg.NODE_STATUS = "установить статус узла на текст %1 для цвета %2 и формы %3";
-Blockly.Msg.NODE_STATUS_TOOLTIP = "Установить статус узла через API функции Node-Red.";
+Blockly.Msg.NODE_STATUS_TOOLTIP = "Установить статус узла через API функции Node-RED.";
 Blockly.Msg.NODE_STATUS_RING = "кольцо";
 Blockly.Msg.NODE_STATUS_DOT = "точка";
 Blockly.Msg.NODE_PROPERTIES = "получить узел %1";
-Blockly.Msg.NODE_PROPERTIES_TOOLTIP = "Получить указанное свойство узла через API функции Node-Red.";
+Blockly.Msg.NODE_PROPERTIES_TOOLTIP = "Получить указанное свойство узла через API функции Node-RED.";
 Blockly.Msg.NODE_PROPERTIES_ID = "идентификатор";
 Blockly.Msg.NODE_PROPERTIES_NAME = "имя";
 Blockly.Msg.NODE_FLOW_MEMORY = "поток";
-Blockly.Msg.NODE_FLOW_MEMORY_TOOLTIP = "Доступ к данным в памяти потока Node-Red.";
+Blockly.Msg.NODE_FLOW_MEMORY_TOOLTIP = "Доступ к данным в памяти потока Node-RED.";
 Blockly.Msg.NODE_CONTEXT_MEMORY = "(узел) контекст";
-Blockly.Msg.NODE_CONTEXT_MEMORY_TOOLTIP = "Доступ к данным в контекстной памяти Node-Red (узла).";
+Blockly.Msg.NODE_CONTEXT_MEMORY_TOOLTIP = "Доступ к данным в контекстной памяти Node-RED (узла).";
 Blockly.Msg.NODE_GLOBAL_MEMORY = "глобальный";
-Blockly.Msg.NODE_GLOBAL_MEMORY_TOOLTIP = "Доступ к данным в глобальной памяти Node-Red.";
+Blockly.Msg.NODE_GLOBAL_MEMORY_TOOLTIP = "Доступ к данным в глобальной памяти Node-RED.";
 Blockly.Msg.NODE_SEND = "отправить %1 на выход% %2";
-Blockly.Msg.NODE_SEND_TOOLTIP = "Отправить выходное сообщение через API функции Node-Red.";
+Blockly.Msg.NODE_SEND_TOOLTIP = "Отправить выходное сообщение через API функции Node-RED.";
 Blockly.Msg.NODE_SEND_WARNING = "При отправке сообщений в цикле,\nmake убедитесь, что сообщения уникальны!";
 Blockly.Msg.NODE_RETURN_MESSAGE = "вернуть %1 к выходу %2";
 Blockly.Msg.NODE_RETURN_MESSAGE_TOOLTIP = "Отправить выходное сообщение и вернуться для остановки обработки";
@@ -93,11 +93,11 @@ Blockly.Msg.OBJECT_KEYS_TOOLTIP = "Получить все ключи от об�
 // Extra blocks
 // =========================================================================================
 Blockly.Msg.TEXT_SPECIAL_CHARACTER = "специальный символ %1";
-Blockly.Msg.TEXT_SPECIAL_CHARACTER_TOOLTIP = "Специальный символ, который нельзя экранировать (префиксом '' ";
-Blockly.Msg.TEXT_SPECIAL_CHARACTER_LF = "перевод строки (\n)";
-Blockly.Msg.TEXT_SPECIAL_CHARACTER_CR = "возврат каретки (\r)";
-Blockly.Msg.TEXT_SPECIAL_CHARACTER_CRLF = "перевод строки возврата каретки (\r\n)";
-Blockly.Msg.TEXT_SPECIAL_CHARACTER_TAB = "вкладка (\t)";
+Blockly.Msg.TEXT_SPECIAL_CHARACTER_TOOLTIP = "Специальный символ, который нельзя экранировать (префиксом '\\')";
+Blockly.Msg.TEXT_SPECIAL_CHARACTER_LF = "перевод строки (\\n)";
+Blockly.Msg.TEXT_SPECIAL_CHARACTER_CR = "возврат каретки (\\r)";
+Blockly.Msg.TEXT_SPECIAL_CHARACTER_CRLF = "перевод строки возврата каретки (\\r\\n)";
+Blockly.Msg.TEXT_SPECIAL_CHARACTER_TAB = "вкладка (\\t)";
 Blockly.Msg.TIMER_CONDITIONAL = "Повторять каждые %1 секунды, до %2 %3";
 Blockly.Msg.TIMER_CONDITIONAL_TOOLTIP = "Повторять через равные промежутки времени, пока условие не будет выполнено.";
 Blockly.Msg.TIMER_COUNTING = "Повторять %1 раз каждые %2 секунды %3 %4";
@@ -111,8 +111,8 @@ Blockly.Msg.SWITCH_CASE_TOOLTIP = "Когда определенное знач�
 Blockly.Msg.SWITCH_CASE_LIST = "в случае";
 Blockly.Msg.SWITCH_CASE_LIST_TOOLTIP = "Список всех доступных случаев";
 Blockly.Msg.SWITCH_DO = "делать";
-Blockly.Msg.MISC_JAVASCRIPT= "Оператор Javascript %1;";
-Blockly.Msg.MISC_JAVASCRIPT_TOOLTIP = "Введите код Javascript, если нет блоков, предлагающих определенные функции.";
+Blockly.Msg.MISC_JAVASCRIPT = "Оператор JavaScript %1;";
+Blockly.Msg.MISC_JAVASCRIPT_TOOLTIP = "Введите код JavaScript, если нет блоков, предлагающих определенные функции.";
 Blockly.Msg.MISC_COMMENT = "Комментарий %1";
 Blockly.Msg.MISC_COMMENT_TOOLTIP = "Добавьте комментарии, чтобы объяснить, как работает логика.";
 
