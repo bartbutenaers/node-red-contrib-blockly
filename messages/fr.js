@@ -1,5 +1,5 @@
 // =========================================================================================
-// Node-Red blocks
+// Node-RED blocks
 // =========================================================================================
 Blockly.Msg.NODE_OBJECT_GET_JSON = "%1 %2 la propriété %3";
 Blockly.Msg.NODE_OBJECT_GET_JSON_GET_TOOLTIP = "Obtenir la propriété d’un objet.";
@@ -13,24 +13,24 @@ Blockly.Msg.NODE_OBJECT_SET_JSON = "fixer dans %1 la propriété %2 à %3";
 Blockly.Msg.NODE_OBJECT_SET_JSON_TOOLTIP = "Fixer la propriété d’un objet.";
 Blockly.Msg.NODE_OBJECT_SET_WARNING = "Les valeurs imbriquées ne peuvent être définies qu’avec une chaîne littérale";
 Blockly.Msg.NODE_LOG = "consigner le texte %1 avec le niveau %2";
-Blockly.Msg.NODE_LOG_TOOLTIP = "Consignation (log) via l’API de Node-Red.";
+Blockly.Msg.NODE_LOG_TOOLTIP = "Consignation (log) via l’API de Node-RED.";
 Blockly.Msg.NODE_LOG_LOG = "info";
 Blockly.Msg.NODE_LOG_WARNING = "avertissement";
 Blockly.Msg.NODE_LOG_ERROR = "erreur";
 Blockly.Msg.NODE_LOG_DEBUG = "débogage";
 Blockly.Msg.NODE_LOG_TRACE = "trace";
 Blockly.Msg.NODE_MSG = "msg";
-Blockly.Msg.NODE_MSG_TOOLTIP = "Obtenir le message d’entrée de Node-Red.";
+Blockly.Msg.NODE_MSG_TOOLTIP = "Obtenir le message d’entrée de Node-RED.";
 Blockly.Msg.NODE_REMOVE_STATUS = "Retirer le statut du nœud";
-Blockly.Msg.NODE_REMOVE_STATUS_TOOLTIP = "Nettoyer le statut du nœud via l’API de Node-Red.";
+Blockly.Msg.NODE_REMOVE_STATUS_TOOLTIP = "Nettoyer le statut du nœud via l’API de Node-RED.";
 Blockly.Msg.NODE_CLONE = "cloner %1";
-Blockly.Msg.NODE_CLONE_TOOLTIP = "Cloner le message via l’API de Node-Red.";
+Blockly.Msg.NODE_CLONE_TOOLTIP = "Cloner le message via l’API de Node-RED.";
 Blockly.Msg.NODE_STATUS = "fixer le statut du nœud avec le texte %1 la couleur %2 et la forme %3";
-Blockly.Msg.NODE_STATUS_TOOLTIP = "Fixer le statut du nœud via l’API de Node-Red.";
+Blockly.Msg.NODE_STATUS_TOOLTIP = "Fixer le statut du nœud via l’API de Node-RED.";
 Blockly.Msg.NODE_STATUS_RING = "anneau";
 Blockly.Msg.NODE_STATUS_DOT = "point";
 Blockly.Msg.NODE_PROPERTIES = "obtenir %1 du nœud";
-Blockly.Msg.NODE_PROPERTIES_TOOLTIP = "Obtenir la propriété spécifiée du nœud via l’API de Node-Red.";
+Blockly.Msg.NODE_PROPERTIES_TOOLTIP = "Obtenir la propriété spécifiée du nœud via l’API de Node-RED.";
 Blockly.Msg.NODE_PROPERTIES_ID = "l’identifiant";
 Blockly.Msg.NODE_PROPERTIES_NAME = "le nom";
 Blockly.Msg.NODE_PROPERTIES_OUTPUT_COUNT = "nombre de sorties";
@@ -41,7 +41,7 @@ Blockly.Msg.NODE_CONTEXT_MEMORY_TOOLTIP = "Accéder aux données dans la mémoir
 Blockly.Msg.NODE_GLOBAL_MEMORY = "contexte global";
 Blockly.Msg.NODE_GLOBAL_MEMORY_TOOLTIP = "Accéder aux données dans la mémoire globale (contexte).";
 Blockly.Msg.NODE_SEND = "envoyer %1 sur la sortie %2";
-Blockly.Msg.NODE_SEND_TOOLTIP = "Envoyer un message de sortie via l’API de Node-Red.";
+Blockly.Msg.NODE_SEND_TOOLTIP = "Envoyer un message de sortie via l’API de Node-RED.";
 Blockly.Msg.NODE_SEND_WARNING = "Lors de l’envoi de messages dans une boucle,\nassurez-vous que les messages soient uniques !";
 Blockly.Msg.NODE_RETURN_MESSAGE = "envoyer %1 sur la sortie %2 et terminer";
 Blockly.Msg.NODE_RETURN_MESSAGE_TOOLTIP = "Envoyer un message de sortie et sortir du nœud.";
@@ -97,7 +97,7 @@ Blockly.Msg.OBJECT_KEYS_TOOLTIP = "Obtenir toutes les clés de l’objet.";
 // Extra blocks
 // =========================================================================================
 Blockly.Msg.TEXT_SPECIAL_CHARACTER = "caractère spécial %1";
-Blockly.Msg.TEXT_SPECIAL_CHARACTER_TOOLTIP = "Un caractère spécial qui ne devrait pas être échappé (par un préfixe '\\'";
+Blockly.Msg.TEXT_SPECIAL_CHARACTER_TOOLTIP = "Un caractère spécial qui ne devrait pas être échappé (par un préfixe '\\')";
 Blockly.Msg.TEXT_SPECIAL_CHARACTER_LF = "saut de ligne (\\n)";
 Blockly.Msg.TEXT_SPECIAL_CHARACTER_CR = "retour de chariot (\\r)";
 Blockly.Msg.TEXT_SPECIAL_CHARACTER_CRLF = "retour de chariot et saut de ligne (\\r\\n)";
