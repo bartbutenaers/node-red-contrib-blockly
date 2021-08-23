@@ -170,3 +170,17 @@ Blockly.Msg.TIMER_TIMER_MS = "msec";
 Blockly.Msg.TIMER_TIMER_SEC = "sec";
 Blockly.Msg.TIMER_TIMER_MIN = "min";
 Blockly.Msg.TIMER_NONE_SELECTED = "aucun";
+
+// Overriding 7 strings that have a translation problem in French in the upstream Blockly project
+// for versions 5.20210325.0 (Q1 2021), 5.20210325.1 (Q1 2021 Patch 1) and 6.20210701.0 (Q2 2021).
+// See https://github.com/google/blockly/issues/5399
+// TODO: When there will be a new Blockly release, check that the `msg/js/fr.js` does not
+//  contain `<!-- -->`, then bump the minimal Blockly dependency version to that release,
+//  and remove the following 7 lines.
+Blockly.Msg["LISTS_GET_INDEX_TAIL"] = "";
+Blockly.Msg["LISTS_GET_SUBLIST_TAIL"] = "";
+Blockly.Msg["MATH_ONLIST_HELPURL"] = "";
+Blockly.Msg["ORDINAL_NUMBER_SUFFIX"] = "";
+Blockly.Msg["PROCEDURES_DEFNORETURN_DO"] = "";
+Blockly.Msg["TEXT_CHARAT_TAIL"] = "";
+Blockly.Msg["TEXT_GET_SUBSTRING_TAIL"] = "";
