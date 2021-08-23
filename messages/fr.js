@@ -128,7 +128,7 @@ Blockly.Msg.MISC_JSMULTILINE_TOOLTIP = "Tapez du code JavaScript multiligne dire
 // =========================================================================================
 Blockly.Msg.DATETIME_INPUT = "date %1";
 Blockly.Msg.DATETIME_INPUT_TOOLTIP = "Une date.";
-Blockly.Msg.DATETIME_TIMESTAMP = "maintenant";
+Blockly.Msg.DATETIME_TIMESTAMP = "timestamp %1";
 Blockly.Msg.DATETIME_TIMESTAMP_TOOLTIP = "Obtenir le timestamp de l’instant présent.";
 Blockly.Msg.DATETIME_CONVERT_FROM_DATE = "obtenir %1 depuis le timestamp %2";
 Blockly.Msg.DATETIME_CONVERT_FROM_DATE_TOOLTIP = "Obtenir une donnée temporelle depuis un timestamp";
