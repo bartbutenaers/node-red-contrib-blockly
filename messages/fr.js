@@ -98,10 +98,10 @@ Blockly.Msg.OBJECT_KEYS_TOOLTIP = "Obtenir toutes les clés de l’objet.";
 // =========================================================================================
 Blockly.Msg.TEXT_SPECIAL_CHARACTER = "caractère spécial %1";
 Blockly.Msg.TEXT_SPECIAL_CHARACTER_TOOLTIP = "Un caractère spécial qui ne devrait pas être échappé (par un préfixe '\\')";
-Blockly.Msg.TEXT_SPECIAL_CHARACTER_LF = "saut de ligne (\\n)";
-Blockly.Msg.TEXT_SPECIAL_CHARACTER_CR = "retour de chariot (\\r)";
-Blockly.Msg.TEXT_SPECIAL_CHARACTER_CRLF = "retour de chariot et saut de ligne (\\r\\n)";
-Blockly.Msg.TEXT_SPECIAL_CHARACTER_TAB = "tabulation (\\t)";
+Blockly.Msg.TEXT_SPECIAL_CHARACTER_LF = "saut de ligne (LF) (\\n)";
+Blockly.Msg.TEXT_SPECIAL_CHARACTER_CR = "retour de chariot (CR) (\\r)";
+Blockly.Msg.TEXT_SPECIAL_CHARACTER_CRLF = "retour de chariot et saut de ligne (CRLF) (\\r\\n)";
+Blockly.Msg.TEXT_SPECIAL_CHARACTER_TAB = "tabulation (TAB) (\\t)";
 Blockly.Msg.TIMER_CONDITIONAL = "Répéter toutes les %1 secondes, jusqu’à %2 %3";
 Blockly.Msg.TIMER_CONDITIONAL_TOOLTIP = "Répéter à intervalles réguliers jusqu’à ce qu’une condition soit remplie.";
 Blockly.Msg.TIMER_COUNTING = "Répéter  %1 fois toutes les %2 secondes %3 %4";

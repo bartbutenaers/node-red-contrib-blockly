@@ -101,10 +101,10 @@ Blockly.Msg.OBJECT_KEYS_TOOLTIP = "Zoek alle eigenschappen van het object";
 // =========================================================================================
 Blockly.Msg.TEXT_SPECIAL_CHARACTER = "speciaal leesteken %1";
 Blockly.Msg.TEXT_SPECIAL_CHARACTER_TOOLTIP = "Een speciaal leesteken dat niet vermeden moet worden (door een '\\' ontsnappingsteken)";
-Blockly.Msg.TEXT_SPECIAL_CHARACTER_LF = "regel opschuiving (\\n)";
-Blockly.Msg.TEXT_SPECIAL_CHARACTER_CR = "sprong naar links (\\r)";
-Blockly.Msg.TEXT_SPECIAL_CHARACTER_CRLF = "sprong naar links, nieuwe regel (\\r\\n)";
-Blockly.Msg.TEXT_SPECIAL_CHARACTER_TAB = "inspringing (\\t)";
+Blockly.Msg.TEXT_SPECIAL_CHARACTER_LF = "regel opschuiving (LF) (\\n)";
+Blockly.Msg.TEXT_SPECIAL_CHARACTER_CR = "sprong naar links (CR) (\\r)";
+Blockly.Msg.TEXT_SPECIAL_CHARACTER_CRLF = "sprong naar links, nieuwe regel (CRLF) (\\r\\n)";
+Blockly.Msg.TEXT_SPECIAL_CHARACTER_TAB = "inspringing (TAB) (\\t)";
 Blockly.Msg.TIMER_CONDITIONAL = "Herhaal elke %1 seconden, totdat %2 %3";
 Blockly.Msg.TIMER_CONDITIONAL_TOOLTIP = "Herhaal met vaste intervallen tot een bepaalde voorwaarde voldaan is.";
 Blockly.Msg.TIMER_COUNTING = "Herhaal %1 keer elke %2 seconden %3 %4";

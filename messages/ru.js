@@ -94,10 +94,10 @@ Blockly.Msg.OBJECT_KEYS_TOOLTIP = "Получить все ключи от об�
 // =========================================================================================
 Blockly.Msg.TEXT_SPECIAL_CHARACTER = "специальный символ %1";
 Blockly.Msg.TEXT_SPECIAL_CHARACTER_TOOLTIP = "Специальный символ, который нельзя экранировать (префиксом '\\')";
-Blockly.Msg.TEXT_SPECIAL_CHARACTER_LF = "перевод строки (\\n)";
-Blockly.Msg.TEXT_SPECIAL_CHARACTER_CR = "возврат каретки (\\r)";
-Blockly.Msg.TEXT_SPECIAL_CHARACTER_CRLF = "перевод строки возврата каретки (\\r\\n)";
-Blockly.Msg.TEXT_SPECIAL_CHARACTER_TAB = "вкладка (\\t)";
+Blockly.Msg.TEXT_SPECIAL_CHARACTER_LF = "перевод строки (LF) (\\n)";
+Blockly.Msg.TEXT_SPECIAL_CHARACTER_CR = "возврат каретки (CR) (\\r)";
+Blockly.Msg.TEXT_SPECIAL_CHARACTER_CRLF = "перевод строки возврата каретки (CRLF) (\\r\\n)";
+Blockly.Msg.TEXT_SPECIAL_CHARACTER_TAB = "вкладка (TAB) (\\t)";
 Blockly.Msg.TIMER_CONDITIONAL = "Повторять каждые %1 секунды, до %2 %3";
 Blockly.Msg.TIMER_CONDITIONAL_TOOLTIP = "Повторять через равные промежутки времени, пока условие не будет выполнено.";
 Blockly.Msg.TIMER_COUNTING = "Повторять %1 раз каждые %2 секунды %3 %4";
