@@ -1,6 +1,6 @@
 {
     "name"         : "node-red-contrib-blockly",
-    "version"      : "2.0.0-beta.2",
+    "version"      : "2.0.0",
     "description"  : "A Node Red node for visual programming a function using Blockly",
     "dependencies": {
         "blockly": "^6.20210701.0",
@@ -23,7 +23,7 @@
         }
     ],
     "license": "Apache-2.0",
-    "keywords": [ "blockly", "function", "visual", "programming", "javascript", "generate" ],
+    "keywords": [ "node-red", "blockly", "function", "visual", "programming", "javascript", "generate" ],
     "bugs": {
         "url": "https://github.com/bartbutenaers/node-red-contrib-blockly/issues"
     },
