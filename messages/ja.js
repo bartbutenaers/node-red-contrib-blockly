@@ -1,5 +1,5 @@
 // =========================================================================================
-// Node-Red blocks
+// Node-RED blocks
 // =========================================================================================
 Blockly.Msg.NODE_OBJECT_GET_JSON = "%2 のプロパティ %3 を %1";
 Blockly.Msg.NODE_OBJECT_GET_JSON_GET_TOOLTIP = "オブジェクトのプロパティを取得";
@@ -11,10 +11,10 @@ Blockly.Msg.NODE_OBJECT_GET_JSON_HAS = "持っているか確認";
 Blockly.Msg.NODE_OBJECT_GET_WARNING = "プロパティ変数がfoo.barのようなネストした戻り値を返さないようにすること";
 Blockly.Msg.NODE_OBJECT_SET_JSON = "%1 のプロパティ %2 を %3 にセット";
 Blockly.Msg.NODE_OBJECT_SET_JSON_TOOLTIP = "オブジェクトのプロパティをセット";
-Blockly.Msg.NODE_OBJECT_GET_WARNING = "ネストしたプロパティは、文字列リテラルでのみ設定できます";
+Blockly.Msg.NODE_OBJECT_SET_WARNING = "ネストしたプロパティは、文字列リテラルでのみ設定できます";
 Blockly.Msg.NODE_LOG = "%2 ログレベル指定で %1 をログ出力";
 Blockly.Msg.NODE_LOG_TOOLTIP = "Node-RED function APIでログ出力";
-Blockly.Msg.NODE_LOG_LOG = "ログ出力"; 
+Blockly.Msg.NODE_LOG_LOG = "ログ出力";
 Blockly.Msg.NODE_LOG_WARNING = "警告";
 Blockly.Msg.NODE_LOG_ERROR = "エラー";
 Blockly.Msg.NODE_LOG_DEBUG = "デバッグ";
@@ -27,7 +27,7 @@ Blockly.Msg.NODE_CLONE = "%1 を複製";
 Blockly.Msg.NODE_CLONE_TOOLTIP = "Node-RED function APIでメッセージを複製";
 Blockly.Msg.NODE_STATUS = "文字列 %1 色 %2 シェイプ %3 でノードステータスをセット";
 Blockly.Msg.NODE_STATUS_TOOLTIP = "Node-RED function APIでノードステータスをセット";
-Blockly.Msg.NODE_STATUS_RING = "リング"; 
+Blockly.Msg.NODE_STATUS_RING = "リング";
 Blockly.Msg.NODE_STATUS_DOT = "ドット";
 Blockly.Msg.NODE_PROPERTIES = "ノード %1 のプロパティを取得";
 Blockly.Msg.NODE_PROPERTIES_TOOLTIP = "Node-RED function APIで指定したノードのプロパティを取得";
@@ -61,7 +61,7 @@ Blockly.Msg.NODE_ENV_TOOLTIP = "環境変数の値にアクセス";
 Blockly.Msg.BUFFER_FROM_STRING = "エンコード %2 で文字列 %1 から Buffer生成";
 Blockly.Msg.BUFFER_FROM_STRING_TOOLTIP = "文字列からBufferを生成";
 Blockly.Msg.BUFFER_TO_STRING = "エンコード %2 で Buffer %1 から文字列を生成";
-Blockly.Msg.BUFFER_TO_STRING_TOOLTIP = " Bufferを文字列に変換";
+Blockly.Msg.BUFFER_TO_STRING_TOOLTIP = "Bufferを文字列に変換";
 Blockly.Msg.BUFFER_LENGTH = "Buffer %1 の長さを取得";
 Blockly.Msg.BUFFER_LENGTH_TOOLTIP = "Bufferの長さをバイトで取得";
 Blockly.Msg.BUFFER_ALLOC = "長さ %1 のBufferを生成";
@@ -100,7 +100,7 @@ Blockly.Msg.OBJECT_KEYS_TOOLTIP = "オブジェクトからすべてのキーを
 // Extra blocks
 // =========================================================================================
 Blockly.Msg.TEXT_SPECIAL_CHARACTER = "特殊文字 %1";
-Blockly.Msg.TEXT_SPECIAL_CHARACTER_TOOLTIP = "'\'を前につけてエスケープしない特殊文字";
+Blockly.Msg.TEXT_SPECIAL_CHARACTER_TOOLTIP = "'\\'を前につけてエスケープしない特殊文字";
 Blockly.Msg.TEXT_SPECIAL_CHARACTER_LF = "改行(LF) (\\n)";
 Blockly.Msg.TEXT_SPECIAL_CHARACTER_CR = "キャリッジリターン(CR) (\\r)";
 Blockly.Msg.TEXT_SPECIAL_CHARACTER_CRLF = "CRLF (\\r\\n)";
@@ -118,14 +118,14 @@ Blockly.Msg.SWITCH_CASE_TOOLTIP = "指定した値にマッチした場合";
 Blockly.Msg.SWITCH_CASE_LIST = "の場合";
 Blockly.Msg.SWITCH_CASE_LIST_TOOLTIP = "全ての有効な条件";
 Blockly.Msg.SWITCH_DO = "do";
-Blockly.Msg.MISC_JAVASCRIPT= "Javascript ステートメント %1;";
-Blockly.Msg.MISC_JAVASCRIPT_TOOLTIP = "特定の機能を提供するブロックがない場合、Javascriptコードを入力できる";
-Blockly.Msg.MISC_JSEXPRESS= "Javascript式 %1";
-Blockly.Msg.MISC_JSEXPRESS_TOOLTIP = "(使用には注意が必要)特定の機能を提供するブロックがない場合、Javascriptコードを入力できる";
+Blockly.Msg.MISC_JAVASCRIPT = "JavaScript ステートメント %1;";
+Blockly.Msg.MISC_JAVASCRIPT_TOOLTIP = "特定の機能を提供するブロックがない場合、JavaScriptコードを入力できる";
+Blockly.Msg.MISC_JSEXPRESS = "JavaScript式 %1";
+Blockly.Msg.MISC_JSEXPRESS_TOOLTIP = "(使用には注意が必要)特定の機能を提供するブロックがない場合、JavaScriptコードを入力できる";
 Blockly.Msg.MISC_COMMENT = "%1 のコメント";
 Blockly.Msg.MISC_COMMENT_TOOLTIP = "ロジックの動作を説明するコメントを追加";
 Blockly.Msg.MISC_JSMULTILINE = "複数行のJSコード %1";
-Blockly.Msg.MISC_JSMULTILINE_TOOLTIP = "特定の機能を提供するブロックがない場合に、複数行のJavascriptコードを入力できる";
+Blockly.Msg.MISC_JSMULTILINE_TOOLTIP = "特定の機能を提供するブロックがない場合に、複数行のJavaScriptコードを入力できる";
 
 // =========================================================================================
 // Datetime blocks
@@ -138,16 +138,16 @@ Blockly.Msg.DATETIME_CONVERT_FROM_DATE = "タイムスタンプ %2 から日時�
 Blockly.Msg.DATETIME_CONVERT_FROM_DATE_TOOLTIP = "タイムスタンプから指定した情報を取得";
 Blockly.Msg.DATETIME_CONVERT_FROM_DATE_NR = "タイムスタンプ形式";
 Blockly.Msg.DATETIME_CONVERT_FROM_DATE_MSEC = "ミリ秒";
-Blockly.Msg.DATETIME_CONVERT_FROM_DATE_SEC = "秒"; 
-Blockly.Msg.DATETIME_CONVERT_FROM_DATE_MIN = "分"; 
-Blockly.Msg.DATETIME_CONVERT_FROM_DATE_HOUR = "時"; 
-Blockly.Msg.DATETIME_CONVERT_FROM_DATE_DAY = "日"; 
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_SEC = "秒";
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_MIN = "分";
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_HOUR = "時";
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_DAY = "日";
 Blockly.Msg.DATETIME_CONVERT_FROM_DATE_DAY_OF_WEEK = "曜日";
-Blockly.Msg.DATETIME_CONVERT_FROM_DATE_MONTH = "月"; 
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_MONTH = "月";
 Blockly.Msg.DATETIME_CONVERT_FROM_DATE_YEAR = "年";
 Blockly.Msg.DATETIME_CONVERT_FROM_DATE_TEXT = "日付";
 Blockly.Msg.DATETIME_CONVERT_FROM_DATE_FULL = "長い形式の日付";
-Blockly.Msg.DATETIME_CONVERT_FROM_DATE_DAY_NAME = "曜日名"; 
+Blockly.Msg.DATETIME_CONVERT_FROM_DATE_DAY_NAME = "曜日名";
 Blockly.Msg.DATETIME_CONVERT_FROM_DATE_MONTH_NAME = "月名称";
 Blockly.Msg.DATETIME_CONVERT_TO_DATE = "%1 から日付を生成";
 Blockly.Msg.DATETIME_CONVERT_TO_DATE_TOOLTIP = "指定した値から日付を生成";
