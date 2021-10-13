@@ -33,6 +33,7 @@ Blockly.Msg.NODE_PROPERTIES = "получить узел %1";
 Blockly.Msg.NODE_PROPERTIES_TOOLTIP = "Получить указанное свойство узла через API функции Node-RED.";
 Blockly.Msg.NODE_PROPERTIES_ID = "идентификатор";
 Blockly.Msg.NODE_PROPERTIES_NAME = "имя";
+Blockly.Msg.NODE_PROPERTIES_OUTPUT_COUNT = "количество выходов";
 Blockly.Msg.NODE_FLOW_MEMORY = "поток";
 Blockly.Msg.NODE_FLOW_MEMORY_TOOLTIP = "Доступ к данным в памяти потока Node-RED.";
 Blockly.Msg.NODE_CONTEXT_MEMORY = "(узел) контекст";
@@ -49,6 +50,10 @@ Blockly.Msg.NODE_RETURN_TOOLTIP = "Вернуться, чтобы останов
 Blockly.Msg.NODE_CLOSE = "узел закрыт";
 Blockly.Msg.NODE_CLOSE_1 = "%1";
 Blockly.Msg.NODE_CLOSE_TOOLTIP = "Операторы, которые должны выполняться при закрытии узла.";
+Blockly.Msg.NODE_DONE = "сообщение завершено";
+Blockly.Msg.NODE_DONE_TOOLTIP = "Обработка сообщения завершена.";
+Blockly.Msg.NODE_ENV = "получить переменную окружения %1";
+Blockly.Msg.NODE_ENV_TOOLTIP = "Доступ к значению переменной среды.";
 
 // =========================================================================================
 // Buffer blocks
@@ -67,6 +72,8 @@ Blockly.Msg.BUFFER_CHECK = "проверить наличие буфера %1";
 Blockly.Msg.BUFFER_CHECK_TOOLTIP = "Проверить, является ли входное значение буфером.";
 Blockly.Msg.BUFFER_COPY = "копировать из буфераr %1 в буфер %2";
 Blockly.Msg.BUFFER_COPY_TOOLTIP = "CКопировать из первого буфера во второй буфер.";
+Blockly.Msg.BUFFER_CONCATENATE = "Объединить буфер %1 и %2";
+Blockly.Msg.BUFFER_CONCATENATE_TOOLTIP = "Объедините два буфера, чтобы создать новый буфер";
 Blockly.Msg.BUFFER_EMPTY = "пустой буфер";
 Blockly.Msg.BUFFER_EMPTY_TOOLTIP = "Создать пустой буфер, то есть буфер размером 0.";
 Blockly.Msg.BUFFER_BYTE = "байт %1";
@@ -111,10 +118,14 @@ Blockly.Msg.SWITCH_CASE_TOOLTIP = "Когда определенное знач�
 Blockly.Msg.SWITCH_CASE_LIST = "в случае";
 Blockly.Msg.SWITCH_CASE_LIST_TOOLTIP = "Список всех доступных случаев";
 Blockly.Msg.SWITCH_DO = "делать";
-Blockly.Msg.MISC_JAVASCRIPT = "оператор JavaScript %1;";
+Blockly.Msg.MISC_JAVASCRIPT = "Оператор JavaScript %1;";
 Blockly.Msg.MISC_JAVASCRIPT_TOOLTIP = "Введите код JavaScript, если нет блоков, предлагающих определенные функции.";
-Blockly.Msg.MISC_COMMENT = "комментарий %1";
+Blockly.Msg.MISC_JSEXPRESS = "Выражение JavaScript %1";
+Blockly.Msg.MISC_JSEXPRESS_TOOLTIP = "Используйте с осторожностью. Введите код JavaScript, если нет блоков, предлагающих определенные функции.";
+Blockly.Msg.MISC_COMMENT = "Комментарий %1";
 Blockly.Msg.MISC_COMMENT_TOOLTIP = "Добавьте комментарии, чтобы объяснить, как работает логика.";
+Blockly.Msg.MISC_JSMULTILINE = "Многострочный код JS %1";
+Blockly.Msg.MISC_JSMULTILINE_TOOLTIP = "Введите многострочный код Javascript, если нет блоков, предлагающих определенные функции.";
 
 // =========================================================================================
 // Datetime blocks
@@ -142,3 +153,25 @@ Blockly.Msg.DATETIME_CONVERT_TO_DATE = "дата создания с %1";
 Blockly.Msg.DATETIME_CONVERT_TO_DATE_TOOLTIP = "Создать дату из указанного значения.";
 Blockly.Msg.DATETIME_FORMAT = "преобразовать отметку времени %1 в формат %2";
 Blockly.Msg.DATETIME_FORMAT_TOOLTIP = "Преобразовать метку времени в указанный форматt.";
+Blockly.Msg.DATETIME_UTC = "UTC";
+//Blockly.Msg.DATETIME_LOCAL = "local";
+
+// =========================================================================================
+// Timer blocks
+// =========================================================================================
+//Blockly.Msg.TIMER_SET_TIMEOUT = "Execute timeout %1 in %2 %3";
+Blockly.Msg.TIMER_SET_TIMEOUT_1 = "%1";
+//Blockly.Msg.TIMER_SET_TIMEOUT_NAME = "timeout";
+//Blockly.Msg.TIMER_SET_TIMEOUT_TOOLTIP = "Execute the included blocks after a specified time delay.";
+//Blockly.Msg.TIMER_CLEAR_TIMEOUT = "Stop timeout %1";
+//Blockly.Msg.TIMER_CLEAR_TIMEOUT_TOOLTIP = "Cancel the execution after the timeout";
+//Blockly.Msg.TIMER_SET_INTERVAL = "Execute interval %1 every %2 %3";
+Blockly.Msg.TIMER_SET_INTERVAL_1 = "%1";
+Blockly.Msg.TIMER_SET_INTERVAL_NAME = "интервал";
+//Blockly.Msg.TIMER_SET_INTERVAL_TOOLTIP = "Execute the included blocks periodically at the specified time interval.";
+Blockly.Msg.TIMER_CLEAR_INTERVAL = "Остановить интервал %1";
+Blockly.Msg.TIMER_CLEAR_INTERVAL_TOOLTIP = "Отменяйте выполнение блока через определенные промежутки времени.";
+Blockly.Msg.TIMER_TIMER_MS = "мсек";
+Blockly.Msg.TIMER_TIMER_SEC = "сек";
+Blockly.Msg.TIMER_TIMER_MIN = "мин";
+Blockly.Msg.TIMER_NONE_SELECTED = "нет";
