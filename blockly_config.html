@@ -48,9 +48,11 @@
                 name: "Date/time",
                 files: [
                     // Inside this category we use a datepicker plugin, which is available as a separate NPM package.
-                    // Note that this NPM package name (blockly/field-date) contains a slash, which needs to be replaced
-                    // by %2f (which represents a slash character inside the NPM package name element of the url).
-                    "blockly-contrib/npm/@blockly%2Ffield-date/dist/date_compressed.js",
+                    // When the npm package name contains a path separator (e.g. @blockly/field-date) then the frontend will
+                    // need to replace that separator by the string "___SEPARATOR___".  Otherwise the NGinx webserver installed together
+                    // with HomeAssistant will cause the Express.js routes to be messed up.
+                    // See https://github.com/bartbutenaers/node-red-contrib-blockly/issues/101
+                    "blockly-contrib/npm/@blockly___SEPARATOR___field-date/dist/date_compressed.js",
                     "blockly-contrib/npm/node-red-contrib-blockly/lib/datetime/dateTimeBlocksCodeGen.js",
                     "blockly-contrib/npm/node-red-contrib-blockly/lib/datetime/dateTimeBlocksDefs.js",
                     "blockly-contrib/npm/node-red-contrib-blockly/lib/datetime/toolbox.xml",

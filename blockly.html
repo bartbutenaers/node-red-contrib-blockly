@@ -39,9 +39,14 @@
                 "blockly-contrib/npm/blockly/msg/en.js",                // Fills the Blockly.Msg with english translations
                 "blockly-contrib/npm/blockly/blocks_compressed.js",
                 "blockly-contrib/npm/blockly/javascript_compressed.js",
-                "blockly-contrib/npm/@blockly%2Fplugin-workspace-search/dist/index.js",
-                "blockly-contrib/npm/@blockly%2Fzoom-to-fit/dist/index.js",
-                "blockly-contrib/npm/@blockly%2Fworkspace-backpack/dist/index.js"
+                // When the npm package name contains a path separator (e.g. @blockly/plugin-workspace-search) then the frontend will
+                // need to replace that separator by the string "___SEPARATOR___".  Otherwise the NGinx webserver installed together
+                // with HomeAssistant will cause the Express.js routes to be messed up.
+                // See https://github.com/bartbutenaers/node-red-contrib-blockly/issues/101
+                "blockly-contrib/npm/@blockly___SEPARATOR___plugin-workspace-search/dist/index.js",
+                "blockly-contrib/npm/@blockly___SEPARATOR___zoom-to-fit/dist/index.js",
+                "blockly-contrib/npm/@blockly___SEPARATOR___workspace-backpack/dist/index.js",
+                "blockly-contrib/npm/@blockly___SEPARATOR___workspace-backpack/dist/index.js"
             ]
         });
 

@@ -505,6 +505,12 @@ module.exports = function(RED) {
     // Make all the static NPM modules resources from this node public available
     RED.httpAdmin.get('/blockly-contrib/npm/:package/*', function(req, res) {
         var requestedFilePath;
+        
+        // When the npm package name contains a path separator (e.g. @blockly/plugin-workspace-search) then the frontend will
+        // have replaced that separator by the string "___SEPARATOR___".  So we need to replace "___SEPARATOR___" here again by 
+        // the path separator (which depends on the OS this node is running on).
+        // See https://github.com/bartbutenaers/node-red-contrib-blockly/issues/101
+        req.params.package = req.params.package.replace("___SEPARATOR___", path.sep);
 
         // Try to get the npm package path from the cache
         var npmPackagePath = blocklyNpmPaths.get(req.params.package);
