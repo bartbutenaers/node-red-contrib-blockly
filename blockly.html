@@ -46,7 +46,8 @@
                 "blockly-contrib/npm/@blockly___SEPARATOR___plugin-workspace-search/dist/index.js",
                 "blockly-contrib/npm/@blockly___SEPARATOR___zoom-to-fit/dist/index.js",
                 "blockly-contrib/npm/@blockly___SEPARATOR___workspace-backpack/dist/index.js",
-                "blockly-contrib/npm/@blockly___SEPARATOR___workspace-backpack/dist/index.js"
+                "blockly-contrib/npm/@blockly___SEPARATOR___toolbox-search/dist/index.js",
+                "blockly-contrib/npm/@blockly___SEPARATOR___workspace-minimap/dist/index.js"
             ]
         });
 
@@ -209,7 +210,17 @@
                     }
                 });
             });
-            
+
+            // Add a 'Search' category at the end, which is linked automatically by Blockly to the toolbox-search plugin.
+            const searchElement = document.createElementNS("http://www.w3.org/1999/xhtml", "category");
+            searchElement.setAttribute("name", "Search");
+            searchElement.setAttribute("kind", "search");
+            // When the search input field is clicked, a blue background appears.
+            // I tried to apply as color the same color as the background color (grey), but it doesn't help.
+            // The same happens in the official plugin demo (https://google.github.io/blockly-samples/plugins/toolbox-search/test/index.html)
+            searchElement.setAttribute("colour", "#B2B2B"); // Same color as the background
+            node.toolboxXmlDocument.documentElement.appendChild(searchElement);
+
             // Create the workspace as soon as the last script has been loaded.  
             // This is possible because the scripts are loaded sequentially (via async = false)
             if (node.workspace) {
@@ -231,6 +242,7 @@
         var showTrashcan     = true;
         var allowComments    = true;
         var showZoomControl  = true;
+        var showMiniMap      = true;
         var horizontalLayout = false;
         var enableBackPack   = false;
         var toolboxPosition  = "start";
@@ -246,6 +258,7 @@
                 showTrashcan    = configNode.showTrashcan;
                 allowComments   = configNode.allowComments;
                 showZoomControl = configNode.showZoomControl;
+                showMiniMap     = configNode.showMiniMap;
                 renderer        = configNode.renderer;
                 enableBackPack  = configNode.enableBackPack;
                 configNodeId    = configNode.id;
@@ -354,7 +367,14 @@
                 node.zoomToFit = new ZoomToFitControl(node.workspace);
                 node.zoomToFit.init();
             }
-            
+
+            // Only show the minimap when the (fullscreen) tray is open, because the minimap is too big to fit into the node's config screen.
+            if (showMiniMap && node.isTrayOpen) {
+                // Enable the mini map on the workspace (via the workspace-minimap plugin)
+                node.minimap = new PositionedMinimap(node.workspace);
+                node.minimap.init();
+            }
+
             if (enableBackPack) {
                 // Enable the backpack icon on the workspace (via the workspace-backpack plugin)
                 node.backpack = new Backpack(node.workspace);
@@ -379,7 +399,7 @@
             
             try {            
                 // Load the workspace content again from the specified XML string
-                var dom = Blockly.Xml.textToDom(workspaceXml);
+                var dom = Blockly.utils.xml.textToDom(workspaceXml);
                 Blockly.Xml.domToWorkspace(dom, node.workspace); 
             }
             catch(err) {
@@ -439,7 +459,13 @@
             node.zoomToFit.dispose();
             node.zoomToFit = null;
         }
-        
+
+        // When previously a workspace-minimap plugin has been activated, then clean it up
+        if (node.minimap) {
+            node.minimap.dispose();
+            node.minimap = null;
+        }
+
         // When previously a workspace-backpack plugin has been activated (for the previous workspace instance), then clean it up
         if (node.backpack) {
             node.backpack.dispose();
@@ -573,6 +599,7 @@
             
             node.librariesLoaded = false;
             node.previousEnableBackPack = "none";
+            node.isTrayOpen = false;
 
             $( "#node-input-outputs" ).spinner({
                 min:1,
@@ -743,7 +770,7 @@
                                 text: RED._("common.label.cancel"),
                                 click: function() {
                                     var loadedXml = node.loadedXml;
-
+                                    node.isTrayOpen = false;
                                     //Jeff: re-create workspace after RED.tray.close finished
                                     RED.tray.close(() => createWorkspace(node, loadedXml));
                                 }
@@ -755,7 +782,7 @@
                                 click: function() {
                                     var dom = Blockly.Xml.workspaceToDom(node.workspace);
                                     var loadedXml = Blockly.Xml.domToPrettyText(dom);
-
+                                    node.isTrayOpen = false;
                                     RED.tray.close(() => createWorkspace(node, loadedXml));
                                 }
                             }
@@ -797,6 +824,7 @@
 
                         }
                     }
+                    node.isTrayOpen = true;
                     RED.tray.show(trayOptions);
                 }
             }
