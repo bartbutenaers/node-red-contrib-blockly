@@ -31,6 +31,8 @@
 module.exports = function(RED) {
     var util = require("util");
     var vm = require("vm");
+    var acorn = require("acorn");
+    var acornWalk = require("acorn-walk");
     var path = require("path");
     var fs = require("fs");
     
@@ -108,6 +110,13 @@ module.exports = function(RED) {
         node.name = n.name;
         node.func = n.func;
         node.outputs = n.outputs;
+        node.timeout = (n.timeout | 0)*1000;
+        if(node.timeout>0){
+            node.timeoutOptions = {
+                timeout:node.timeout,
+                breakOnSigint:true
+            }
+        }
         node.ini = n.initialize ? n.initialize.trim() : "";
         node.fin = n.finalize ? n.finalize.trim() : "";
         node.libs = n.libs || [];
@@ -116,21 +125,13 @@ module.exports = function(RED) {
             throw new Error(RED._("function.error.externalModuleNotAllowed"));
         }
 
-        var handleNodeDoneCall = true;
-
-        // Check to see if the Function appears to call `node.done()`. If so,
-        // we will assume it is well written and does actually call node.done().
-        // Otherwise, we will call node.done() after the function returns regardless.
-        if (/node\.done\s*\(\s*\)/.test(node.func)) {
-            handleNodeDoneCall = false;
-        }
-
         var functionText = "var results = null;"+
             "results = (async function(msg,__send__,__done__){ "+
                 "var __msgid__ = msg._msgid;"+
                 "var node = {"+
                     "id:__node__.id,"+
                     "name:__node__.name,"+
+                    "path:__node__.path,"+
                     "outputCount:__node__.outputCount,"+
                     "log:__node__.log,"+
                     "error:__node__.error,"+
@@ -144,6 +145,26 @@ module.exports = function(RED) {
                 "};\n"+
                 node.func+"\n"+
             "})(msg,__send__,__done__);";
+        
+        var handleNodeDoneCall = true;
+
+        // Check to see if the Function appears to call `node.done()`. If so,
+        // we will assume it is well written and does actually call node.done().
+        // Otherwise, we will call node.done() after the function returns regardless.
+        if (/node\.done\s*\(\s*\)/.test(functionText)) {
+            // We have spotted the code contains `node.done`. It could be in a comment
+            // so need to do the extra work to parse the AST and examine it properly.
+            acornWalk.simple(acorn.parse(functionText,{ecmaVersion: "latest"} ), {
+                CallExpression(astNode) {
+                    if (astNode.callee && astNode.callee.object) {
+                        if (astNode.callee.object.name === "node" && astNode.callee.property.name === "done") {
+                            handleNodeDoneCall = false;
+                        }
+                    }
+                }
+            })
+        }
+
         var finScript = null;
         var finOpt = null;
         node.topic = n.topic;
@@ -162,6 +183,7 @@ module.exports = function(RED) {
             __node__: {
                 id: node.id,
                 name: node.name,
+                path: node._path,
                 outputCount: node.outputs,
                 log: function() {
                     node.log.apply(node, arguments);
@@ -290,6 +312,8 @@ module.exports = function(RED) {
             sandbox.promisify = util.promisify;
         }
 
+        const moduleLoadPromises = [];
+
         if (node.hasOwnProperty("libs")) {
             let moduleErrors = false;
             var modules = node.libs;
@@ -302,16 +326,14 @@ module.exports = function(RED) {
                         return;
                     }
                     sandbox[vname] = null;
-                    try {
-                        var spec = module.module;
-                        if (spec && (spec !== "")) {
-                            var lib = RED.require(module.module);
-                            sandbox[vname] = lib;
-                        }
-                    } catch (e) {
-                        //TODO: NLS error message
-                        node.error(RED._("function.error.moduleLoadError",{module:module.spec, error:e.toString()}))
-                        moduleErrors = true;
+                    var spec = module.module;
+                    if (spec && (spec !== "")) {
+                        moduleLoadPromises.push(RED.import(module.module).then(lib => {
+                            sandbox[vname] = lib.default;
+                        }).catch(err => {
+                            node.error(RED._("function.error.moduleLoadError",{module:module.spec, error:err.toString()}))
+                            throw err;
+                        }));
                     }
                 }
             });
@@ -336,168 +358,190 @@ module.exports = function(RED) {
                 processMessage(msg, send, done);
             }
         });
-
-        var context = vm.createContext(sandbox);
-        try {
-            var iniScript = null;
-            var iniOpt = null;
-            if (node.ini && (node.ini !== "")) {
-                var iniText = `
-                (async function(__send__) {
-                    var node = {
-                        id:__node__.id,
-                        name:__node__.name,
-                        outputCount:__node__.outputCount,
-                        log:__node__.log,
-                        error:__node__.error,
-                        warn:__node__.warn,
-                        debug:__node__.debug,
-                        trace:__node__.trace,
-                        status:__node__.status,
-                        send: function(msgs, cloneMsg) {
-                            __node__.send(__send__, RED.util.generateId(), msgs, cloneMsg);
-                        }
-                    };
-                    `+ node.ini +`
-                })(__initSend__);`;
-                iniOpt = createVMOpt(node, " setup");
-                iniScript = new vm.Script(iniText, iniOpt);
-            }
-            node.script = vm.createScript(functionText, createVMOpt(node, ""));
-            if (node.fin && (node.fin !== "")) {
-                var finText = `(function () {
-                    var node = {
-                        id:__node__.id,
-                        name:__node__.name,
-                        outputCount:__node__.outputCount,
-                        log:__node__.log,
-                        error:__node__.error,
-                        warn:__node__.warn,
-                        debug:__node__.debug,
-                        trace:__node__.trace,
-                        status:__node__.status,
-                        send: function(msgs, cloneMsg) {
-                            __node__.error("Cannot send from close function");
-                        }
-                    };
-                    `+node.fin +`
-                })();`;
-                finOpt = createVMOpt(node, " cleanup");
-                finScript = new vm.Script(finText, finOpt);
-            }
-            var promise = Promise.resolve();
-            if (iniScript) {
-                context.__initSend__ = function(msgs) { node.send(msgs); };
-                promise = iniScript.runInContext(context, iniOpt);
-            }
-
-            processMessage = function (msg, send, done) {
-                var start = process.hrtime();
-                context.msg = msg;
-                context.__send__ = send;
-                context.__done__ = done;
-
-                node.script.runInContext(context);
-                context.results.then(function(results) {
-                    sendResults(node,send,msg._msgid,results,false);
-                    if (handleNodeDoneCall) {
-                        done();
-                    }
-
-                    var duration = process.hrtime(start);
-                    var converted = Math.floor((duration[0] * 1e9 + duration[1])/10000)/100;
-                    node.metric("duration", msg, converted);
-                    if (process.env.NODE_RED_FUNCTION_TIME) {
-                        node.status({fill:"yellow",shape:"dot",text:""+converted});
-                    }
-                }).catch(err => {
-                    if ((typeof err === "object") && err.hasOwnProperty("stack")) {
-                        //remove unwanted part
-                        var index = err.stack.search(/\n\s*at ContextifyScript.Script.runInContext/);
-                        err.stack = err.stack.slice(0, index).split('\n').slice(0,-1).join('\n');
-                        var stack = err.stack.split(/\r?\n/);
-
-                        //store the error in msg to be used in flows
-                        msg.error = err;
-
-                        var line = 0;
-                        var errorMessage;
-                        if (stack.length > 0) {
-                            while (line < stack.length && stack[line].indexOf("ReferenceError") !== 0) {
-                                line++;
+        Promise.all(moduleLoadPromises).then(() => {
+            var context = vm.createContext(sandbox);
+            try {
+                var iniScript = null;
+                var iniOpt = null;
+                if (node.ini && (node.ini !== "")) {
+                    var iniText = `
+                    (async function(__send__) {
+                        var node = {
+                            id:__node__.id,
+                            name:__node__.name,
+                            path:__node__.path,
+                            outputCount:__node__.outputCount,
+                            log:__node__.log,
+                            error:__node__.error,
+                            warn:__node__.warn,
+                            debug:__node__.debug,
+                            trace:__node__.trace,
+                            status:__node__.status,
+                            send: function(msgs, cloneMsg) {
+                                __node__.send(__send__, RED.util.generateId(), msgs, cloneMsg);
                             }
+                        };
+                        `+ node.ini +`
+                    })(__initSend__);`;
+                    iniOpt = createVMOpt(node, " setup");
+                    iniScript = new vm.Script(iniText, iniOpt);
+                    if(node.timeout>0){
+                        iniOpt.timeout = node.timeout;
+                        iniOpt.breakOnSigint = true;
+                    }
+                }
+                node.script = vm.createScript(functionText, createVMOpt(node, ""));
+                if (node.fin && (node.fin !== "")) {
+                    var finText = `(function () {
+                        var node = {
+                            id:__node__.id,
+                            name:__node__.name,
+                            path:__node__.path,
+                            outputCount:__node__.outputCount,
+                            log:__node__.log,
+                            error:__node__.error,
+                            warn:__node__.warn,
+                            debug:__node__.debug,
+                            trace:__node__.trace,
+                            status:__node__.status,
+                            send: function(msgs, cloneMsg) {
+                                __node__.error("Cannot send from close function");
+                            }
+                        };
+                        `+node.fin +`
+                    })();`;
+                    finOpt = createVMOpt(node, " cleanup");
+                    finScript = new vm.Script(finText, finOpt);
+                    if(node.timeout>0){
+                        finOpt.timeout = node.timeout;
+                        finOpt.breakOnSigint = true;
+                    }
+                }
+                var promise = Promise.resolve();
+                if (iniScript) {
+                    context.__initSend__ = function(msgs) { node.send(msgs); };
+                    promise = iniScript.runInContext(context, iniOpt);
+                }
 
-                            if (line < stack.length) {
-                                errorMessage = stack[line];
-                                var m = /:(\d+):(\d+)$/.exec(stack[line+1]);
-                                if (m) {
-                                    var lineno = Number(m[1])-1;
-                                    var cha = m[2];
-                                    errorMessage += " (line "+lineno+", col "+cha+")";
+                processMessage = function (msg, send, done) {
+                    var start = process.hrtime();
+                    context.msg = msg;
+                    context.__send__ = send;
+                    context.__done__ = done;
+                    var opts = {};
+                    if (node.timeout>0){
+                        opts = node.timeoutOptions;
+                    }
+                    node.script.runInContext(context);
+                    context.results.then(function(results) {
+                        sendResults(node,send,msg._msgid,results,false);
+                        if (handleNodeDoneCall) {
+                            done();
+                        }
+
+                        var duration = process.hrtime(start);
+                        var converted = Math.floor((duration[0] * 1e9 + duration[1])/10000)/100;
+                        node.metric("duration", msg, converted);
+                        if (process.env.NODE_RED_FUNCTION_TIME) {
+                            node.status({fill:"yellow",shape:"dot",text:""+converted});
+                        }
+                    }).catch(err => {
+                        if ((typeof err === "object") && err.hasOwnProperty("stack")) {
+                            //remove unwanted part
+                            var index = err.stack.search(/\n\s*at ContextifyScript.Script.runInContext/);
+                            err.stack = err.stack.slice(0, index).split('\n').slice(0,-1).join('\n');
+                            var stack = err.stack.split(/\r?\n/);
+
+                            //store the error in msg to be used in flows
+                            msg.error = err;
+
+                            var line = 0;
+                            var errorMessage;
+                            if (stack.length > 0) {
+                                while (line < stack.length && stack[line].indexOf("ReferenceError") !== 0) {
+                                    line++;
+                                }
+
+                                if (line < stack.length) {
+                                    errorMessage = stack[line];
+                                    var m = /:(\d+):(\d+)$/.exec(stack[line+1]);
+                                    if (m) {
+                                        var lineno = Number(m[1])-1;
+                                        var cha = m[2];
+                                        errorMessage += " (line "+lineno+", col "+cha+")";
+                                    }
                                 }
                             }
+                            if (!errorMessage) {
+                                errorMessage = err.toString();
+                            }
+                            done(errorMessage);
                         }
-                        if (!errorMessage) {
-                            errorMessage = err.toString();
+                        else if (typeof err === "string") {
+                            done(err);
                         }
-                        done(errorMessage);
+                        else {
+                            done(JSON.stringify(err));
+                        }
+                    });
+                }
+
+                node.on("close", function() {
+                    if (finScript) {
+                        try {
+                            finScript.runInContext(context, finOpt);
+                        }
+                        catch (err) {
+                            node.error(err);
+                        }
                     }
-                    else if (typeof err === "string") {
-                        done(err);
+                    while (node.outstandingTimers.length > 0) {
+                        clearTimeout(node.outstandingTimers.pop());
                     }
-                    else {
-                        done(JSON.stringify(err));
+                    while (node.outstandingIntervals.length > 0) {
+                        clearInterval(node.outstandingIntervals.pop());
+                    }
+                    if (node.clearStatus) {
+                        node.status({});
                     }
                 });
-            }
 
-            node.on("close", function() {
-                if (finScript) {
-                    try {
-                        finScript.runInContext(context, finOpt);
-                    }
-                    catch (err) {
-                        node.error(err);
-                    }
-                }
-                while (node.outstandingTimers.length > 0) {
-                    clearTimeout(node.outstandingTimers.pop());
-                }
-                while (node.outstandingIntervals.length > 0) {
-                    clearInterval(node.outstandingIntervals.pop());
-                }
-                if (node.clearStatus) {
-                    node.status({});
-                }
-            });
-
-            promise.then(function (v) {
-                var msgs = messages;
-                messages = [];
-                while (msgs.length > 0) {
-                    msgs.forEach(function (s) {
-                        processMessage(s.msg, s.send, s.done);
-                    });
-                    msgs = messages;
+                promise.then(function (v) {
+                    var msgs = messages;
                     messages = [];
-                }
-                state = RESOLVED;
-            }).catch((error) => {
-                messages = [];
-                state = ERROR;
-                node.error(error);
-            });
+                    while (msgs.length > 0) {
+                        msgs.forEach(function (s) {
+                            processMessage(s.msg, s.send, s.done);
+                        });
+                        msgs = messages;
+                        messages = [];
+                    }
+                    state = RESOLVED;
+                }).catch((error) => {
+                    messages = [];
+                    state = ERROR;
+                    node.error(error);
+                });
 
-        }
-        catch(err) {
-            // eg SyntaxError - which v8 doesn't include line number information
-            // so we can't do better than this
-            updateErrorInfo(err);
-            node.error(err);
-        }
+            }
+            catch(err) {
+                // eg SyntaxError - which v8 doesn't include line number information
+                // so we can't do better than this
+                updateErrorInfo(err);
+                node.error(err);
+            }
+        }).catch(err => {
+            node.error(RED._("function.error.externalModuleLoadError"));
+        });
     }
     
-    RED.nodes.registerType("Blockly",BlocklyNode);
+    RED.nodes.registerType("Blockly",BlocklyNode, {
+        dynamicModuleList: "libs",
+        settings: {
+            functionExternalModules: { value: true, exportable: true },
+            functionTimeout: { value:0, exportable: true }
+        }
+    });
     RED.library.register("blockly_functions");
 
     var blocklyNpmPaths = new Map();
