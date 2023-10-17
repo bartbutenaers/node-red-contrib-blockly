@@ -52,7 +52,7 @@
                     // need to replace that separator by the string "___SEPARATOR___".  Otherwise the NGinx webserver installed together
                     // with HomeAssistant will cause the Express.js routes to be messed up.
                     // See https://github.com/bartbutenaers/node-red-contrib-blockly/issues/101
-                    "blockly-contrib/npm/@blockly___SEPARATOR___field-date/dist/date_compressed.js",
+                    "blockly-contrib/npm/@blockly___SEPARATOR___field-date/dist/index.js",
                     "blockly-contrib/npm/node-red-contrib-blockly/lib/datetime/dateTimeBlocksCodeGen.js",
                     "blockly-contrib/npm/node-red-contrib-blockly/lib/datetime/dateTimeBlocksDefs.js",
                     "blockly-contrib/npm/node-red-contrib-blockly/lib/datetime/toolbox.xml",
@@ -103,6 +103,7 @@
             showTrashcan: {value: true},
             allowComments: {value: true},
             showZoomControl: {value: true},
+            showMiniMap: {value: true},
             enableBackPack: {value: false},
             // The backpackContents will be set by the Blockly nodes, but need to be defined here (otherwise it won't be persisted by Node-RED)
             backpackContents: {value: []},
@@ -262,6 +263,11 @@
                 <span for='node-config-input-showZoomControl'> Show zoom control icons in workspace</span>
             </div>
             <div class="form-row">
+                <label for='node-config-input-showMiniMap'><i class='fa fa-map'></i> MiniMap</label>
+                <input type='checkbox' id='node-config-input-showMiniMap' style='width:auto ;border:none; vertical-align:baseline;' placeholder='0'>
+                <span for='node-config-input-showMiniMap'> Show a mini map in (expanded) workspace</span>
+            </div>
+            <div class="form-row">
                 <label for='node-config-input-enableBackPack'><i class='fa fa-briefcase'></i> Backpack</label>
                 <input type='checkbox' id='node-config-input-enableBackPack' style='width:auto ;border:none; vertical-align:baseline;' placeholder='0'>
                 <span for='node-config-input-enableBackPack'> Show backpack icon in workspace</span>
@@ -353,6 +359,8 @@
     If activated, comments can be added to a block (via the right-click context menu).</p>
     <p><strong>Show zoom control icons in workspace:</strong><br/>
     If activated, zoom control icons will be displayed in the Blockly workspace.</p> 
+    <p><strong>Show mini map in workspace:</strong><br/>
+    If activated, a mini map will be displayed in the Blockly workspace (when extended to fullscreen).</p> 
     <p><strong>Show backpack icon in workspace:</strong><br/>
     If activated, a backpack icon will be displayed in the Blockly workspace.  Via this way you can manage your favorite blocks.</p> 
     <p><strong>Categories:</strong><br/>
