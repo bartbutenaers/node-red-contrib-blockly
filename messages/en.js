@@ -34,6 +34,7 @@ Blockly.Msg.NODE_PROPERTIES_TOOLTIP = "Get the specified node property via the N
 Blockly.Msg.NODE_PROPERTIES_ID = "identifier";
 Blockly.Msg.NODE_PROPERTIES_NAME = "name";
 Blockly.Msg.NODE_PROPERTIES_OUTPUT_COUNT = "output count";
+Blockly.Msg.NODE_PROPERTIES_PATH = "path";
 Blockly.Msg.NODE_FLOW_MEMORY = "flow";
 Blockly.Msg.NODE_FLOW_MEMORY_TOOLTIP = "Access the data in the Node-RED flow memory.";
 Blockly.Msg.NODE_CONTEXT_MEMORY = "(node) context";
