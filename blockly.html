@@ -579,6 +579,7 @@
             func: {value:"\nreturn msg;"}, // The generated Javascript code
             workspaceXml: {value:"<xml xmlns=\"https:\/\/developers.google.com\/blockly\/xml\"><\/xml>"}, // Needed for Blockly version "5.20210325.1". Can't be empty
             outputs: {value:1}, // Standard field that will be used by Node-Red to draw N output ports in the flow editor,
+            timeout: {value:RED.settings.functionTimeout || 0},
             blocklyConfig: {type: "blockly-config", required: false}, // No default value (see https://discourse.nodered.org/t/default-config-node/46773/9?u=bartbutenaers)
             backpackContents: {value:[]},
             // Use the noerr property to let Node-RED know whether the generated Javascript contains a syntax error or not.
@@ -601,7 +602,12 @@
             node.previousEnableBackPack = "none";
             node.isTrayOpen = false;
 
-            $( "#node-input-outputs" ).spinner({
+            // Show a default timeout value for older nodes 
+            if(node.timeout === null || node.timeout === "") {
+                $("#node-input-timeout").val(RED.settings.functionTimeout || 0);
+            }
+
+            $("#node-input-outputs").spinner({
                 min:1,
                 change: function(event, ui) {
                     var value = this.value;
@@ -621,6 +627,26 @@
                             }
                         }
                     }
+                }
+            });
+
+            // 4294967 is max in node.js timeout.
+            $("#node-input-timeout").spinner({
+                min: 0,
+                max: 4294967,
+                change: function(event, ui) {
+                    var value = this.value;
+                    if(value == ""){
+                        value = 0;
+                    }
+                    else
+                    {
+                        value = parseInt(value);
+                    }
+                    value = isNaN(value) ? 1 : value;
+                    value = Math.max(value, parseInt($(this).attr("aria-valuemin")));
+                    value = Math.min(value, parseInt($(this).attr("aria-valuemax")));
+                    if (value !== this.value) { $(this).spinner("value", value); }
                 }
             });
 
@@ -706,7 +732,7 @@
                 // Jeff: load XML to aceXMLEditor instead aceEditor
                 editor:node.aceXMLEditor, // the field name the main text body goes to
                 mode:"ace/mode/xml",
-                fields:['name','outputs']
+                fields:['name','outputs','timeout']
             });
             
 
@@ -986,9 +1012,15 @@
             </div>
         </div>
     </div>
-    <div class="form-row">
-        <label for="node-input-outputs"><i class="fa fa-random"></i> Outputs</label>
-        <input id="node-input-outputs" style="width: 20px;" value="1">
+    <div>
+        <div class="form-row" style="display: inline-block; margin-right: 50px;">
+            <label for="node-input-outputs"><i class="fa fa-random"></i> Outputs</label>
+            <input id="node-input-outputs" style="width: 60px;" value="1">
+        </div>
+        <div class="form-row" style="display: inline-block;">
+            <label for="node-input-timeout"><i class="fa fa-clock-o"></i> Timeout</label>
+            <input id="node-input-timeout" style="width: 60px;">
+        </div>
     </div>
     <div class="form-tips" id="tip-version" style="width: 100%;max-width: 100%;" hidden>Tip: The 'get node property' block cannot be used, since Node-red version 0.19.0 is minimal required.</div>
     </br>
