@@ -154,13 +154,17 @@ When writing Javascript code in a standard *function node*, some Node-Red functi
 ## Config node settings
 The Blocky workspace can be configured via the settings in the selected config node:
 
-![Config node](https://user-images.githubusercontent.com/14224149/126557196-7d6f06c5-be68-43c9-8686-f707e8f94977.png)
+![Config node](https://github.com/bartbutenaers/node-red-contrib-blockly/assets/14224149/1297e13b-1d83-4078-aedc-137b541d3e86)
 
 These settings will be applied to every Blockly node where this config node has been selected:
 + Specify whether a **trash can** icon needs to be displayed in the workspace.
 + Specify whether **comments** can be added to blocks in the workspace.
-+ Specify whether the 4 **zoom** icons need to to be displayed in the workspace.
-+ Specify whether a **backpack** icon need to be be displayed in the workspace.
++ Specify whether the 4 **zoom** icons needs to to be displayed in the workspace.
++ Specify whether a ***mini map*** needs to be displayed in the expanded (i.e. full screen) workspace:
+
+   ![image](https://github.com/bartbutenaers/node-red-contrib-blockly/assets/14224149/f3c2c6f2-e372-4c82-9395-6d98fcb9162d)
+  
++ Specify whether a **backpack** icon needs to be be displayed in the workspace.
 + Customize the toolbox **categories** to fit your needs. CAUTION: this is only for advanced users and need to be done with care!!  When this checkbox is activated, the "Categories" tabsheet will become enabled.  See [wiki](https://github.com/bartbutenaers/node-red-contrib-blockly/wiki/Customizing-the-toolbox).
 + Specify the **language** that needs to be used in the blocks in the workspace.
 + Specify the location of the **toolbox**, relative to the workspace.
