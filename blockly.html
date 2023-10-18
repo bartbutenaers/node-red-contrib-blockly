@@ -247,6 +247,7 @@
         var enableBackPack   = false;
         var toolboxPosition  = "start";
         var renderer         = "geras";
+        var theme            = "classic";
         var configNodeId     = "";
         var backpackContents = [];
 
@@ -260,6 +261,7 @@
                 showZoomControl = configNode.showZoomControl;
                 showMiniMap     = configNode.showMiniMap;
                 renderer        = configNode.renderer;
+                theme           = configNode.theme;
                 enableBackPack  = configNode.enableBackPack;
                 configNodeId    = configNode.id;
  
@@ -334,6 +336,14 @@
             node.workspace = null;
         }  
 
+        try {
+            // The theme plugins for Blockly are ES6 modules
+            node.themeModule = await import("/blockly-contrib/npm/@blockly___SEPARATOR___theme-" + theme + "/dist/index.js");
+        }
+        catch (err) {
+            console.error(err);
+        }
+
         // Only load the Blockly workspace when all libraries have been loaded yet, in order to avoid errors
         if (node.librariesLoaded == true) {
             // Create the workspace (with the specified settings)
@@ -350,6 +360,7 @@
                     wheel: true
                 },
                 renderer: renderer,
+                theme: node.themeModule,
                 trashcan: showTrashcan,
                 comments: allowComments,
                 disable: true,
