@@ -603,7 +603,7 @@
             node.isTrayOpen = false;
 
             // Show a default timeout value for older nodes 
-            if(node.timeout === null || node.timeout === "") {
+            if(node.timeout === null || node.timeout === "" || (typeof node.timeout === "undefined")) {
                 $("#node-input-timeout").val(RED.settings.functionTimeout || 0);
             }
 
