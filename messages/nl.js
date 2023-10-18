@@ -34,6 +34,7 @@ Blockly.Msg.NODE_PROPERTIES_TOOLTIP = "Zoek de opgegeven eigenschap via de Node-
 Blockly.Msg.NODE_PROPERTIES_ID = "identificatie nummer";
 Blockly.Msg.NODE_PROPERTIES_NAME = "naam";
 Blockly.Msg.NODE_PROPERTIES_OUTPUT_COUNT = "aantal uitgangen";
+Blockly.Msg.NODE_PROPERTIES_PATH = "pad";
 Blockly.Msg.NODE_FLOW_MEMORY = "flow";
 Blockly.Msg.NODE_FLOW_MEMORY_TOOLTIP = "Toegang krijgen tot de gegevens in het Node-RED flow geheugen.";
 Blockly.Msg.NODE_CONTEXT_MEMORY = "(node) context";

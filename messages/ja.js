@@ -34,6 +34,7 @@ Blockly.Msg.NODE_PROPERTIES_TOOLTIP = "Node-RED function APIで指定したノ�
 Blockly.Msg.NODE_PROPERTIES_ID = "ノード識別ID";
 Blockly.Msg.NODE_PROPERTIES_NAME = "ノード名称";
 Blockly.Msg.NODE_PROPERTIES_OUTPUT_COUNT = "出力数";
+Blockly.Msg.NODE_PROPERTIES_PATH = "パス";
 Blockly.Msg.NODE_FLOW_MEMORY = "flowコンテキスト";
 Blockly.Msg.NODE_FLOW_MEMORY_TOOLTIP = "Node-REDのFlowコンテキストデータにアクセス";
 Blockly.Msg.NODE_CONTEXT_MEMORY = "(ノード)コンテキスト";

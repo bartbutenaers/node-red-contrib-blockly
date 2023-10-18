@@ -34,6 +34,7 @@ Blockly.Msg.NODE_PROPERTIES_TOOLTIP = "Получить указанное св�
 Blockly.Msg.NODE_PROPERTIES_ID = "идентификатор";
 Blockly.Msg.NODE_PROPERTIES_NAME = "имя";
 Blockly.Msg.NODE_PROPERTIES_OUTPUT_COUNT = "количество выходов";
+Blockly.Msg.NODE_PROPERTIES_PATH = "путь";
 Blockly.Msg.NODE_FLOW_MEMORY = "поток";
 Blockly.Msg.NODE_FLOW_MEMORY_TOOLTIP = "Доступ к данным в памяти потока Node-RED.";
 Blockly.Msg.NODE_CONTEXT_MEMORY = "(узел) контекст";
