@@ -34,6 +34,7 @@ Blockly.Msg.NODE_PROPERTIES_TOOLTIP = "Obtenir la propriété spécifiée du nœ
 Blockly.Msg.NODE_PROPERTIES_ID = "l’identifiant";
 Blockly.Msg.NODE_PROPERTIES_NAME = "le nom";
 Blockly.Msg.NODE_PROPERTIES_OUTPUT_COUNT = "nombre de sorties";
+Blockly.Msg.NODE_PROPERTIES_PATH = "chemin";
 Blockly.Msg.NODE_FLOW_MEMORY = "contexte du flux";
 Blockly.Msg.NODE_FLOW_MEMORY_TOOLTIP = "Accéder aux données dans la mémoire du flux (flow).";
 Blockly.Msg.NODE_CONTEXT_MEMORY = "contexte du nœud";
