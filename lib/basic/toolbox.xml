@@ -1,3 +1,11 @@
+<!-- This toolbox XML file has been generated once manually, and it contains all the standard blocks offered by the Blockly team.  -->
+<!-- See procedure for this on https://github.com/bartbutenaers/node-red-contrib-blockly/issues/63#issuecomment-852441283          -->
+<!-- After that some manual changes have been made:                                                                                -->
+<!--    1) The category colors have been updated.                                                                                  -->
+<!--    2) Some blocks have been reordered within a category (i.e. the most used ones on top).                                     -->
+<!-- You can rerun this procedure, to see if new blocks or categories have been added by the Blockly team.                         -->
+<!-- But I noticed in the last 5 years that this almost never changes...                                                           -->
+<!-- If you ever find new or updated nodes, it is easier to apply those changes to this file (to keep e.g. all our custom colors). -->
 <xml xmlns="http://www.w3.org/1999/xhtml" id="toolbox" style="display: none;">
   <category name="Logic" colour="#5C81A6">
     <block type="controls_if"></block>
