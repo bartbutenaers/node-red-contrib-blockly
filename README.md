@@ -154,7 +154,7 @@ When writing Javascript code in a standard *function node*, some Node-Red functi
 ## Config node settings
 The Blocky workspace can be configured via the settings in the selected config node:
 
-![Config node](https://github.com/bartbutenaers/node-red-contrib-blockly/assets/14224149/1297e13b-1d83-4078-aedc-137b541d3e86)
+![image](https://github.com/bartbutenaers/node-red-contrib-blockly/assets/14224149/bbd27965-f83c-4a03-8583-98ce53c40f0f)
 
 These settings will be applied to every Blockly node where this config node has been selected:
 + Specify whether a **trash can** icon needs to be displayed in the workspace.
@@ -169,6 +169,7 @@ These settings will be applied to every Blockly node where this config node has 
 + Specify the **language** that needs to be used in the blocks in the workspace.
 + Specify the location of the **toolbox**, relative to the workspace.
 + Specify the **renderer**, which determines how the blocks need to be drawn.
++ Specify the **theme**, which determines the look and feel of Blockly (block colours, category colours, ...)
 
 ## Need a change ...
 When you need a change in this node, you can create a new Github issue.  A couple of remarks about this:
