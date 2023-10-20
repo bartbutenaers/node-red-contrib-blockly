@@ -109,6 +109,7 @@
             backpackContents: {value: []},
             toolboxPosition: {value: "left"},
             renderer: {value: "geras"},
+            theme: {value: "classic"},
             categories: {value: null},
             customizeToolbox: {value: false},
             name: {value: ""}
@@ -342,6 +343,17 @@
                     <option value="zelos">Zelos</option>
                 </select>
             </div>
+            <div class="form-row">
+                <label for="node-config-input-theme"><i class="fa fa-paint-brush"></i> Theme</label>
+                <select id="node-config-input-theme">
+                    <option value="classic">Classic</option> 
+                    <option value="dark">Dark</option>
+                    <option value="deuteranopia">Deuteranopia</option>
+                    <option value="highcontrast">High contrast</option>
+                    <option value="modern">Modern</option>
+                    <option value="tritanopia">Tritanopia</option>
+                </select>
+            </div>
         </div>
         <div id="node-blockly-config-tab-categories" class="node-blockly-config-tab-content">
             <div class="form-row">
@@ -371,10 +383,20 @@
     <p><strong>Toolbox:</strong><br/>
     Specify the location of the toolbox in the workspace (left, right or top).</p>
     <p><strong>Renderer:</strong><br/>
-    Specify a renderer to determine how the blocks need to be drawed visually in the workspace:
+    Specify a renderer to determine how the blocks need to be drawed visually in the workspace (height, padding, border, ...):
     <ul>
         <li><i>Geras:</i> The default Blockly look and feel.</li>
         <li><i>Thrasos:</i></li>
         <li><i>Zelos:</i> A Scratch-like look and feel.</li>
+    </ul></p>
+    <p><strong>Theme:</strong><br/>
+    Specify a theme to adjust the colors in the workspace:
+    <ul>
+        <li><i>Classic:</i> The default theme in Blockly.</li>
+        <li><i>Dark:</i> A theme that uses darker colors than the default</li>
+        <li><i>Deuteranopia:</i> A theme for people that have deuteranopia (the inability to perceive green light). This can also be used for people that have protanopia (the inability to perceive red light).</li>
+        <li><i>Modern:</i> A slight variant of the default Blockly theme that uses darker borders and flatter blocks.</li>
+        <li><i>High Contrast:</i> A theme that improves accessibility by using more contrasting colors and darker text to make blocks more legible.</li>
+        <li><i>Tritanopia:</i> A theme for people that have tritanopia (the inability to perceive blue light).</li>
     </ul></p>
 </script>

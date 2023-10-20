@@ -100,7 +100,7 @@
         // The workspace can only be created when all script files have been loaded, otherwise errors will occur...
         // By loading the standard Blockly library again, a new Blockly instance will be created which must be initialized here.
         // And then the language files can be loaded into the new empty Blockly.Msg
-        lastScriptToLoad.onload = function() {
+        lastScriptToLoad.onload = async function() {
             node.librariesLoaded = true;
             
             Blockly.blocklyEditorVisible = true;
@@ -211,15 +211,22 @@
                 });
             });
 
-            // Add a 'Search' category at the end, which is linked automatically by Blockly to the toolbox-search plugin.
-            const searchElement = document.createElementNS("http://www.w3.org/1999/xhtml", "category");
-            searchElement.setAttribute("name", "Search");
-            searchElement.setAttribute("kind", "search");
-            // When the search input field is clicked, a blue background appears.
-            // I tried to apply as color the same color as the background color (grey), but it doesn't help.
-            // The same happens in the official plugin demo (https://google.github.io/blockly-samples/plugins/toolbox-search/test/index.html)
-            searchElement.setAttribute("colour", "#B2B2B"); // Same color as the background
-            node.toolboxXmlDocument.documentElement.appendChild(searchElement);
+            await load_themes();
+
+            // Ralph:
+            // The way searchElement is implemented creates trouble beginning with the second invocation of onload:
+            // "shortcut_registry.ts:55 Uncaught (in promise) Error: Shortcut named "startSearch" already exists."
+            // Thus I've put comment tags in front of the following section!
+
+            // // Add a 'Search' category at the end, which is linked automatically by Blockly to the toolbox-search plugin.
+            // const searchElement = document.createElementNS("http://www.w3.org/1999/xhtml", "category");
+            // searchElement.setAttribute("name", "Search");
+            // searchElement.setAttribute("kind", "search");
+            // // When the search input field is clicked, a blue background appears.
+            // // I tried to apply as color the same color as the background color (grey), but it doesn't help.
+            // // The same happens in the official plugin demo (https://google.github.io/blockly-samples/plugins/toolbox-search/test/index.html)
+            // searchElement.setAttribute("colour", "#B2B2B2"); // Same color as the background
+            // node.toolboxXmlDocument.documentElement.appendChild(searchElement);
 
             // Create the workspace as soon as the last script has been loaded.  
             // This is possible because the scripts are loaded sequentially (via async = false)
@@ -237,7 +244,71 @@
         }
     }
 
-    function createWorkspace(node, workspaceXml) {
+    let theme_guard = false;
+
+    async function load_themes() {
+
+        if (theme_guard) {
+            return;
+        }
+
+        theme_guard = true;
+
+        // Load the themes
+        let _themes = [
+            "dark",
+            "deuteranopia",
+            "highcontrast",
+            "modern",
+            "tritanopia"
+        ];
+
+        // Ralph:
+        // Initially Bart tried to import the Blockly Theme modules the conventional way:
+        //   node.themeModule = await import("/blockly-contrib/npm/@blockly___SEPARATOR___theme-" + theme + "/dist/index.js");
+        // This yet runs into "Cannot read properties of undefined (reading 'Blockly')".
+        // Looks like there's an issue with the webpackUniversalModuleDefinition implementation. I found no way to compensate for this. Bad.
+        // As "[...]/src/index.js" is the pure code file (not being wrapped into the webpackUniversalModuleDefinition stuff), I tried to import from there.
+        // Fails as well, as "import Blockly from 'blockly/core'" cannot be resolved.
+        // The good thing: We don't need this import at all! 'Blockly' is guaranteed to be already defined!
+        // Fortunately, the Blockly Theme plugins follow a very simple & identical pattern - supporting the following hack:
+        // * Get the script as text from the runtime.
+        // * Remove "import Blockly from 'blockly/core';" from the script.
+        // * Replace "export default ..." statement by a simple "return".
+        // * Wrap this script into a self executing function, to assign its value to the "Blockly.Themes" object.
+        // * Do those steps for all defined themes.
+        // * Create a script tag and let it execute the generated code.
+        // Works like a charm!
+
+        let _script = ["Blockly.Themes = Blockly.Themes ?? {}"];
+        _script.push("Blockly.Themes['classic'] = Blockly.Themes.Classic");
+
+        for (const thm of _themes) {
+            await $.get({
+                url: "/blockly-contrib/npm/@blockly___SEPARATOR___theme-" + thm + "/src/index.js",
+                dataType: "html"
+            }).done((data) => {
+                data = data.replace("import Blockly from 'blockly/core';", "");
+                data = data.replace("export default Blockly.", "return Blockly.");
+                _script.push(`Blockly.Themes["${thm}"] = (function() {${data}})();`);
+            }).fail((info) => {
+                console.log(info);
+            });
+        }
+
+        _script = _script.join(";\r\n");
+        
+        let script = document.createElement('script');
+        script.type= "text/javascript";
+        script.async = false; // Force synchronous loading, to load them in the correct sequence
+        script.text = _script;
+        script.dataset.custom_blockly_library = true;
+        document.head.appendChild(script);
+
+        theme_guard = false;
+    }
+
+    async function createWorkspace(node, workspaceXml) {
         // Default settings in case no config node has been specified
         var showTrashcan     = true;
         var allowComments    = true;
@@ -247,6 +318,7 @@
         var enableBackPack   = false;
         var toolboxPosition  = "start";
         var renderer         = "geras";
+        var theme            = "classic";
         var configNodeId     = "";
         var backpackContents = [];
 
@@ -260,6 +332,7 @@
                 showZoomControl = configNode.showZoomControl;
                 showMiniMap     = configNode.showMiniMap;
                 renderer        = configNode.renderer;
+                theme           = configNode.theme;
                 enableBackPack  = configNode.enableBackPack;
                 configNodeId    = configNode.id;
  
@@ -334,6 +407,15 @@
             node.workspace = null;
         }  
 
+        // Ralph: This doesn't work!
+        // try {
+        //     // The theme plugins for Blockly are ES6 modules
+        //     node.themeModule = await import("/blockly-contrib/npm/@blockly___SEPARATOR___theme-" + theme + "/dist/index.js");
+        // }
+        // catch (err) {
+        //     console.error(err);
+        // }
+
         // Only load the Blockly workspace when all libraries have been loaded yet, in order to avoid errors
         if (node.librariesLoaded == true) {
             // Create the workspace (with the specified settings)
@@ -350,6 +432,7 @@
                     wheel: true
                 },
                 renderer: renderer,
+                theme: Blockly.Themes[theme],
                 trashcan: showTrashcan,
                 comments: allowComments,
                 disable: true,

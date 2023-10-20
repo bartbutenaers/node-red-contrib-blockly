@@ -11,6 +11,11 @@
         "@blockly/plugin-workspace-search": "^8.0.4",
         "@blockly/toolbox-search": "^1.1.6",
         "@blockly/workspace-minimap": "^0.1.0",
+        "@blockly/theme-dark": "^6.0.1",
+        "@blockly/theme-highcontrast": "^5.0.1",
+        "@blockly/theme-tritanopia": "^5.0.1",
+        "@blockly/theme-deuteranopia": "^5.0.1",
+        "@blockly/theme-modern": "^5.0.1",
         "acorn": "^8.10.0",
         "acorn-walk": "^8.2.0"
     },
