@@ -123,6 +123,11 @@
         oneditprepare: function() {
             var node = this;
 
+            // Show by default theme "classic" for older nodes 
+            if(node.theme === null || node.theme === "" || (typeof node.theme === "undefined")) {
+                $("#node-config-input-theme").val("classic");
+            }
+
             // Show tabsheets
             node.tabs = RED.tabs.create({
                 id: "node-blockly-config-tabs",
