@@ -100,7 +100,7 @@
         // The workspace can only be created when all script files have been loaded, otherwise errors will occur...
         // By loading the standard Blockly library again, a new Blockly instance will be created which must be initialized here.
         // And then the language files can be loaded into the new empty Blockly.Msg
-        lastScriptToLoad.onload = async function() {
+        lastScriptToLoad.onload = function() {
             node.librariesLoaded = true;
             
             Blockly.blocklyEditorVisible = true;
@@ -221,7 +221,7 @@
             searchElement.setAttribute("colour", "#B2B2B2"); // Same color as the background
             node.toolboxXmlDocument.documentElement.appendChild(searchElement);
 
-            await load_themes();
+            load_themes();
 
             // Create the workspace as soon as the last script has been loaded.  
             // This is possible because the scripts are loaded sequentially (via async = false)
@@ -279,16 +279,18 @@
         _script.push("Blockly.Themes['classic'] = Blockly.Themes.Classic");
 
         for (const thm of _themes) {
-            await $.get({
-                url: "/blockly-contrib/npm/@blockly___SEPARATOR___theme-" + thm + "/src/index.js",
-                dataType: "html"
-            }).done((data) => {
+
+            let request = new XMLHttpRequest();
+            request.open('GET', `/blockly-contrib/npm/@blockly___SEPARATOR___theme-${thm}/src/index.js`, false);  // `false` makes the request synchronous
+            request.send();
+            if (request.readyState == 4 && request.status == 200) {
+                let data = request.response;
                 data = data.replace("import Blockly from 'blockly/core';", "");
                 data = data.replace("export default Blockly.", "return Blockly.");
                 _script.push(`Blockly.Themes["${thm}"] = (function() {${data}})();`);
-            }).fail((info) => {
-                console.log(info);
-            });
+            } else {
+                console.log(`Failed to load plugin for Blockly Theme "${thm}": ${request.response}`);
+            }
         }
 
         _script = _script.join(";\r\n");
@@ -303,7 +305,7 @@
         theme_guard = false;
     }
 
-    async function createWorkspace(node, workspaceXml) {
+    function createWorkspace(node, workspaceXml) {
         // Default settings in case no config node has been specified
         var showTrashcan     = true;
         var allowComments    = true;
