@@ -659,7 +659,10 @@
         category: 'function',
         color: '#FFAAAA',       
         defaults: {
-            func: {value:"\nreturn msg;"}, // The generated Javascript code
+            // The generated Javascript code.
+            // Make sure we start without (generated) javascript code, because the Blockly workspace is also empty for new nodes.
+            // That way the (empty) Blockly workspace at startup is in sync with the (empty) Javascript tabsheet.
+            func: {value:""},
             workspaceXml: {value:"<xml xmlns=\"https:\/\/developers.google.com\/blockly\/xml\"><\/xml>"}, // Needed for Blockly version "5.20210325.1". Can't be empty
             outputs: {value:1}, // Standard field that will be used by Node-Red to draw N output ports in the flow editor,
             timeout: {value:RED.settings.functionTimeout || 0},
