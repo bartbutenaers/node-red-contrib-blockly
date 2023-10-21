@@ -211,22 +211,17 @@
                 });
             });
 
-            await load_themes();
-
-            // Ralph:
-            // The way searchElement is implemented creates trouble beginning with the second invocation of onload:
-            // "shortcut_registry.ts:55 Uncaught (in promise) Error: Shortcut named "startSearch" already exists."
-            // Thus I've put comment tags in front of the following section!
-
             // // Add a 'Search' category at the end, which is linked automatically by Blockly to the toolbox-search plugin.
-            // const searchElement = document.createElementNS("http://www.w3.org/1999/xhtml", "category");
-            // searchElement.setAttribute("name", "Search");
-            // searchElement.setAttribute("kind", "search");
-            // // When the search input field is clicked, a blue background appears.
-            // // I tried to apply as color the same color as the background color (grey), but it doesn't help.
-            // // The same happens in the official plugin demo (https://google.github.io/blockly-samples/plugins/toolbox-search/test/index.html)
-            // searchElement.setAttribute("colour", "#B2B2B2"); // Same color as the background
-            // node.toolboxXmlDocument.documentElement.appendChild(searchElement);
+            const searchElement = document.createElementNS("http://www.w3.org/1999/xhtml", "category");
+            searchElement.setAttribute("name", "Search");
+            searchElement.setAttribute("kind", "search");
+            // When the search input field is clicked, a blue background appears.
+            // I tried to apply as color the same color as the background color (grey), but it doesn't help.
+            // The same happens in the official plugin demo (https://google.github.io/blockly-samples/plugins/toolbox-search/test/index.html)
+            searchElement.setAttribute("colour", "#B2B2B2"); // Same color as the background
+            node.toolboxXmlDocument.documentElement.appendChild(searchElement);
+
+            await load_themes();
 
             // Create the workspace as soon as the last script has been loaded.  
             // This is possible because the scripts are loaded sequentially (via async = false)
