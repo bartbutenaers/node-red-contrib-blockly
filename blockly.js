@@ -536,11 +536,7 @@ module.exports = function(RED) {
     }
     
     RED.nodes.registerType("Blockly",BlocklyNode, {
-        dynamicModuleList: "libs",
-        settings: {
-            functionExternalModules: { value: true, exportable: true },
-            functionTimeout: { value:0, exportable: true }
-        }
+        dynamicModuleList: "libs"
     });
     RED.library.register("blockly_functions");
 
