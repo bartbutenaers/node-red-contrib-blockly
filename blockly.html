@@ -225,17 +225,7 @@
 
             // Create the workspace as soon as the last script has been loaded.  
             // This is possible because the scripts are loaded sequentially (via async = false)
-            if (node.workspace) {
-                // When there has been a previous workspace, show the content of that workspace.
-                // Because that workspace might have changes (which have not been stored yet into node.workspaceXml), which need to be kept
-                var dom = Blockly.Xml.workspaceToDom(node.workspace);
-                var originalXml = Blockly.Xml.domToPrettyText(dom);
-                createWorkspace(node, originalXml);
-            }
-            else {
-                // Since their is no previous workspace, let's show the last stored xml
-                createWorkspace(node, node.workspaceXml);
-            }                
+            createWorkspace(node, node.workspaceXml);
         }
     }
 
@@ -972,6 +962,13 @@
                 // it that way, missing sentences in the translations are not a problem (since those sentences will simply be displayed in english).
                 // CAUTION: the "blockly-contrib/npm/blockly/msg/en.js" file contains a Blockly.Msg = {} , which means all previous loaded 
                 // messages will be removed!
+                if (node.workspace) {
+                    // When there has been a previous workspace, show the content of that workspace.
+                    // Because that workspace might have changes (which have not been stored yet into node.workspaceXml), which need to be kept
+
+                    var dom = Blockly.Xml.workspaceToDom(node.workspace);
+                    node.workspaceXml = Blockly.Xml.domToPrettyText(dom);
+                }
                 loadResourcesFromServer(node, language, categories);
             });
             // This is being called by Node-RED also $("#node-input-blocklyConfig").change();
