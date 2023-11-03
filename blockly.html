@@ -47,7 +47,8 @@
                 "blockly-contrib/npm/@blockly___SEPARATOR___zoom-to-fit/dist/index.js",
                 "blockly-contrib/npm/@blockly___SEPARATOR___workspace-backpack/dist/index.js",
                 "blockly-contrib/npm/@blockly___SEPARATOR___toolbox-search/dist/index.js",
-                "blockly-contrib/npm/@blockly___SEPARATOR___workspace-minimap/dist/index.js"
+                "blockly-contrib/npm/@blockly___SEPARATOR___workspace-minimap/dist/index.js",
+                "blockly-contrib/npm/@blockly___SEPARATOR___plugin-cross-tab-copy-paste/dist/index.js"
             ]
         });
 
@@ -456,7 +457,17 @@
                     node.backpack.setContents(backpackContents);
                 }
             }
-     
+
+            const copyPastePluginOptions = {
+              contextMenu: true,
+              shortcut: true,
+            };
+
+            const copyPastePlugin = new CrossTabCopyPaste();
+            copyPastePlugin.init(copyPastePluginOptions, function() {
+                //console.log('Use this error callback to handle TypeError while pasting');
+            });
+
             // Trigger an event to indicate that a new Blockly workspace has been created.
             // Blockly doesn't offer such an event.  See https://groups.google.com/g/blockly/c/sSpvp_Kz-To
             // Such an event is required, because this node switches often its workspace (and some blocks need to be aware of that...).
