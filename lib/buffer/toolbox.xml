@@ -10,6 +10,15 @@
         <shadow type="buffer_empty"></shadow>
       </value>
     </block>
+    <block type="buffer_from_list">
+      <value name="LIST_INPUT">
+      </value> 
+    </block>
+    <block type="buffer_to_list">
+      <value name="BUFFER_INPUT">
+        <shadow type="buffer_empty"></shadow>
+      </value>
+    </block>
     <block type="buffer_alloc">
       <value name="LENGTH">
         <shadow type="math_number">
