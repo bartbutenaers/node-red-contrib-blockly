@@ -378,22 +378,13 @@
         // Remember the current config node id for the next time we arrive in this function
         node.previousConfigNodeId = configNodeId;
         
-        // When previously a workspace-backpack plugin has been activated (for the previous workspace instance), then clean it up
-        if (node.backpack) {
-            node.backpack.dispose();
-            node.backpack = null;
-        }
-        
-        // Blockly requires an empty array for the content of an empty backpack (instead of undefined or null)
-        if (!backpackContents) {
-            backpackContents = [];
-        }
+        cleanup_plugins(node);
 
         // When previously another workspace was already created, then cleanup that one first (to avoid displaying multiple workspaces).
         if (node.workspace) {
             node.workspace.dispose();
             node.workspace = null;
-        }  
+        } 
 
         // Ralph: This doesn't work!
         // try {
@@ -463,8 +454,8 @@
               shortcut: true,
             };
 
-            const copyPastePlugin = new CrossTabCopyPaste();
-            copyPastePlugin.init(copyPastePluginOptions, function() {
+            node.copyPastePlugin = new CrossTabCopyPaste();
+            node.copyPastePlugin.init(copyPastePluginOptions, function() {
                 //console.log('Use this error callback to handle TypeError while pasting');
             });
 
@@ -535,6 +526,19 @@
         node.aceXMLEditor.destroy();
         delete node.aceXMLEditor;
 
+        cleanup_plugins(node);
+
+        // Blockly requires an empty array for the content of an empty backpack (instead of undefined or null)
+        if (!backpackContents) {
+            backpackContents = [];
+        }
+
+        // Cleanup the Blockly workspace
+        node.workspace.dispose(); 
+        delete node.workspace;
+    }
+
+    function cleanup_plugins(node) {
         // When previously a zoom-to-fit plugin has been activated, then clean it up
         if (node.zoomToFit) {
             node.zoomToFit.dispose();
@@ -553,11 +557,20 @@
             node.backpack = null;
         }
 
-        // Cleanup the Blockly workspace
-        node.workspace.dispose(); 
-        delete node.workspace;
+        if (node.copyPastePlugin) {
+            // TODO temporary workaround for https://github.com/google/blockly-samples/issues/2058
+            if (Blockly.ContextMenuRegistry.registry.getItem("blockCopyToStorage")) {
+                Blockly.ContextMenuRegistry.registry.unregister('blockCopyToStorage');
+            }
+
+            if (Blockly.ContextMenuRegistry.registry.getItem("blockPasteFromStorage")) {
+                Blockly.ContextMenuRegistry.registry.unregister('blockPasteFromStorage');
+            }
+            //node.copyPastePlugin.dispose();
+            node.copyPastePlugin = null;
+        }
     }
-    
+
     // See https://developers.google.com/blockly/guides/configure/web/resizable
     function resize(node) {        
         // Resize the Blockly workspace, as soon as available (i.e. not when called from oneditprepare).
