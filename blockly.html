@@ -14,7 +14,7 @@
 <script type="text/javascript">
     function loadResourcesFromServer(node, language, categories) {
         var lastScriptToLoad;
-        
+
         // When no categories are passed (e.g. when there is no config node selected), then use the default categories
         if (!categories) {
             categories = getDefaultBlocklyCategories();
@@ -47,7 +47,8 @@
                 "blockly-contrib/npm/@blockly___SEPARATOR___zoom-to-fit/dist/index.js",
                 "blockly-contrib/npm/@blockly___SEPARATOR___workspace-backpack/dist/index.js",
                 "blockly-contrib/npm/@blockly___SEPARATOR___toolbox-search/dist/index.js",
-                "blockly-contrib/npm/@blockly___SEPARATOR___workspace-minimap/dist/index.js"
+                "blockly-contrib/npm/@blockly___SEPARATOR___workspace-minimap/dist/index.js",
+                "blockly-contrib/npm/@blockly___SEPARATOR___plugin-cross-tab-copy-paste/dist/index.js"
             ]
         });
 
@@ -102,7 +103,20 @@
         // And then the language files can be loaded into the new empty Blockly.Msg
         lastScriptToLoad.onload = function() {
             node.librariesLoaded = true;
-            
+         
+            // Unlike the other plugins below, the CrossTabCopyPaste plugin needs to be initialized globally, and as a resulting
+            // it doesn't need to be disposed.  See more info on https://github.com/google/blockly-samples/pull/2061
+            // We will initialize the plugin here, because at this point a new empty Blockly instance has been loaded.
+            // On that new instance, the init method will e.g. register the 'copy' and 'paste' context menu actions.
+            // Note that this can't be done at the point where the other plugins are being initialized, because then an 
+            // exception would be thrown every time the workspace is being recreated (e.g. when switching to full-screen),
+            // because the context menu actions have already been created.  Because the global plugin is never disposed....
+            var copyPastePlugin = new CrossTabCopyPaste();
+            copyPastePlugin.init({
+                contextMenu: true,
+                shortcut: true,
+            });
+
             Blockly.blocklyEditorVisible = true;
 
             // Make sure the Blockly datetime_convert_from_date block is always aware about the number of outputs
@@ -377,22 +391,13 @@
         // Remember the current config node id for the next time we arrive in this function
         node.previousConfigNodeId = configNodeId;
         
-        // When previously a workspace-backpack plugin has been activated (for the previous workspace instance), then clean it up
-        if (node.backpack) {
-            node.backpack.dispose();
-            node.backpack = null;
-        }
-        
-        // Blockly requires an empty array for the content of an empty backpack (instead of undefined or null)
-        if (!backpackContents) {
-            backpackContents = [];
-        }
+        cleanup_plugins(node);
 
         // When previously another workspace was already created, then cleanup that one first (to avoid displaying multiple workspaces).
         if (node.workspace) {
             node.workspace.dispose();
             node.workspace = null;
-        }  
+        } 
 
         // Ralph: This doesn't work!
         // try {
@@ -456,7 +461,7 @@
                     node.backpack.setContents(backpackContents);
                 }
             }
-     
+
             // Trigger an event to indicate that a new Blockly workspace has been created.
             // Blockly doesn't offer such an event.  See https://groups.google.com/g/blockly/c/sSpvp_Kz-To
             // Such an event is required, because this node switches often its workspace (and some blocks need to be aware of that...).
@@ -524,6 +529,19 @@
         node.aceXMLEditor.destroy();
         delete node.aceXMLEditor;
 
+        cleanup_plugins(node);
+
+        // Blockly requires an empty array for the content of an empty backpack (instead of undefined or null)
+        if (!backpackContents) {
+            backpackContents = [];
+        }
+
+        // Cleanup the Blockly workspace
+        node.workspace.dispose(); 
+        delete node.workspace;
+    }
+
+    function cleanup_plugins(node) {
         // When previously a zoom-to-fit plugin has been activated, then clean it up
         if (node.zoomToFit) {
             node.zoomToFit.dispose();
@@ -541,12 +559,8 @@
             node.backpack.dispose();
             node.backpack = null;
         }
-
-        // Cleanup the Blockly workspace
-        node.workspace.dispose(); 
-        delete node.workspace;
     }
-    
+
     // See https://developers.google.com/blockly/guides/configure/web/resizable
     function resize(node) {        
         // Resize the Blockly workspace, as soon as available (i.e. not when called from oneditprepare).
