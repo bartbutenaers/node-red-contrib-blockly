@@ -285,7 +285,7 @@
         for (const thm of _themes) {
 
             let request = new XMLHttpRequest();
-            request.open('GET', `/blockly-contrib/npm/@blockly___SEPARATOR___theme-${thm}/src/index.js`, false);  // `false` makes the request synchronous
+            request.open('GET', `blockly-contrib/npm/@blockly___SEPARATOR___theme-${thm}/src/index.js`, false);  // `false` makes the request synchronous
             request.send();
             if (request.readyState == 4 && request.status == 200) {
                 let data = request.response;
